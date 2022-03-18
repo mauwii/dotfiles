@@ -8,9 +8,13 @@ PROCTYPE="$(uname -m)"
 
 # initialize arch-dependend brew env
 if [[ "$PROCTYPE" == "arm64" ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+  if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
 else
-  eval "$(/usr/local/bin/brew shellenv)"
+  if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
 fi
 
 # add ESP-IDF if folder exists

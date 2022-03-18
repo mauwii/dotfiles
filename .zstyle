@@ -25,6 +25,6 @@ zstyle ':completion:*' substitute 1
 zstyle ':completion:*' verbose true
 zstyle :compinstall filename '/Users/mauwii/.zstyle'
 
-# autoload -Uz compinit
-# compinit
+autoload -Uz compinit
+compinit
 # End of lines added by compinstall

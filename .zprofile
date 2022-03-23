@@ -7,12 +7,12 @@ eval "$(PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" /usr/libexec/path_he
 PROCTYPE="$(uname -m)"
 
 # initialize arch-dependend brew env
-if [[ "$PROCTYPE" == "arm64" ]]; then
+if [[ "$PROCTYPE" == "arm64"  ]]; then
   if [[ -x /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
 else
-  if [[ -x /opt/homebrew/bin/brew ]]; then
+  if [[ -x /usr/local/bin/brew ]]; then
     eval "$(/usr/local/bin/brew shellenv)"
   fi
 fi

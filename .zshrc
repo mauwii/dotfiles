@@ -145,8 +145,8 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 alias l='ls -GAhH'
-alias ll='l -lO'
-alias lll='ll -@'
+alias ll='ls -GAhHlO'
+alias lll='ls -GAhHlO@'
 alias lr='ls -R'
 alias topgrade="topgrade --disable=pip3"
 

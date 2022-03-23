@@ -1,10 +1,11 @@
 # disable sourcing global dotfiles, located at /etc
 # unsetopt globalrcs
-# LC_ALL=C.UTF-8
+LC_ALL=de_DE.UTF-8
 
 # create clean PATH
 eval "$(PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" /usr/libexec/path_helper -s)"
 PROCTYPE="$(uname -m)"
+export PROCTYPE
 
 # initialize arch-dependend brew env
 if [[ "$PROCTYPE" == "arm64"  ]]; then
@@ -24,18 +25,21 @@ if [[ -d $HOME/esp/esp-idf ]]; then
   export IDF_PATH ESPIDF
 fi
 
-fpath=(
-  "$(brew --prefix)/share/zsh-completions"
-  "$(brew --prefix)/share/zsh/site-functions"
-  "/usr/share/zsh/5.8/functions"
-)
-  # "$HOME/scripting/zcompletions"
-
 # add my bins to front of path
 path=(
   $HOME/scripting/bin
   $path
 )
+export path
+
+fpath=(
+  /usr/share/zsh/5.8/functions
+  $(brew --prefix)/share/zsh-completions
+  $(brew --prefix)/share/zsh/site-functions
+  $fpath
+)
+export fpath
+  # "$HOME/scripting/zcompletions"
 
 # export PYENV_ROOT="$HOME/.pyenv"
 # export PATH="$PYENV_ROOT/bin:$PATH"
@@ -43,6 +47,5 @@ path=(
 if which pyenv > /dev/null; then eval "$(pyenv init --path)"; fi
 # if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
-# Remove dupilcates from paths
+# Remove dupilcates from path, fpath and manpath
 typeset -U path fpath manpath
-export PATH FPATH MANPATH PROCTYPE

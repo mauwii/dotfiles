@@ -1,6 +1,5 @@
 # disable sourcing global dotfiles, located at /etc
-# unsetopt globalrcs
-LC_ALL=de_DE.UTF-8
+unsetopt globalrcs
 
 # create clean PATH
 eval "$(PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" /usr/libexec/path_helper -s)"

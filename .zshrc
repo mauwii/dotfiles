@@ -123,7 +123,7 @@ source "$ZSH/oh-my-zsh.sh"
 # export MANPATH="$(man --path)"
 
 # You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
@@ -154,9 +154,9 @@ alias topgrade="topgrade --disable=pip3"
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 # remove pyenv from PATH when executing brew
-# if [ -d $(pyenv root) ]; then
-#   alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
-# fi
+if [ -d $(pyenv root) ]; then
+  alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+fi
 
 # alias to start adaptivecards-designer
 if [[ -d $HOME/Bots/AdaptiveCards/source/nodejs ]]; then

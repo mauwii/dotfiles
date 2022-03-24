@@ -50,3 +50,5 @@ if which pyenv > /dev/null; then eval "$(pyenv init --path)"; fi
 
 # Remove dupilcates from path, fpath and manpath
 typeset -U manpath
+FUNCTIONS_CORE_TOOLS_TELEMETRY_OPTOUT=1
+export FUNCTIONS_CORE_TOOLS_TELEMETRY_OPTOUT

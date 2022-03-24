@@ -29,7 +29,8 @@ path=(
   $HOME/scripting/bin
   $path
 )
-export path
+typeset -U path
+# export path
 
 fpath=(
   /usr/share/zsh/5.8/functions
@@ -37,8 +38,9 @@ fpath=(
   $(brew --prefix)/share/zsh/site-functions
   $fpath
 )
-export fpath
   # "$HOME/scripting/zcompletions"
+typeset -U fpath
+# export fpath
 
 # export PYENV_ROOT="$HOME/.pyenv"
 # export PATH="$PYENV_ROOT/bin:$PATH"
@@ -47,4 +49,4 @@ if which pyenv > /dev/null; then eval "$(pyenv init --path)"; fi
 # if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
 # Remove dupilcates from path, fpath and manpath
-typeset -U path fpath manpath
+typeset -U manpath

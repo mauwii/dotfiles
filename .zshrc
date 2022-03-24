@@ -154,10 +154,11 @@ alias topgrade="topgrade --disable=pip3"
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 # remove pyenv from PATH when executing brew
-if [ -d $(pyenv root) ]; then
-  alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+if which pyenv > /dev/null; then
+  if [ -d $(pyenv root) ]; then
+    alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+  fi
 fi
-
 # alias to start adaptivecards-designer
 if [[ -d $HOME/Bots/AdaptiveCards/source/nodejs ]]; then
   alias acarddesigner="(cd $HOME/Bots/AdaptiveCards/source/nodejs && npx lerna run start --scope=adaptivecards-designer --stream)"

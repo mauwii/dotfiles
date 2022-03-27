@@ -1,5 +1,5 @@
 # disable sourcing global dotfiles, located at /etc
-unsetopt globalrcs
+# unsetopt globalrcs
 
 # create clean PATH
 eval "$(PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" /usr/libexec/path_helper -s)"
@@ -16,6 +16,9 @@ else
     eval "$(/usr/local/bin/brew shellenv)"
   fi
 fi
+
+# Remove dupilcates from manpath
+typeset -U manpath
 
 # add ESP-IDF if folder exists
 if [[ -d $HOME/esp/esp-idf ]]; then
@@ -40,7 +43,6 @@ fpath=(
 )
   # "$HOME/scripting/zcompletions"
 typeset -U fpath
-# export fpath
 
 # export PYENV_ROOT="$HOME/.pyenv"
 # export PATH="$PYENV_ROOT/bin:$PATH"
@@ -48,7 +50,8 @@ typeset -U fpath
 if which pyenv > /dev/null; then eval "$(pyenv init --path)"; fi
 # if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
-# Remove dupilcates from path, fpath and manpath
-typeset -U manpath
 FUNCTIONS_CORE_TOOLS_TELEMETRY_OPTOUT=1
 export FUNCTIONS_CORE_TOOLS_TELEMETRY_OPTOUT
+
+DOTNET_ROOT=/usr/local/share/dotnet
+export DOTNET_ROOT

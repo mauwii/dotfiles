@@ -153,8 +153,13 @@ alias topgrade="topgrade --disable=pip3"
 # dotfiles management
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
+# initialize pyenv
 if which pyenv > /dev/null; then
   eval "$(pyenv init -)"
+  # initialize pyenv-virtualenv
+  if which pyenv-virtualenv > /dev/null; then
+    eval "$(pyenv virtualenv-init -)"
+  fi
   # remove pyenv from PATH when executing brew
   if which brew > /dev/null; then
     alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'

@@ -44,10 +44,11 @@ fpath=(
   # "$HOME/scripting/zcompletions"
 typeset -U fpath
 
-# export PYENV_ROOT="$HOME/.pyenv"
-# export PATH="$PYENV_ROOT/bin:$PATH"
-# eval "$(pyenv init --path)"
-if which pyenv > /dev/null; then eval "$(pyenv init --path)"; fi
+if which pyenv > /dev/null; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init --path)"
+fi
 # if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
 FUNCTIONS_CORE_TOOLS_TELEMETRY_OPTOUT=1

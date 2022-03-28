@@ -11,7 +11,7 @@ if [[ "$PROCTYPE" = "arm64" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
 else
-  if [[ -x "/opt/homebrew/bin/brew" ]]; then
+  if [[ -x "/usr/local/bin/brew" ]]; then
     eval "$(/usr/local/bin/brew shellenv)"
   fi
 fi
@@ -27,11 +27,11 @@ fi
 PATH="$HOME/scripting/bin:$PATH"
 
 # Add pyenv to front of path
-# export PYENV_ROOT="$HOME/.pyenv"
-# PATH="$PYENV_ROOT/bin:$PATH"
-# export PATH
-# eval "$(pyenv init --path)"
-if which pyenv > /dev/null; then eval "$(pyenv init --path)"; fi
+if which pyenv > /dev/null; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init --path)"
+fi
 # if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
 if [ "${BASH-no}" != "no" ]; then

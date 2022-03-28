@@ -29,8 +29,16 @@ if [[ -d "${HOME}/.nvm" ]]; then
 fi
 
 # add pyenv shims to front of path and inizialize pyenv
-if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
-if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+if which pyenv > /dev/null; then
+  eval "$(pyenv init -)"
+  if which pyenv-virtualenv-init > /dev/null; then
+    eval "$(pyenv virtualenv-init -)"
+  fi
+  # remove pyenv from PATH when executing brew
+  if which brew > /dev/null; then
+    alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+  fi
+fi
 
 HB_CNF_HANDLER="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
 if [ -f "$HB_CNF_HANDLER" ]; then

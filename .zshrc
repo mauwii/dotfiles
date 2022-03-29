@@ -55,29 +55,6 @@ zstyle ':omz:update' mode auto      # update automatically without asking
 # You can also set it to another string to have that shown instead of the default red dots.
 # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
 COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
@@ -110,11 +87,8 @@ plugins=(
   github
   pip
   python
-  pyenv
 )
   # zsh-autosuggestions
-  # docker
-  # docker-compose
 
 source "$ZSH/oh-my-zsh.sh"
 
@@ -157,7 +131,7 @@ alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 if which pyenv > /dev/null; then
   eval "$(pyenv init -)"
   # initialize pyenv-virtualenv
-  if which pyenv-virtualenv > /dev/null; then
+  if which pyenv-virtualenv-init > /dev/null; then
     eval "$(pyenv virtualenv-init -)"
   fi
   # remove pyenv from PATH when executing brew
@@ -174,7 +148,7 @@ fi
 # alias to run a shell with rosetta which will only be necesarry in arm64 env
 if [[ $(uname -m) == arm64 ]]; then
   # alias rosettaterm="env -u PATH -u FPATH arch -arch x86_64 /bin/zsh -l"
-  alias rosettaterm="arch -arch x86_64 /bin/zsh -l"
+  alias rosettaterm="arch -arch x86_64 /bin/zsh -i"
 fi
 
 # only needed wenn $ESPIDF is set

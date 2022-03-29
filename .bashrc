@@ -10,6 +10,10 @@ if [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]]; then
   source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
 fi
 
+for bcfile in "$HOMEBREW_PREFIX"/etc/bash_completion.d/* ; do
+  . "$bcfile"
+done
+
 if [[ "$PROCTYPE" = "arm64" ]]; then
   alias rosettaterm="arch -arch x86_64 /bin/bash -l"
 fi
@@ -31,6 +35,7 @@ fi
 # add pyenv shims to front of path and inizialize pyenv
 if which pyenv > /dev/null; then
   eval "$(pyenv init -)"
+  # initialize pyenv-virtualenv
   if which pyenv-virtualenv-init > /dev/null; then
     eval "$(pyenv virtualenv-init -)"
   fi

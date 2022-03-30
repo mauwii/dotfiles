@@ -61,6 +61,6 @@ fi
 
 # If System is MacOS, start ssh-agent and add keys from keychain
 if [[ $(uname -s) = "Darwin" ]]; then
-  ssh-agent >/dev/null
-  ssh-add --apple-load-keychain >/dev/null
+  ssh-agent &>/dev/null
+  ssh-add --apple-load-keychain &>/dev/null
 fi

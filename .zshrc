@@ -143,11 +143,15 @@ if [[ -d "${HOME}/Bots/AdaptiveCards/source/nodejs" ]]; then
 fi
 
 function rosettaterm() {
-  echo "switching to x86_64 architecture"
-  if which nvm >/dev/null; then
-    nvm deactivate >/dev/null
+  if [[ "$(uname -m)" == "x86_64" ]]; then
+    echo "Already using x86_64 architecture"
+  else
+    echo "switching to x86_64 architecture"
+    if which nvm >/dev/null; then
+      nvm deactivate >/dev/null
+    fi
+    arch -arch x86_64 /bin/zsh -l
   fi
-  arch -arch x86_64 /bin/zsh -l
 }
 
 # only needed wenn $ESPIDF is set

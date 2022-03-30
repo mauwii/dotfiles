@@ -89,7 +89,6 @@ plugins=(
   python
   ssh-agent
 )
-  # zsh-autosuggestions
 
 # silent SSH-Agent Start
 zstyle :omz:plugins:ssh-agent quiet yes
@@ -103,7 +102,7 @@ source "$ZSH/oh-my-zsh.sh"
 # export MANPATH="$(man --path)"
 
 # You may need to manually set your language environment
-export LANG=en_US.UTF-8
+export LANG="en_US.UTF-8"
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
@@ -148,8 +147,8 @@ if which pyenv > /dev/null; then
 fi
 
 # alias to start adaptivecards-designer
-if [[ -d $HOME/Bots/AdaptiveCards/source/nodejs ]]; then
-  alias acarddesigner="(cd $HOME/Bots/AdaptiveCards/source/nodejs && npx lerna run start --scope=adaptivecards-designer --stream)"
+if [[ -d "${HOME}/Bots/AdaptiveCards/source/nodejs" ]]; then
+  alias acarddesigner="(cd ${HOME}/Bots/AdaptiveCards/source/nodejs && npx lerna run start --scope=adaptivecards-designer --stream)"
 fi
 
 # alias to run a shell with rosetta which will only be necesarry in arm64 env
@@ -159,29 +158,37 @@ if [[ $(uname -m) == arm64 ]]; then
 fi
 
 # only needed wenn $ESPIDF is set
-if [[ -d $ESPIDF ]]; then
-  alias getidf="source $IDF_PATH/export.sh"
+if [[ -d "${ESPIDF}" ]]; then
+  alias getidf="source ${IDF_PATH}/export.sh"
 fi
 
 # iTerm 2 Shell Integration
-if [[ -s $HOME/.iterm2_shell_integration.zsh && $TERM_PROGRAM == iTerm.app ]]; then
+if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app ]]; then
   source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
 # initialize brewed node version manager
-[ -d $HOME/.nvm ] && export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+if [[ -d "${HOME}/.nvm" ]]; then
+  export NVM_DIR="${HOME}/.nvm"
+fi
+# This loads nvm
+if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/nvm.sh" ]]; then
+  source "${HOMEBREW_PREFIX}/opt/nvm/nvm.sh"
+fi
+# This loads nvm bash_completion
+if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+  source "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
+fi
 
 # homebrew zsh-autosuggestions plugin
-if [[ -s ${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-  source ${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+if [[ -s "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 # Sign git commits with gpg https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
 export GPG_TTY=$(tty)
 
 # zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
-if [[ -s ${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-  source ${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ -s "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi

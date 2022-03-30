@@ -59,7 +59,8 @@ if [[ -f "$HB_CNF_HANDLER" ]]; then
   source "$HB_CNF_HANDLER"
 fi
 
-if [[ $(uname -m) = "Darwin" ]]; then
+# If System is MacOS, start ssh-agent and add keys from keychain
+if [[ $(uname -s) = "Darwin" ]]; then
   ssh-agent >/dev/null
   ssh-add --apple-load-keychain >/dev/null
 fi

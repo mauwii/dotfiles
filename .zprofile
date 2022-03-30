@@ -40,7 +40,7 @@ fpath=(
   ${HOMEBREW_PREFIX}/share/zsh-completions
   ${HOMEBREW_PREFIX}/share/zsh/site-functions
   $HOME/scripting/zcompletions
-  $fpath
+  ${fpath[@]}
 )
 typeset -U fpath
 

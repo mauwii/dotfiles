@@ -85,6 +85,7 @@ plugins=(
   colored-man-pages
   git
   github
+  jsontools
   pip
   python
   ssh-agent

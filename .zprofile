@@ -37,8 +37,8 @@ typeset -U path
 
 fpath=(
   /usr/share/zsh/5.8/functions
-  $(brew --prefix)/share/zsh-completions
-  $(brew --prefix)/share/zsh/site-functions
+  ${HOMEBREW_PREFIX}/share/zsh-completions
+  ${HOMEBREW_PREFIX}/share/zsh/site-functions
   $HOME/scripting/zcompletions
   $fpath
 )

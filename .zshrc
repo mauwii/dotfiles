@@ -87,8 +87,14 @@ plugins=(
   github
   pip
   python
+  ssh-agent
 )
   # zsh-autosuggestions
+
+# silent SSH-Agent Start
+zstyle :omz:plugins:ssh-agent quiet yes
+# add Identities from Keychain
+zstyle :omz:plugins:ssh-agent ssh-add-args --apple-load-keychain
 
 source "$ZSH/oh-my-zsh.sh"
 
@@ -108,6 +114,7 @@ fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
+export ARCHFLAGS="-arch arm64 -arch x86_64"
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -148,7 +155,7 @@ fi
 # alias to run a shell with rosetta which will only be necesarry in arm64 env
 if [[ $(uname -m) == arm64 ]]; then
   # alias rosettaterm="env -u PATH -u FPATH arch -arch x86_64 /bin/zsh -l"
-  alias rosettaterm="arch -arch x86_64 /bin/zsh -i"
+  alias rosettaterm="arch -arch x86_64 /bin/zsh -l"
 fi
 
 # only needed wenn $ESPIDF is set

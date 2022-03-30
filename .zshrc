@@ -1,12 +1,11 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# check if arch changed (f.e. when starting a rosettaterminal)
+# warn arch changed
 if [[ "${SHELL_ARCH}" != "$(arch)" ]]; then
-  echo "detected architecture change, creating new env"
-  rm -f "${HOME}/.zcompdump"
-  source "${HOME}/.zprofile"
+  echo "Be Careful - yor architecture changed so your env is likely to be messed up!!!"
 fi
+
 # Path to your oh-my-zsh installation.
 export ZSH="${HOME}/.oh-my-zsh"
 
@@ -34,7 +33,7 @@ DEFAULT_USER="$(whoami)"
 
 # Uncomment one of the following lines to change the auto-update behavior
 # zstyle ':omz:update' mode disabled  # disable automatic updates
-zstyle ':omz:update' mode auto      # update automatically without asking
+zstyle ':omz:update' mode auto # update automatically without asking
 # zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
@@ -92,9 +91,9 @@ plugins=(
 )
 
 # silent SSH-Agent Start
-zstyle :omz:plugins:ssh-agent quiet yes
+zstyle ':omz:plugins:ssh-agent' quiet yes
 # add Identities from Keychain
-zstyle :omz:plugins:ssh-agent ssh-add-args --apple-load-keychain
+zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
 
 source "$ZSH/oh-my-zsh.sh"
 
@@ -114,7 +113,8 @@ fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
-export ARCHFLAGS="-arch arm64 -arch x86_64"
+ARCHFLAGS="-arch ${SHELL_ARCH}"
+export ARCHFLAGS
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -129,7 +129,7 @@ alias l='ls -GAhH'
 alias ll='ls -GAhHlO'
 alias lll='ls -GAhHlO@'
 alias lr='ls -R'
-alias topgrade="topgrade --disable=pip3"
+# alias topgrade="topgrade --disable=pip3"
 
 # dotfiles management
 if [[ -d $HOME/.cfg ]]; then
@@ -137,14 +137,14 @@ if [[ -d $HOME/.cfg ]]; then
 fi
 
 # initialize pyenv
-if which pyenv > /dev/null; then
+if which pyenv >/dev/null; then
   eval "$(pyenv init -)"
   # initialize pyenv-virtualenv
-  if which pyenv-virtualenv-init > /dev/null; then
+  if which pyenv-virtualenv-init >/dev/null; then
     eval "$(pyenv virtualenv-init -)"
   fi
   # remove pyenv from PATH when executing brew
-  if which brew > /dev/null; then
+  if which brew >/dev/null; then
     alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
   fi
 fi
@@ -154,11 +154,13 @@ if [[ -d "${HOME}/Bots/AdaptiveCards/source/nodejs" ]]; then
   alias acarddesigner="(cd ${HOME}/Bots/AdaptiveCards/source/nodejs && npx lerna run start --scope=adaptivecards-designer --stream)"
 fi
 
-# alias to run a shell with rosetta which will only be necesarry in arm64 env
-if [[ $(uname -m) == arm64 ]]; then
-  # alias rosettaterm="env -u PATH -u FPATH arch -arch x86_64 /bin/zsh -l"
-  alias rosettaterm="arch -arch x86_64 /bin/zsh -i"
-fi
+function rosettaterm() {
+  echo "switching to x86_64 architecture"
+  if which nvm >/dev/null; then
+    nvm deactivate >/dev/null
+  fi
+  arch -arch x86_64 /bin/zsh -l
+}
 
 # only needed wenn $ESPIDF is set
 if [[ -d "${ESPIDF}" ]]; then
@@ -171,7 +173,7 @@ if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app
 fi
 
 # initialize brewed node version manager
-if [[ -d "${HOME}/.nvm.${SHELL_ARCH}" ]]; then
+if [[ -d ~/.nvm.${SHELL_ARCH} ]]; then
   NVM_DIR="${HOME}/.nvm.${SHELL_ARCH}"
   export NVM_DIR
   # This loads nvm
@@ -182,6 +184,7 @@ if [[ -d "${HOME}/.nvm.${SHELL_ARCH}" ]]; then
   if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm" ]]; then
     source "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
   fi
+  nvm use --lts >/dev/null
 fi
 
 # homebrew zsh-autosuggestions plugin
@@ -195,4 +198,6 @@ export GPG_TTY=$(tty)
 # zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
 if [[ -s "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR="$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/highlighters"
+  export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR
 fi

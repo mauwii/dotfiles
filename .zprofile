@@ -1,13 +1,14 @@
 # disable sourcing global dotfiles, located at /etc
 # unsetopt globalrcs
+export LC_ALL=en_US.UTF-8
 
 # create clean PATH
-eval "$(PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" /usr/libexec/path_helper -s)"
+eval "$(env -i -P/usr/bin /usr/libexec/path_helper)"
 SHELL_ARCH="$(arch)"
 export SHELL_ARCH
 
 # initialize arch-dependend brew env
-if [[ "$SHELL_ARCH" == "arm64"  ]]; then
+if [[ "$SHELL_ARCH" == "arm64" ]]; then
   if [[ -x /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
@@ -45,7 +46,7 @@ fpath=(
 typeset -U fpath
 
 # Initialize Pyenv Path
-if which pyenv > /dev/null; then
+if which pyenv >/dev/null; then
   PYENV_ROOT="$HOME/.pyenv.${SHELL_ARCH}"
   export PYENV_ROOT
   eval "$(pyenv init --path)"

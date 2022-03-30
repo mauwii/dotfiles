@@ -147,9 +147,9 @@ function rosettaterm() {
     echo "Already using x86_64 architecture"
   else
     echo "switching to x86_64 architecture"
-    if which nvm >/dev/null; then
-      nvm deactivate >/dev/null
-    fi
+    # if which nvm >/dev/null; then
+    #   nvm deactivate >/dev/null
+    # fi
     arch -arch x86_64 /bin/zsh -l
   fi
 }

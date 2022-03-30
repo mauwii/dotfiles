@@ -1,12 +1,13 @@
-# shellcheck shell=bash
+# shellcheck shell=bash source=./.bashrc
 # LC_ALL=en_US.UTF-8
 
-# Begin with a clear Path and prepare brew env
+# Begin with a clear Path and set SHELL_ARCH env
 eval "$(PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" /usr/libexec/path_helper -s)"
-PROCTYPE="$(uname -m)"
-export PROCTYPE
+SHELL_ARCH="$(arch)"
+export SHELL_ARCH
 
-if [[ "$PROCTYPE" = "arm64" ]]; then
+# Initialize Arch-Specific Brew Environment if exists
+if [[ "${SHELL_ARCH}" = "arm64" ]]; then
   if [[ -x "/opt/homebrew/bin/brew" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
@@ -24,16 +25,17 @@ if [[ -d "${HOME}/esp/esp-idf" ]]; then
 fi
 
 # add my own binaries to path
-PATH="$HOME/scripting/bin:$PATH"
+if [[ -d $HOME/scripting/bin ]]; then
+  PATH="$HOME/scripting/bin:$PATH"
+fi
 
 # Add pyenv to front of path
 if which pyenv > /dev/null; then
-  # export PYENV_ROOT="$HOME/.pyenv"
-  # export PATH="$PYENV_ROOT/bin:$PATH"
+  PYENV_ROOT="$HOME/.pyenv.${SHELL_ARCH}"
+  export PYENV_ROOT
   eval "$(pyenv init --path)"
 fi
-# if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
-if [ "${BASH-no}" != "no" ]; then
-	[ -r "$HOME/.bashrc" ] && . "$HOME/.bashrc"
+if [[ "${BASH-no}" != "no" ]]; then
+	[[ -r "${HOME}/.bashrc" ]] && . "$HOME/.bashrc"
 fi

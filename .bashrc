@@ -1,20 +1,20 @@
 # shellcheck shell=bash source=./.bash_profile
 
 # Clear Path if arch changed and prepare brew env
-if [[ "$PROCTYPE" != $(uname -m) ]]; then
-  echo "detected architecture change, creating new env"
-  source "$HOME/.bash_profile"
+if [[ "${SHELL_ARCH}" != "$(arch)" ]]; then
+  echo "detected architecture change, re-sourcing ~/.bash_profile"
+  source ~/.bash_profile
 fi
 
-if [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]]; then
-  source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+  source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
 fi
 
-for bcfile in "$HOMEBREW_PREFIX"/etc/bash_completion.d/* ; do
-  . "$bcfile"
+for bcfile in "${HOMEBREW_PREFIX}"/etc/bash_completion.d/* ; do
+  source "${bcfile}"
 done
 
-if [[ "$PROCTYPE" = "arm64" ]]; then
+if [[ "$SHELL_ARCH" = "arm64" ]]; then
   alias rosettaterm="arch -arch x86_64 /bin/bash -l"
 fi
 
@@ -26,17 +26,25 @@ fi
 [[ -x "${HOMEBREW_PREFIX}/bin/direnv" ]] && \
   eval "$("${HOMEBREW_PREFIX}/bin/direnv" hook bash)"
 
-if [[ -d "${HOME}/.nvm" ]]; then
-  export NVM_DIR="${HOME}/.nvm"
-  [ -s "${NVM_DIR}/nvm.sh" ] && \. "${NVM_DIR}/nvm.sh"                   # This loads nvm
-  [ -s "${NVM_DIR}/bash_completion" ] && \. "${NVM_DIR}/bash_completion" # This loads nvm bash_completion
+# initialize brewed node version manager
+if [[ -d "${HOME}/.nvm.${SHELL_ARCH}" ]]; then
+  NVM_DIR="${HOME}/.nvm.${SHELL_ARCH}"
+  export NVM_DIR
+  # This loads nvm
+  if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/nvm.sh" ]]; then
+    source "${HOMEBREW_PREFIX}/opt/nvm/nvm.sh"
+  fi
+  # This loads nvm bash_completion
+  if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+    source "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
+  fi
 fi
 
 # add pyenv shims to front of path and inizialize pyenv
 if which pyenv > /dev/null; then
   eval "$(pyenv init -)"
   # initialize pyenv-virtualenv
-  if which pyenv-virtualenv-init > /dev/null; then
+  if [[ $(which pyenv-virtualenv-init) > /dev/null ]]; then
     eval "$(pyenv virtualenv-init -)"
   fi
   # remove pyenv from PATH when executing brew
@@ -45,7 +53,9 @@ if which pyenv > /dev/null; then
   fi
 fi
 
-HB_CNF_HANDLER="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
-if [ -f "$HB_CNF_HANDLER" ]; then
+if [[ -r "${HOMEBREW_PREFIX}/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh" ]]; then
+  HB_CNF_HANDLER="${HOMEBREW_PREFIX}/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
+fi
+if [[ -f "$HB_CNF_HANDLER" ]]; then
   source "$HB_CNF_HANDLER";
 fi

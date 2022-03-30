@@ -2,8 +2,9 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # check if arch changed (f.e. when starting a rosettaterminal)
-if [[ $PROCTYPE != $(uname -m) ]] && [[ -n $PROCTYPE ]]; then
+if [[ "${SHELL_ARCH}" != "$(arch)" ]]; then
   echo "detected architecture change, creating new env"
+  rm -f "${HOME}/.zcompdump"
   source "${HOME}/.zprofile"
 fi
 # Path to your oh-my-zsh installation.
@@ -131,7 +132,9 @@ alias lr='ls -R'
 alias topgrade="topgrade --disable=pip3"
 
 # dotfiles management
-alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+if [[ -d $HOME/.cfg ]]; then
+  alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+fi
 
 # initialize pyenv
 if which pyenv > /dev/null; then
@@ -154,7 +157,7 @@ fi
 # alias to run a shell with rosetta which will only be necesarry in arm64 env
 if [[ $(uname -m) == arm64 ]]; then
   # alias rosettaterm="env -u PATH -u FPATH arch -arch x86_64 /bin/zsh -l"
-  alias rosettaterm="arch -arch x86_64 /bin/zsh -l"
+  alias rosettaterm="arch -arch x86_64 /bin/zsh -i"
 fi
 
 # only needed wenn $ESPIDF is set
@@ -168,16 +171,17 @@ if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app
 fi
 
 # initialize brewed node version manager
-if [[ -d "${HOME}/.nvm" ]]; then
-  export NVM_DIR="${HOME}/.nvm"
-fi
-# This loads nvm
-if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/nvm.sh" ]]; then
-  source "${HOMEBREW_PREFIX}/opt/nvm/nvm.sh"
-fi
-# This loads nvm bash_completion
-if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm" ]]; then
-  source "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
+if [[ -d "${HOME}/.nvm.${SHELL_ARCH}" ]]; then
+  NVM_DIR="${HOME}/.nvm.${SHELL_ARCH}"
+  export NVM_DIR
+  # This loads nvm
+  if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/nvm.sh" ]]; then
+    source "${HOMEBREW_PREFIX}/opt/nvm/nvm.sh"
+  fi
+  # This loads nvm bash_completion
+  if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+    source "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
+  fi
 fi
 
 # homebrew zsh-autosuggestions plugin

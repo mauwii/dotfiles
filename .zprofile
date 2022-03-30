@@ -3,11 +3,11 @@
 
 # create clean PATH
 eval "$(PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" /usr/libexec/path_helper -s)"
-PROCTYPE="$(uname -m)"
-export PROCTYPE
+SHELL_ARCH="$(arch)"
+export SHELL_ARCH
 
 # initialize arch-dependend brew env
-if [[ "$PROCTYPE" == "arm64"  ]]; then
+if [[ "$SHELL_ARCH" == "arm64"  ]]; then
   if [[ -x /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
@@ -46,6 +46,8 @@ typeset -U fpath
 
 # Initialize Pyenv Path
 if which pyenv > /dev/null; then
+  PYENV_ROOT="$HOME/.pyenv.${SHELL_ARCH}"
+  export PYENV_ROOT
   eval "$(pyenv init --path)"
 fi
 

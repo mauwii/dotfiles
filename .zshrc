@@ -114,7 +114,7 @@ fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
-ARCHFLAGS="-arch ${SHELL_ARCH}"
+ARCHFLAGS="-arch $(uname -m)"
 export ARCHFLAGS
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
@@ -135,19 +135,6 @@ alias lr='ls -R'
 # dotfiles management
 if [[ -d $HOME/.cfg ]]; then
   alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
-fi
-
-# initialize pyenv
-if which pyenv >/dev/null; then
-  eval "$(pyenv init -)"
-  # initialize pyenv-virtualenv
-  if which pyenv-virtualenv-init >/dev/null; then
-    eval "$(pyenv virtualenv-init -)"
-  fi
-  # remove pyenv from PATH when executing brew
-  if which brew >/dev/null; then
-    alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
-  fi
 fi
 
 # alias to start adaptivecards-designer
@@ -174,7 +161,7 @@ if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app
 fi
 
 # initialize brewed node version manager
-if [[ -d ~/.nvm.${SHELL_ARCH} ]]; then
+if [[ -d "${HOME}/.nvm.${SHELL_ARCH}" ]]; then
   NVM_DIR="${HOME}/.nvm.${SHELL_ARCH}"
   export NVM_DIR
   # This loads nvm
@@ -186,6 +173,19 @@ if [[ -d ~/.nvm.${SHELL_ARCH} ]]; then
     source "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
   fi
   nvm use --lts >/dev/null
+fi
+
+# initialize pyenv
+if which pyenv >/dev/null; then
+  eval "$(pyenv init -)"
+  # initialize pyenv-virtualenv
+  if which pyenv-virtualenv-init >/dev/null; then
+    eval "$(pyenv virtualenv-init -)"
+  fi
+  # remove pyenv from PATH when executing brew
+  if which brew >/dev/null; then
+    alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+  fi
 fi
 
 # homebrew zsh-autosuggestions plugin

@@ -168,9 +168,10 @@ if [[ -s $HOME/.iterm2_shell_integration.zsh && $TERM_PROGRAM == iTerm.app ]]; t
   source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
-# initialize node version manager
-[ -d "$HOME/.nvm" ] && export NVM_DIR="${HOME}/.nvm"
-[ -s "${NVM_DIR}/nvm.sh" ] && \. "${NVM_DIR}/nvm.sh"
+# initialize brewed node version manager
+[ -d $HOME/.nvm ] && export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # homebrew zsh-autosuggestions plugin
 if [[ -s ${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then

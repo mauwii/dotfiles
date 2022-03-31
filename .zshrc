@@ -113,7 +113,6 @@ else
 fi
 
 # Compilation flags
-# export ARCHFLAGS="-arch x86_64"
 ARCHFLAGS="-arch $(uname -m)"
 export ARCHFLAGS
 
@@ -147,12 +146,16 @@ function rosettaterm() {
     echo "Already using x86_64 architecture"
   else
     echo "switching to x86_64 architecture"
-    # if which nvm >/dev/null; then
-    #   nvm deactivate >/dev/null
-    # fi
-    arch -arch x86_64 /bin/zsh -l
+    env -u PATH -u MANPATH -u INFOPATH \
+      arch -arch x86_64 /bin/zsh -l
   fi
 }
+
+if [[ "${SHELL_ARCH}" == "i386" ]]; then
+  export DOCKER_DEFAULT_PLATFORM="linux/amd64"
+elif [[ "${SHELL_ARCH}" == "arm64" ]]; then
+  export DOCKER_DEFAULT_PLATFORM="linux/arm64"
+fi
 
 # only needed wenn $ESPIDF is set
 if [[ -d "${ESPIDF}" ]]; then
@@ -203,6 +206,6 @@ export GPG_TTY=$(tty)
 # zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
 if [[ -s "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-  ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR="$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/highlighters"
+  ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR="${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/highlighters"
   export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR
 fi

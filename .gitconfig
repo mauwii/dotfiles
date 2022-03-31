@@ -3,6 +3,7 @@
 	ff = true
 [diff]
 	tool = vscode
+	rename = true
 [difftool "vscode"]
 	cmd = code --new-window --wait --diff --new-window $LOCAL $REMOTE
 [user]

@@ -1,0 +1,23 @@
+[pull]
+	rebase = false
+	ff = true
+[diff]
+	tool = vscode
+[difftool "vscode"]
+	cmd = code --new-window --wait --diff --new-window $LOCAL $REMOTE
+[user]
+	email = mauwii@outlook.de
+	name = Matthias Wild
+	signingkey = B7051959
+[core]
+	excludesfile = /Users/mauwii/.gitignore
+[init]
+	defaultBranch = main
+[color]
+	ui = true
+[commit]
+	gpgsign = true
+# [gpg]
+# 	program = /usr/local/bin/gpg
+[fetch]
+	prune = true

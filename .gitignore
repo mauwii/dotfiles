@@ -1,0 +1,6 @@
+.DS_Store
+.envrc
+.dockerenv
+.env
+.venv
+.python-version

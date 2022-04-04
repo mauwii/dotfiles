@@ -100,7 +100,7 @@ source "$ZSH/oh-my-zsh.sh"
 
 # User configuration
 
-# export MANPATH="$(man --path)"
+export MANPATH="$(man --path)"
 
 # You may need to manually set your language environment
 export LANG="en_US.UTF-8"
@@ -141,6 +141,7 @@ if [[ -d "${HOME}/Bots/AdaptiveCards/source/nodejs" ]]; then
   alias acarddesigner="(cd ${HOME}/Bots/AdaptiveCards/source/nodejs && npx lerna run start --scope=adaptivecards-designer --stream)"
 fi
 
+# function to switch current Terminal Environment to rosetta emulated x86_64
 function rosettaterm() {
   if [[ "$(uname -m)" == "x86_64" ]]; then
     echo "Already using x86_64 architecture"
@@ -154,6 +155,7 @@ function rosettaterm() {
 if [[ "${SHELL_ARCH}" == "i386" ]]; then
   export DOCKER_DEFAULT_PLATFORM="linux/amd64"
 elif [[ "${SHELL_ARCH}" == "arm64" ]]; then
+  export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
   export DOCKER_DEFAULT_PLATFORM="linux/arm64"
 fi
 
@@ -207,5 +209,7 @@ export GPG_TTY=$(tty)
 if [[ -s "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
   ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR="${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/highlighters"
-  export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR
+  if [[ -d $ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR ]]; then
+    export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR
+  fi
 fi

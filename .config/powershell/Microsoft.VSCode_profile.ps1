@@ -6,4 +6,4 @@
 #     $brewpath = "/usr/local/bin/brew"
 # }
 
-$($brewpath shellenv) | Invoke-Expression
+$(brew shellenv) | Invoke-Expression

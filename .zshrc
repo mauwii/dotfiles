@@ -113,8 +113,7 @@ else
 fi
 
 # Compilation flags
-ARCHFLAGS="-arch $(uname -m)"
-export ARCHFLAGS
+export ARCHFLAGS='-arch arm64 -arch x86_64'
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh

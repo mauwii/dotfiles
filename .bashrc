@@ -1,6 +1,6 @@
 # shellcheck shell=bash source=./.bash_profile
 
-ARCHFLAGS="-arch $(uname -m)"
+ARCHFLAGS='-arch arm64 -arch x86_64'
 export ARCHFLAGS
 
 # Warn if Arch changed

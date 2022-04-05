@@ -1,5 +1,5 @@
 # shellcheck shell=bash source=./.bashrc
-export LC_ALL=en_US.UTF-8
+# export LC_ALL=en_US.UTF-8
 
 # Begin with a clear Path and set SHELL_ARCH env
 eval "$(env -u PATH /usr/libexec/path_helper -s)"

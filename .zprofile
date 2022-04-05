@@ -1,6 +1,6 @@
 # disable sourcing global dotfiles, located at /etc
 # unsetopt globalrcs
-export LC_ALL=en_US.UTF-8
+# export LC_ALL=en_US.UTF-8
 
 # create clean PATH
 eval "$(env -i -P/usr/bin /usr/libexec/path_helper)"

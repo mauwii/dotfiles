@@ -11,7 +11,7 @@
 	name = Matthias Wild
 	signingkey = B7051959
 [core]
-	excludesfile = ~/.gitignore
+	excludesfile = ~/.gitignore_global
 [init]
 	defaultBranch = main
 [color]

@@ -44,7 +44,10 @@ disable = ["powershell"]
 #]
 repos = [
 #    "~/.pyenv",
-    "~/.bashtop"
+    "~/.bashtop",
+    "~/git/microsoft/vscode-dev-containers",
+    "~/git/notexist"
+
 ]
 # Don't pull the predefined git repos
 #predefined_repos = false

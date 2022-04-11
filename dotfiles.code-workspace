@@ -5,7 +5,12 @@
         },
         {
             "path": "./.ssh"
+        },
+        {
+            "path": ".config"
         }
     ],
-    "settings": {}
+    "settings": {
+        "path-intellisense.absolutePathToWorkspace": false
+    }
 }

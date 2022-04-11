@@ -12,8 +12,9 @@ if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
   source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
 fi
 
-for bcfile in "${HOMEBREW_PREFIX}/etc/bash_completion.d"/*; do
-  source "$bcfile"
+# shellcheck disable=SC2167
+for bcfile in "${HOMEBREW_PREFIX}"/etc/bash_completion.d/*; do
+    source "${bcfile}"
 done
 
 if [[ "$SHELL_ARCH" = "arm64" ]]; then

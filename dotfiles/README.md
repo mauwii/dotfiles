@@ -16,6 +16,15 @@ Now you can just use `config` to handle your Repository. Here are some examples:
 | `config commit -a -m "<commit message>"` | commit changes               |
 | `config pull`                            | update local dotfiles        |
 
+```bash
+config status
+config add .vimrc
+config commit -m "Add vimrc"
+config add .bashrc
+config commit -m "Add bashrc"
+config push
+```
+
 ## Edit Scripts
 
 I added a Directory with symlinks to the dotfiles which where added to this Repository, so that it is easier to edit my Scripts via f.E. VSCode

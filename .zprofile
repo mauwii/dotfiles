@@ -18,6 +18,11 @@ else
   fi
 fi
 
+# If Brewfile.<arch> exists, use brew bundle to install packages
+# if which brew &>/dev/null && [[ -s "${HOME}/Brewfile.${SHELL_ARCH}" ]]; then
+#   brew bundle install --file="${HOME}/Brewfile.${SHELL_ARCH}"
+# fi
+
 # Remove dupilcates from manpath
 typeset -U manpath
 
@@ -38,8 +43,8 @@ typeset -U path
 
 fpath=(
   /usr/share/zsh/5.8/functions
-  ${HOMEBREW_PREFIX}/share/zsh-completions
-  ${HOMEBREW_PREFIX}/share/zsh/site-functions
+  $HOMEBREW_PREFIX/share/zsh-completions
+  $HOMEBREW_PREFIX/share/zsh/site-functions
   $HOME/scripting/zcompletions
   ${fpath[@]}
 )

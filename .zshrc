@@ -113,7 +113,7 @@ else
 fi
 
 # Compilation flags
-export ARCHFLAGS='-arch arm64 -arch x86_64'
+# export ARCHFLAGS='-arch arm64 -arch x86_64'
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -132,7 +132,7 @@ alias lr='ls -R'
 
 # dotfiles management
 if [[ -d $HOME/.cfg ]]; then
-  alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+  alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME '
 fi
 
 # alias to start adaptivecards-designer
@@ -149,11 +149,15 @@ function rosettaterm() {
     env -u PATH -u MANPATH -u INFOPATH \
       arch -arch x86_64 /bin/zsh -l
   fi
+  exit
 }
 
+# ARCH Dependened env
 if [[ "${SHELL_ARCH}" == "i386" ]]; then
+  export ARCHFLAGS='-arch x86_64'
   export DOCKER_DEFAULT_PLATFORM="linux/amd64"
 elif [[ "${SHELL_ARCH}" == "arm64" ]]; then
+  export ARCHFLAGS='-arch arm64 -arch x86_64'
   export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
   export DOCKER_DEFAULT_PLATFORM="linux/arm64"
 fi
@@ -197,17 +201,17 @@ if which pyenv >/dev/null; then
 fi
 
 # homebrew zsh-autosuggestions plugin
-if [[ -s "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-  source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if [[ -s "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 # Sign git commits with gpg https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
 export GPG_TTY=$(tty)
 
 # zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
-if [[ -s "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
-  source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-  ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR="${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/highlighters"
+if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR="/opt/homebrew/share/zsh-syntax-highlighting/highlighters"
   if [[ -d $ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR ]]; then
     export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR
   fi

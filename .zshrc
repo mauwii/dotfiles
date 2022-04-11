@@ -132,7 +132,7 @@ alias lr='ls -R'
 
 # dotfiles management
 if [[ -d $HOME/.cfg ]]; then
-  alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME '
+  alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 fi
 
 # alias to start adaptivecards-designer

@@ -135,7 +135,7 @@ brew cu
 
 My current minimal Brew on macOS is:
 
-``` ruby
+```ruby
 tap "homebrew/core"
 tap "homebrew/bundle"
 tap "homebrew/cask"
@@ -157,28 +157,29 @@ cask "typora"
 
 I have two brewfiles currently:
 
-* One in `~.private` which I install right after installing brew and before setting up my basic `.ssh` and `.gnupg` files so that I can use GitHub. It is the minimal essential list above. I can install this manually with a script inside `.private`.
+- One in `~.private` which I install right after installing brew and before setting up my basic `.ssh` and `.gnupg` files so that I can use GitHub. It is the minimal essential list above. I can install this manually with a script inside `.private`.
 
-* My standard in `~/Brewfile` is actually a symlink to `~/.dotfiles/mac/Brewfile`. I different `~/.dotfiles/` for different environments.
-  * My primary Mac is a monster MacBook Pro is really more of a "desktop" for me. It has 64 GB RAM with an 8TB HD. It probably has my largest Brewfile.
-  * That being said, it actually doesn't have many development tools in it. Instead, I mostly use VMware instances (mostly macOS but some Debian) for my development images. They use a different `~.dotfiles` based Brewfile.
-  * My smaller, older MacBook is mostly for travel. It has different set of `~/.dotfiles/` focused on just enough to work remotely. I'm always prepared to restore this Mac from scratch.
-  * For a month or so each year, late summer early fall, my old MacBook also will run the latest beta of macOS, allowing me to test not just macOS, but also be prepared for changes to my development environments.
+- My standard in `~/Brewfile` is actually a symlink to `~/.dotfiles/mac/Brewfile`. I different `~/.dotfiles/` for different environments.
+  - My primary Mac is a monster MacBook Pro is really more of a "desktop" for me. It has 64 GB RAM with an 8TB HD. It probably has my largest Brewfile.
+  - That being said, it actually doesn't have many development tools in it. Instead, I mostly use VMware instances (mostly macOS but some Debian) for my development images. They use a different `~.dotfiles` based Brewfile.
+  - My smaller, older MacBook is mostly for travel. It has different set of `~/.dotfiles/` focused on just enough to work remotely. I'm always prepared to restore this Mac from scratch.
+  - For a month or so each year, late summer early fall, my old MacBook also will run the latest beta of macOS, allowing me to test not just macOS, but also be prepared for changes to my development environments.
 
 ## Advanced Topics & To Investigate
 
-* Instead of `brew cask uninstall <caskname>` you can do `brew cask zap <caskname>` which may also do additional removal of preferences, caches, updaters, etc. stored in `~/Library`. See [Zap](https://github.com/Homebrew/homebrew-cask/blob/master/doc/cask_language_reference/stanzas/zap.md)
+- Instead of `brew cask uninstall <caskname>` you can do `brew cask zap <caskname>` which may also do additional removal of preferences, caches, updaters, etc. stored in `~/Library`. See [Zap](https://github.com/Homebrew/homebrew-cask/blob/master/doc/cask_language_reference/stanzas/zap.md)
 
-* A pariculary powerful feature for Brew is that it attempts to install developer tools in ways that allow them to co-exist. However if you are using multiple versions of a tool, it can be difficult to understand dependencies. These links may help:
-  * brew deps
-    * `brew deps --tree <brewformula>`
-    * `brew deps --tree -1 <brewformula>`
-    * `brew deps --include-build --tree $(brew leaves)`
-  * [brew leaves](https://thoughtbot.com/blog/brew-leaves)
-    * `brew leaves | xargs brew deps --include-build --tree`
-    * `brew leaves | xargs brew deps --installed --for-each | sed "s/^.*:/$(tput setaf 4)&$(tput sgr0)/"`
-    * `brew leaves | sed 's/^/install /' > Brewfile`
-  * [brew graph](https://github.com/martido/homebrew-graph)
-  * A [critique](https://blog.jpalardy.com/posts/untangling-your-homebrew-dependencies/) of `brew leaves` and `brew graph`
+- A pariculary powerful feature for Brew is that it attempts to install developer tools in ways that allow them to co-exist. However if you are using multiple versions of a tool, it can be difficult to understand dependencies. These links may help:
 
-* If you are a heavy Github user, or are creating brew formulae, there is an advanced wrapper for Homebrew that automates the creation of the Brewfile and can store it on Github, along with a many more features: [https://homebrew-file.readthedocs.io/]
+  - brew deps
+    - `brew deps --tree <brewformula>`
+    - `brew deps --tree -1 <brewformula>`
+    - `brew deps --include-build --tree $(brew leaves)`
+  - [brew leaves](https://thoughtbot.com/blog/brew-leaves)
+    - `brew leaves | xargs brew deps --include-build --tree`
+    - `brew leaves | xargs brew deps --installed --for-each | sed "s/^.*:/$(tput setaf 4)&$(tput sgr0)/"`
+    - `brew leaves | sed 's/^/install /' > Brewfile`
+  - [brew graph](https://github.com/martido/homebrew-graph)
+  - A [critique](https://blog.jpalardy.com/posts/untangling-your-homebrew-dependencies/) of `brew leaves` and `brew graph`
+
+- If you are a heavy Github user, or are creating brew formulae, there is an advanced wrapper for Homebrew that automates the creation of the Brewfile and can store it on Github, along with a many more features: [https://homebrew-file.readthedocs.io/]

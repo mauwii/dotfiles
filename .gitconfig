@@ -1,21 +1,23 @@
-[pull]
-	rebase = false
-	ff = true
-[diff]
-	tool = vscode
-	rename = true
-[difftool "vscode"]
-	cmd = code --new-window --wait --diff --new-window $LOCAL $REMOTE
 [user]
 	email = mauwii@outlook.de
 	name = Matthias Wild
 	signingkey = B7051959
 [core]
 	excludesfile = ~/.gitignore_global
+[pull]
+	rebase = false
+	ff = true
+[push]
+	default = current
+[diff]
+	tool = vscode
+	rename = true
+[difftool "vscode"]
+	cmd = code --new-window --wait --diff --new-window $LOCAL $REMOTE
 [init]
 	defaultBranch = main
 [color]
-	ui = true
+	ui = auto
 [commit]
 	gpgsign = true
 [fetch]

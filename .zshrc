@@ -184,7 +184,6 @@ if [[ -d "${HOME}/.nvm.${SHELL_ARCH}" ]]; then
   if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm" ]]; then
     source "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
   fi
-  # nvm use --lts >/dev/null
 fi
 
 # initialize pyenv

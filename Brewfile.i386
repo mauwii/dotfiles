@@ -10,7 +10,7 @@ brew "gnuradio"
 brew "mono"
 brew "nvm"
 brew "openssl@3"
-brew "pyenv", args: ["HEAD"]
+brew "pyenv"
 brew "pyenv-virtualenv"
 brew "zsh-completions"
 brew "zsh-syntax-highlighting"

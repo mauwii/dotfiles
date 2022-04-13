@@ -65,3 +65,5 @@ if [[ $(uname -s) = "Darwin" ]]; then
   ssh-agent &>/dev/null
   ssh-add --apple-load-keychain &>/dev/null
 fi
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

@@ -40,7 +40,7 @@ zstyle ':omz:update' mode auto # update automatically without asking
 # zstyle ':omz:update' frequency 13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
+DISABLE_MAGIC_FUNCTIONS="true"
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -83,6 +83,7 @@ plugins=(
   direnv
   colorize
   colored-man-pages
+  fzf
   git
   github
   jsontools
@@ -206,6 +207,37 @@ fi
 
 # Sign git commits with gpg https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
 export GPG_TTY=$(tty)
+
+# Source files {{{2
+
+# Apply FZF configuration
+if [ -f $HOME/fzf.zsh ]; then
+  source $HOME/fzf.zsh
+fi
+
+# Load any extra settings
+test -f ~/dotfiles/zsh/extras && source ~/dotfiles/zsh/extras
+
+# Completion {{{2
+
+# set descriptions format to enable group support
+zstyle ':completion:*:descriptions' format '[%d]'
+
+# Only display targets tag for make command completion
+zstyle ':completion:*:*:make::' tag-order 'targets variables'
+
+# give a preview of commandline arguments when completing `kill`
+zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+
+# Reload the completions (uncomment if zsh-completions don't work)
+# autoload -U compinit && compinit
+
+# Add skaffold autocompletions
+if [ $commands[skaffold] ]; then
+    source <(skaffold completion zsh)
+fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
 if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then

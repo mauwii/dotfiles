@@ -24,3 +24,8 @@ Thumbs.db
 
 # dotfiles Bare Repository
 ~/.cfg
+
+# build-artefacts
+dist
+pkg
+build

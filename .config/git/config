@@ -1,5 +1,6 @@
 [core]
 	excludesfile = ~/.gitignore_global
+	editor = code --wait
 [pull]
 	rebase = false
 	ff = true
@@ -14,7 +15,5 @@
 	defaultBranch = main
 [color]
 	ui = auto
-[commit]
-	gpgsign = true
 [fetch]
 	prune = false

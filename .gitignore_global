@@ -18,7 +18,7 @@ Thumbs.db
 .Trashes
 
 # Environment variables
-.envrc
+**/.envrc
 .dockerenv
 .env
 
@@ -29,3 +29,6 @@ Thumbs.db
 dist
 pkg
 build
+
+# local gitconfig
+.gitconfig.local

@@ -19,4 +19,4 @@
 [alias]
     delete-local-merged = fetch && git branch --merged | egrep -v 'master' | xargs git branch -d
 [include]
-    path = .gitconfig.local
+    path = .local.gitconfig

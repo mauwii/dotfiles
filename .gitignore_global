@@ -18,9 +18,9 @@ Thumbs.db
 .Trashes
 
 # Environment variables
-.envrc
-.dockerenv
-.env
+**/.envrc
+**/.dockerenv
+**/.env
 
 # dotfiles Bare Repository
 ~/.cfg

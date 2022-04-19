@@ -32,3 +32,6 @@ build
 
 # local gitconfig
 .local.gitconfig
+
+# VSCode Workspace Settings
+.vscode

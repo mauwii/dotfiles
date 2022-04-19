@@ -23,3 +23,5 @@ export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 # export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --color=dark,fg:7,bg:-1,hl:5,fg+:15,bg+:8,hl+:13,info:2,prompt:4,pointer:1,marker:3,spinner:4,header:4"
 export FZF_DEFAULT_OPTS="--layout=reverse --inline-info --preview-window right:50%:border:wrap"
 export FZF_CTRL_R_OPTS="--layout=reverse --preview-window hidden"
+
+export DOCKER_GATEWAY_HOST='127.0.0.1'

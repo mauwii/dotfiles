@@ -19,8 +19,8 @@ Thumbs.db
 
 # Environment variables
 **/.envrc
-.dockerenv
-.env
+**/.dockerenv
+**/.env
 
 # dotfiles Bare Repository
 ~/.cfg

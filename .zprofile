@@ -50,12 +50,9 @@ fpath=(
 )
 typeset -U fpath
 
-# Initialize Pyenv Path
+# Initialize Pyenv Path if pyenv is found
 if which pyenv >/dev/null; then
   PYENV_ROOT="$HOME/.pyenv.${SHELL_ARCH}"
   export PYENV_ROOT
   eval "$(pyenv init --path)"
 fi
-
-FUNCTIONS_CORE_TOOLS_TELEMETRY_OPTOUT=1
-export FUNCTIONS_CORE_TOOLS_TELEMETRY_OPTOUT

@@ -55,12 +55,12 @@ DISABLE_MAGIC_FUNCTIONS="true"
 # You can also set it to another string to have that shown instead of the default red dots.
 # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-COMPLETION_WAITING_DOTS="true"
+# COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -83,25 +83,34 @@ plugins=(
   direnv
   colorize
   colored-man-pages
-  fzf
   git
   github
   jsontools
   pip
   python
   ssh-agent
+  zsh-interactive-cd
 )
 
 # silent SSH-Agent Start
 zstyle ':omz:plugins:ssh-agent' quiet yes
 # add Identities from Keychain
 zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
+# set descriptions format to enable group support
+zstyle ':completion:*:descriptions' format '[%d]'
+# Only display targets tag for make command completion
+zstyle ':completion:*:*:make::' tag-order 'targets variables'
+# give a preview of commandline arguments when completing `kill`
+zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 
 source "$ZSH/oh-my-zsh.sh"
 
 # User configuration
 
 export MANPATH="$(man --path)"
+
+# Apply sensisble zsh settings
+source "${HOME}/.zshopt"
 
 # You may need to manually set your language environment
 # export LANG="en_US.UTF-8"
@@ -110,11 +119,11 @@ export MANPATH="$(man --path)"
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='nano'
 else
-  export EDITOR='code'
+  export EDITOR='vim'
 fi
 
 # Compilation flags
-# export ARCHFLAGS='-arch arm64 -arch x86_64'
+# export ARCHFLAGS='-arch x86_64'
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -129,7 +138,15 @@ alias l='ls -GAhH'
 alias ll='ls -GAhHlO'
 alias lll='ls -GAhHlO@'
 alias lr='ls -R'
-# alias topgrade="topgrade --disable=pip3"
+
+# replace cat with bat, but disable paging to make it behave like cat
+if which bat &>/dev/null; then
+  alias cat='bat --paging never'
+fi
+
+if which fzf &>/dev/null; then
+  alias fzprev="fzf --preview 'bat --style=numbers --color=always --line-range :500 {}'"
+fi
 
 # dotfiles management
 if [[ -d $HOME/.cfg ]]; then
@@ -152,16 +169,6 @@ function rosettaterm() {
   fi
   exit
 }
-
-# ARCH Dependened env
-if [[ "${SHELL_ARCH}" == "i386" ]]; then
-  export ARCHFLAGS='-arch x86_64'
-  export DOCKER_DEFAULT_PLATFORM="linux/amd64"
-elif [[ "${SHELL_ARCH}" == "arm64" ]]; then
-  export ARCHFLAGS='-arch arm64 -arch x86_64'
-  export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
-  export DOCKER_DEFAULT_PLATFORM="linux/arm64"
-fi
 
 # only needed wenn $ESPIDF is set
 if [[ -d "${ESPIDF}" ]]; then
@@ -191,9 +198,9 @@ fi
 if which pyenv >/dev/null; then
   eval "$(pyenv init -)"
   # initialize pyenv-virtualenv
-  if which pyenv-virtualenv-init >/dev/null; then
-    eval "$(pyenv virtualenv-init -)"
-  fi
+  # if which pyenv-virtualenv-init >/dev/null; then
+  #   eval "$(pyenv virtualenv-init -)"
+  # fi
   # remove pyenv from PATH when executing brew
   if which brew >/dev/null; then
     alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
@@ -208,36 +215,18 @@ fi
 # Sign git commits with gpg https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
 export GPG_TTY=$(tty)
 
-# Source files {{{2
+# Load any extra settings
+for fzfscript in ${HOME}/.fzf/zsh/*; do
+    source "$fzfscript"
+done
 
 # Apply FZF configuration
-if [ -f $HOME/fzf.zsh ]; then
-  source $HOME/fzf.zsh
+if [ -f $HOME/${HOME}/.fzf/zsh/fzf.zsh ]; then
+  source $HOME/.fzf/fzf_init.zsh
 fi
-
-# Load any extra settings
-test -f ~/dotfiles/zsh/extras && source ~/dotfiles/zsh/extras
-
-# Completion {{{2
-
-# set descriptions format to enable group support
-zstyle ':completion:*:descriptions' format '[%d]'
-
-# Only display targets tag for make command completion
-zstyle ':completion:*:*:make::' tag-order 'targets variables'
-
-# give a preview of commandline arguments when completing `kill`
-zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 
 # Reload the completions (uncomment if zsh-completions don't work)
 # autoload -U compinit && compinit
-
-# Add skaffold autocompletions
-if [ $commands[skaffold] ]; then
-    source <(skaffold completion zsh)
-fi
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
 if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then

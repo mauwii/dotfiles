@@ -1,7 +1,7 @@
 [core]
     editor = code --wait
     fileMode = false
-    excludesFile = .gitignore_global
+    excludesFile = ~/.gitignore_global
 [pull]
 	rebase = false
 	ff = true

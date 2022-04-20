@@ -66,4 +66,4 @@ if [[ $(uname -s) = "Darwin" ]]; then
   ssh-add --apple-load-keychain &>/dev/null
 fi
 
-[ -f "${HOME}"/.fzf/.fzf.bash ] && source ~/.fzf.bash
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

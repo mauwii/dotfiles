@@ -221,7 +221,7 @@ for fzfscript in ${HOME}/.fzf/zsh/*; do
 done
 
 # Apply FZF configuration
-if [ -f $HOME/${HOME}/.fzf/zsh/fzf.zsh ]; then
+if [ -f $HOME/.fzf/fzf_init.zsh ]; then
   source $HOME/.fzf/fzf_init.zsh
 fi
 

@@ -2,6 +2,8 @@
 
 ## Usage
 
+### add alias
+
 This Line should be contained in your RC file (f.E `~/.zshrc` or/and `~/.bashrc`):
 
 ```sh
@@ -25,17 +27,19 @@ config commit -m "Add bashrc"
 config push
 ```
 
-## Edit Scripts
+### Edit Scripts
 
-I added a Directory with symlinks to the dotfiles which where added to this Repository, so that it is easier to edit my Scripts via f.E. VSCode
+Clone repository to have a centralized place where you can edit your dotfiles like
 
-`code ~/dotfiles`
+```sh
+code path/to/dotfiles
+```
 
-### Code-Workspace
+after you pushed the repository, you need to update your local files with
 
-I started to experiment with a Code-Workspace File as well, to open other Folders as well, which makes looking at Configurations more easy for me. To open it, just use:
-
-`open ~/dotfiles.code-workspace`
+```sh
+config pull
+```
 
 ## Original Tutorial
 

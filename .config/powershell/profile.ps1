@@ -1,1 +1,1 @@
-$(brew shellenv) | Invoke-Expression
+# $(brew shellenv) | Invoke-Expression

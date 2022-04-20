@@ -1,21 +1,21 @@
 # Compiled Python files
-*.pyc
+**/*.pyc
 
 # Python Environment
-.venv
-.python-version
+**/.venv
+**/.python-version
 
 # Folder view configuration files
-.DS_Store
-Desktop.ini
+**/.DS_Store
+**/Desktop.ini
 
 # Thumbnail cache files
-._*
-Thumbs.db
+**/._*
+**/Thumbs.db
 
 # Files that might appear on external disks
-.Spotlight-V100
-.Trashes
+**/.Spotlight-V100
+**/.Trashes
 
 # Environment variables
 **/.envrc
@@ -26,12 +26,12 @@ Thumbs.db
 ~/.cfg
 
 # build-artefacts
-dist
-pkg
-build
+**/dist
+**/pkg
+**/build
 
 # local gitconfig
-.local.gitconfig
+~/.local.gitconfig
 
 # VSCode Workspace Settings
-.vscode
+**/.vscode

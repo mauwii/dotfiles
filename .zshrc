@@ -219,3 +219,5 @@ export GPG_TTY=$(tty)
 if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

@@ -15,10 +15,10 @@ Now you can just use `config` to handle your Repository. Here are some examples:
 | Command                                  | Purpose                      |
 | :--------------------------------------- | :--------------------------- |
 | `config add <path/to/file[s]>`           | Adds file\[s\] to repository |
-| `config commit -a -m "<commit message>"` | commit changes               |
+| `config commit -a -m "<commit message>"` | commit all changes           |
 | `config pull`                            | update local dotfiles        |
 
-```bash
+```sh
 config status
 config add .vimrc
 config commit -m "Add vimrc"

@@ -141,11 +141,8 @@ alias lr='ls -R'
 
 # replace cat with bat, but disable paging to make it behave like cat
 if which bat &>/dev/null; then
-  alias cat='bat --paging never'
-fi
-
-if which fzf &>/dev/null; then
-  alias fzprev="fzf --preview 'bat --style=numbers --color=always --line-range :500 {}'"
+  # alias cat='bat --paging never'
+  alias cat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo default || echo GitHub)"
 fi
 
 # dotfiles management
@@ -214,16 +211,6 @@ fi
 
 # Sign git commits with gpg https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
 export GPG_TTY=$(tty)
-
-# Load any extra settings
-for fzfscript in ${HOME}/.fzf/zsh/*; do
-    source "$fzfscript"
-done
-
-# Apply FZF configuration
-if [ -f $HOME/.fzf/fzf_init.zsh ]; then
-  source $HOME/.fzf/fzf_init.zsh
-fi
 
 # Reload the completions (uncomment if zsh-completions don't work)
 # autoload -U compinit && compinit

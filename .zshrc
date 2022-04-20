@@ -79,18 +79,8 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 
-plugins=(
-  direnv
-  colorize
-  colored-man-pages
-  git
-  github
-  jsontools
-  pip
-  python
-  ssh-agent
-  zsh-interactive-cd
-)
+export FZF_BASE='/opt/homebrew/opt/fzf'
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 
 # silent SSH-Agent Start
 zstyle ':omz:plugins:ssh-agent' quiet yes
@@ -102,6 +92,20 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*:*:make::' tag-order 'targets variables'
 # give a preview of commandline arguments when completing `kill`
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+
+plugins=(
+  direnv
+  colorize
+  colored-man-pages
+  fzf
+  git
+  github
+  jsontools
+  pip
+  python
+  ssh-agent
+  zsh-interactive-cd
+)
 
 source "$ZSH/oh-my-zsh.sh"
 

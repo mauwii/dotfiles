@@ -6,15 +6,9 @@ eval "$(env -u PATH /usr/libexec/path_helper -s)"
 SHELL_ARCH="$(arch)"
 export SHELL_ARCH
 
-# Initialize Arch-Specific Brew Environment if exists
-if [[ "${SHELL_ARCH}" = "arm64" ]]; then
-  if [[ -x "/opt/homebrew/bin/brew" ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  fi
-else
-  if [[ -x "/usr/local/bin/brew" ]]; then
-    eval "$(/usr/local/bin/brew shellenv)"
-  fi
+# Initialize brew
+if [[ -x "/opt/homebrew/bin/brew" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 # add ESP-IDF Directory if it exists

@@ -7,15 +7,9 @@ eval "$(env -i -P/usr/bin /usr/libexec/path_helper)"
 SHELL_ARCH="$(arch)"
 export SHELL_ARCH
 
-# initialize arch-dependend brew env
-if [[ "$SHELL_ARCH" == "arm64" ]]; then
-  if [[ -x /opt/homebrew/bin/brew ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  fi
-else
-  if [[ -x /usr/local/bin/brew ]]; then
-    eval "$(/usr/local/bin/brew shellenv)"
-  fi
+# initialize brew
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 # If Brewfile.<arch> exists, use brew bundle to install packages

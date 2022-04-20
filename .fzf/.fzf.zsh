@@ -1,7 +1,7 @@
 # Setup fzf
 # ---------
-fzfpath="$(brew --prefix)/opt/fzf/bin"
-if [[ ! "$PATH" == *$fzfpath* ]]; then
+fzfpath="/opt/homebrew/opt/fzf/bin"
+if [[ ! "$PATH" == *${fzfpath}* ]]; then
   export PATH="${PATH:+${PATH}:}${fzfpath}"
 fi
 

@@ -93,7 +93,7 @@ plugins=(
   zsh-interactive-cd
 )
 
-export FZF_BASE='/opt/homebrew/opt/fzf/bin'
+export FZF_BASE="$(brew --prefix fzf)"
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 
 # silent SSH-Agent Start

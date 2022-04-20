@@ -7,15 +7,17 @@ export FUNCTIONS_CORE_TOOLS_TELEMETRY_OPTOUT=1
 
 # setting some arch dependend Variables
 if [[ "${SHELL_ARCH}" == "i386" ]]; then
-  export ARCHFLAGS='-arch x86_64';
+  # export ARCHFLAGS='-arch x86_64';
   export DOCKER_DEFAULT_PLATFORM="linux/amd64";
 elif [[ "${SHELL_ARCH}" == "arm64" ]]; then
-  export ARCHFLAGS='-arch arm64 -arch x86_64';
+  # export ARCHFLAGS='-arch arm64 -arch x86_64';
   export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec";
   export DOCKER_DEFAULT_PLATFORM="linux/arm64";
 fi
 
-if [[ -d $ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR ]]; then export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR; fi
+export ARCHFLAGS='-arch arm64 -arch x86_64';
+
+[[ -d /opt/homebrew/share/zsh-syntax-highlighting/highlighters ]] && export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR='/opt/homebrew/share/zsh-syntax-highlighting/highlighters'
 
 # export FZF_DEFAULT_COMMAND='fd --type f'
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'

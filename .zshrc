@@ -231,8 +231,4 @@ fi
 # zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
 if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-  ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR="/opt/homebrew/share/zsh-syntax-highlighting/highlighters"
-  if [[ -d $ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR ]]; then
-    export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR
-  fi
 fi

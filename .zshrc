@@ -145,8 +145,7 @@ alias lr='ls -R'
 
 # replace cat with bat, but disable paging to make it behave like cat
 if which bat &>/dev/null; then
-  # alias cat='bat --paging never'
-  alias cat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo default || echo GitHub)"
+  alias cat='bat --paging never'
 fi
 
 # dotfiles management

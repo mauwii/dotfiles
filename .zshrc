@@ -215,12 +215,9 @@ fi
 # Sign git commits with gpg https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
 export GPG_TTY=$(tty)
 
-# Reload the completions (uncomment if zsh-completions don't work)
-# autoload -U compinit && compinit
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
 if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

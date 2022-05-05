@@ -3,7 +3,7 @@
 # export LC_ALL=en_US.UTF-8
 
 # create clean PATH
-eval "$(env -i -P/usr/bin /usr/libexec/path_helper)"
+# eval "$(env -i -P /usr/bin /usr/libexec/path_helper)"
 SHELL_ARCH="$(arch)"
 export SHELL_ARCH
 
@@ -12,10 +12,17 @@ if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-# If Brewfile.<arch> exists, use brew bundle to install packages
-# if which brew &>/dev/null && [[ -s "${HOME}/Brewfile.${SHELL_ARCH}" ]]; then
-#   brew bundle install --file="${HOME}/Brewfile.${SHELL_ARCH}"
-# fi
+if [[ "$(arch)" == "i386" ]]; then
+  export ARCHFLAGS='-arch x86_64'
+  export DOCKER_DEFAULT_PLATFORM="linux/amd64"
+elif [[ "${SHELL_ARCH}" == "arm64" ]]; then
+  # export ARCHFLAGS='-arch arm64 -arch x86_64';
+  export DOCKER_DEFAULT_PLATFORM="linux/arm64"
+  export ARCHFLAGS='-arch arm64 -arch x86_64'
+fi
+
+# Dotnet Root
+export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
 
 # Remove dupilcates from manpath
 typeset -U manpath
@@ -33,10 +40,8 @@ path=(
   $path
 )
 typeset -U path
-# export path
 
 fpath=(
-  /usr/share/zsh/5.8/functions
   $HOMEBREW_PREFIX/share/zsh-completions
   $HOMEBREW_PREFIX/share/zsh/site-functions
   $HOME/scripting/zcompletions

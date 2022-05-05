@@ -45,8 +45,7 @@ disable = ["powershell"]
 repos = [
   "~/.bashtop",
   "~/git/microsoft/vscode-dev-containers",
-  "~/git/notexist",
-
+  "~/.oh-my-zsh"
 ]
 # Don't pull the predefined git repos
 #predefined_repos = false

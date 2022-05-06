@@ -84,6 +84,7 @@ plugins=(
   colorize
   colored-man-pages
   fzf
+  gpg-agent
   git
   github
   jsontools
@@ -213,7 +214,7 @@ if [[ -s "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; t
 fi
 
 # Sign git commits with gpg https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
-export GPG_TTY=$(tty)
+# export GPG_TTY=$(tty)
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 

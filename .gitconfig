@@ -1,7 +1,8 @@
+[include]
+    path = ~/.local.gitconfig
 [core]
     editor = code --wait
     fileMode = false
-    excludesFile = ~/.gitignore_global
 [pull]
 	rebase = false
 	ff = true
@@ -18,6 +19,4 @@
 [fetch]
 	prune = true
 [alias]
-    delete-local-merged = fetch && git branch --merged | egrep -v 'master' | xargs git branch -d
-[include]
-    path = ~/.config/.local.gitconfig
+    delete-local-merged = fetch && git branch --merged | egrep -v 'master' | egrep -v 'main' | xargs git branch -d

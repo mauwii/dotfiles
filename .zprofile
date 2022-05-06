@@ -3,7 +3,7 @@
 # export LC_ALL=en_US.UTF-8
 
 # create clean PATH
-# eval "$(env -i -P /usr/bin /usr/libexec/path_helper)"
+eval "$(env -i -P /usr/bin /usr/libexec/path_helper)"
 SHELL_ARCH="$(arch)"
 export SHELL_ARCH
 

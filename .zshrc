@@ -181,31 +181,13 @@ if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app
   source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
-# initialize brewed node version manager
-if [[ -d "${HOME}/.nvm.${SHELL_ARCH}" ]]; then
-  NVM_DIR="${HOME}/.nvm.${SHELL_ARCH}"
-  export NVM_DIR
-  # This loads nvm
-  if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/nvm.sh" ]]; then
-    source "${HOMEBREW_PREFIX}/opt/nvm/nvm.sh"
-  fi
-  # This loads nvm bash_completion
-  if [[ -s "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm" ]]; then
-    source "${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm"
-  fi
-fi
-
 # initialize pyenv
 if which pyenv >/dev/null; then
   eval "$(pyenv init -)"
-  # initialize pyenv-virtualenv
-  # if which pyenv-virtualenv-init >/dev/null; then
-  #   eval "$(pyenv virtualenv-init -)"
-  # fi
   # remove pyenv from PATH when executing brew
-  if which brew >/dev/null; then
-    alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
-  fi
+  # if which brew >/dev/null; then
+  #   alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+  # fi
 fi
 
 # homebrew zsh-autosuggestions plugin
@@ -213,12 +195,9 @@ if [[ -s "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; t
   source "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
-# Sign git commits with gpg https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
-# export GPG_TTY=$(tty)
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 # zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
 if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

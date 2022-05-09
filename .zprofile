@@ -1,12 +1,13 @@
 # disable sourcing global dotfiles, located at /etc
 # unsetopt globalrcs
-export LANG="en_US"
-export LC_COLLATE="en_US"
+export LANG="en_US.UTF-8"
+export LC_COLLATE="de_DE.UTF-8"
 export LC_CTYPE="de_DE.UTF-8"
-export LC_MESSAGES="de_DE"
-export LC_MONETARY="de_DE"
-export LC_NUMERIC="de_DE"
-export LC_TIME="de_DE"
+export LC_MESSAGES="de_DE.UTF-8"
+export LC_MONETARY="de_DE.UTF-8"
+export LC_NUMERIC="de_DE.UTF-8"
+export LC_TIME="de_DE.UTF-8"
+export LC_ALL="de_DE.UTF-8"
 
 # create clean PATH
 eval "$(env -i -P /usr/bin /usr/libexec/path_helper)"
@@ -39,24 +40,16 @@ if [[ -d $HOME/esp/esp-idf ]]; then
   export IDF_PATH ESPIDF
 fi
 
-# add my bins to front of path
-path=(
-  $HOME/scripting/bin
-  $path
-)
-typeset -U path
-
 fpath=(
   $HOMEBREW_PREFIX/share/zsh-completions
   $HOMEBREW_PREFIX/share/zsh/site-functions
-  $HOME/scripting/zcompletions
   $fpath
 )
 typeset -U fpath
 
 # Initialize Pyenv Path if pyenv is found
 if which pyenv >/dev/null; then
-  PYENV_ROOT="$HOME/.pyenv.${SHELL_ARCH}"
+  PYENV_ROOT="$HOME/.pyenv"
   export PYENV_ROOT
   eval "$(pyenv init --path)"
 fi

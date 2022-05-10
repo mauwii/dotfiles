@@ -1,5 +1,4 @@
 # shellcheck shell=bash source=./.bashrc
-# export LC_ALL=en_US.UTF-8
 
 # Begin with a clear Path and set SHELL_ARCH env
 eval "$(env -u PATH /usr/libexec/path_helper -s)"
@@ -24,16 +23,14 @@ if [[ -d $HOME/scripting/bin ]]; then
 fi
 
 # Add pyenv to front of path
-if which pyenv > /dev/null; then
-  PYENV_ROOT="$HOME/.pyenv.${SHELL_ARCH}"
-  export PYENV_ROOT
-  eval "$(pyenv init --path)"
-fi
+# if which pyenv > /dev/null; then
+#   eval "$(pyenv init --path)"
+# fi
 
 # Bash completion
-if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
-  . "/opt/homebrew/etc/profile.d/bash_completion.sh"
-fi
+# if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
+#   . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+# fi
 
 # Dotnet Root
 export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"

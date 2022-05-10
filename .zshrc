@@ -80,19 +80,17 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Add wisely, as too many plugins slow down shell startup.
 
 plugins=(
-  direnv
   colorize
   colored-man-pages
   fzf
-  gpg-agent
-  git
-  github
   jsontools
   pip
   python
-  ssh-agent
   zsh-interactive-cd
+  ssh-agent
 )
+  # gpg-agent
+  # ssh-agent
 
 export FZF_BASE="$(brew --prefix fzf)"
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
@@ -113,9 +111,6 @@ source "$ZSH/oh-my-zsh.sh"
 # User configuration
 
 export MANPATH="$(man --path)"
-
-# Apply sensisble zsh settings
-source "${HOME}/.zshopt"
 
 # You may need to manually set your language environment
 # export LANG="en_US.UTF-8"
@@ -182,13 +177,13 @@ if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app
 fi
 
 # initialize pyenv
-if which pyenv >/dev/null; then
-  eval "$(pyenv init -)"
+# if which pyenv >/dev/null; then
+  # eval "$(pyenv init -)"
   # remove pyenv from PATH when executing brew
   # if which brew >/dev/null; then
   #   alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
   # fi
-fi
+# fi
 
 # homebrew zsh-autosuggestions plugin
 if [[ -s "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
@@ -201,3 +196,4 @@ if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+

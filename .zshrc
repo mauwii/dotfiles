@@ -90,7 +90,6 @@ plugins=(
   ssh-agent
 )
   # gpg-agent
-  # ssh-agent
 
 export FZF_BASE="$(brew --prefix fzf)"
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
@@ -176,14 +175,10 @@ if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app
   source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
-# initialize pyenv
-# if which pyenv >/dev/null; then
-  # eval "$(pyenv init -)"
-  # remove pyenv from PATH when executing brew
-  # if which brew >/dev/null; then
-  #   alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
-  # fi
-# fi
+# Add pyenv to front of path
+if [[ -r $(which pyenv) ]]; then
+  eval "$(pyenv init -)"
+fi
 
 # homebrew zsh-autosuggestions plugin
 if [[ -s "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then

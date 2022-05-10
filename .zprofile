@@ -23,9 +23,9 @@ if [[ -d $HOME/scripting/bin ]]; then
 fi
 
 # Add pyenv to front of path
-# if which pyenv > /dev/null; then
-#   eval "$(pyenv init --path)"
-# fi
+if [[ -r $(which pyenv) ]]; then
+  eval "$(pyenv init --path)"
+fi
 
 # Bash completion
 # if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then

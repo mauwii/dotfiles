@@ -82,6 +82,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 plugins=(
   colorize
   colored-man-pages
+  direnv
   fzf
   jsontools
   pip

@@ -91,7 +91,7 @@ plugins=(
   zsh-interactive-cd
   ssh-agent
 )
-  # gpg-agent
+# gpg-agent
 
 export FZF_BASE="$(brew --prefix fzf)"
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
@@ -187,5 +187,8 @@ if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
   source "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_COMMAND='fd --type f'
+# export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
+export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {}'"
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

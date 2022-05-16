@@ -86,6 +86,7 @@ plugins=(
   fzf
   jsontools
   pip
+  pyenv
   python
   zsh-interactive-cd
   ssh-agent
@@ -176,14 +177,9 @@ if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app
   source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
-# Add pyenv to front of path
-if [[ -r $(which pyenv) ]]; then
-  eval "$(pyenv init -)"
-fi
-
 # homebrew zsh-autosuggestions plugin
-if [[ -s "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-  source "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if [[ -s "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 # zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt

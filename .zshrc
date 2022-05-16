@@ -182,13 +182,17 @@ if [[ -s "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-aut
   source "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
-# zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
-if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
-  source "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-fi
-
 export FZF_DEFAULT_COMMAND='fd --type f'
 # export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {}'"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
+if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
+
+if [[ -d "$(brew --prefix zsh-fast-syntax-highlighting)" ]]; then
+  source $(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+fi

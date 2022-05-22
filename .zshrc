@@ -32,8 +32,8 @@ DEFAULT_USER="$(whoami)"
 # HYPHEN_INSENSITIVE="true"
 
 # Uncomment one of the following lines to change the auto-update behavior
-# zstyle ':omz:update' mode disabled  # disable automatic updates
-zstyle ':omz:update' mode auto # update automatically without asking
+zstyle ':omz:update' mode disabled # disable automatic updates
+# zstyle ':omz:update' mode auto # update automatically without asking
 # zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
@@ -60,7 +60,7 @@ DISABLE_MAGIC_FUNCTIONS="true"
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-DISABLE_UNTRACKED_FILES_DIRTY="true"
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -84,17 +84,20 @@ plugins=(
   colored-man-pages
   direnv
   fzf
+  gpg-agent
   jsontools
   pip
-  pyenv
   python
   zsh-interactive-cd
   ssh-agent
 )
-# gpg-agent
 
-export FZF_BASE="$(brew --prefix fzf)"
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_BASE="$(brew --prefix fzf)/"
+export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
+export FZF_DEFAULT_OPTS='--preview "bat --color=always --style=numbers --line-range=:500 {}"'
+if [ -f "${HOME}/.fzf.zsh" ]; then
+  source "${HOME}/.fzf.zsh"
+fi
 
 # silent SSH-Agent Start
 zstyle ':omz:plugins:ssh-agent' quiet yes
@@ -167,6 +170,9 @@ function rosettaterm() {
   exit
 }
 
+# set History file
+export HISTFILE=$HOME/.zsh_history
+
 # only needed wenn $ESPIDF is set
 if [[ -d "${ESPIDF}" ]]; then
   alias getidf="source ${IDF_PATH}/export.sh"
@@ -177,22 +183,26 @@ if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app
   source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
+# Hombrew zsh-completions
+if type brew &>/dev/null; then
+  FPATH="$(brew --prefix)/share/zsh-completions:$FPATH"
+
+  autoload -Uz compinit
+  compinit
+fi
+
+# Add pyenv to front of path
+if which pyenv >/dev/null; then
+  eval "$(pyenv init -)"
+  if which pyenv-virtualenv-init >/dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+fi
+
 # homebrew zsh-autosuggestions plugin
 if [[ -s "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
   source "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
-export FZF_DEFAULT_COMMAND='fd --type f'
-# export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
-export FZF_DEFAULT_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {}'"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# zsh-syntax-highlighting needs to get sourced at the end because of the way it is hooking the prompt
-if [[ -s "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
-  source "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-fi
-
-if [[ -d "$(brew --prefix zsh-fast-syntax-highlighting)" ]]; then
-  source $(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+# zsh fast syntax highlighting
+if [[ -r "$(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]]; then
+  source "$(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 fi

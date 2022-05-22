@@ -1,9 +1,14 @@
-# shellcheck shell=bash source=./.bashrc
+# shellcheck shell=bash source=./.zshrc
 
 # Begin with a clear Path and set SHELL_ARCH env
 eval "$(env -u PATH /usr/libexec/path_helper -s)"
 SHELL_ARCH="$(arch)"
 export SHELL_ARCH
+
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.caches"
+
+eval "$(locale)"
 
 # Initialize brew
 if [[ -x /opt/homebrew/bin/brew ]]; then
@@ -18,7 +23,7 @@ if [[ -d "${HOME}/esp/esp-idf" ]]; then
 fi
 
 # Add pyenv to front of path
-if [[ -r $(which pyenv) ]]; then
+if which pyenv >/dev/null; then
   eval "$(pyenv init --path)"
 fi
 

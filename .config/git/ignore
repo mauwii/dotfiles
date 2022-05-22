@@ -1,5 +1,6 @@
 # Compiled Python files
 **/*.pyc
+**/*.egg-info
 
 # Python Environment
 **/.venv
@@ -25,10 +26,13 @@
 # dotfiles Bare Repository
 ~/.cfg
 
-# build-artefacts
+# build-artifacts
 **/dist
 **/pkg
 **/build
 
 # local gitconfig
 ~/.config/.local.gitconfig
+
+# jfrog
+.jfrog_vscode

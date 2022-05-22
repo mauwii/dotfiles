@@ -1,5 +1,5 @@
 # Don't ask for confirmations
-assume_yes = true
+assume_yes = false
 
 # Disable specific steps - same options as the command line flag
 #disable = ["system", "emacs"]
@@ -45,7 +45,9 @@ disable = ["powershell"]
 repos = [
   "~/.bashtop",
   "~/git/microsoft/vscode-dev-containers",
-  "~/.oh-my-zsh"
+  "~/.oh-my-zsh",
+  "~/git/github/vscode-codeql-starter",
+  "~/git/MicrosoftDocs/azure-devops-docs"
 ]
 # Don't pull the predefined git repos
 #predefined_repos = false

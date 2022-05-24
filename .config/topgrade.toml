@@ -46,6 +46,7 @@ repos = [
   "~/.bashtop",
   "~/git/microsoft/vscode-dev-containers",
   "~/.oh-my-zsh",
+  "~/.pyenv",
   "~/git/github/vscode-codeql-starter",
   "~/git/MicrosoftDocs/azure-devops-docs"
 ]

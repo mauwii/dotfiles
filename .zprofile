@@ -5,8 +5,8 @@ eval "$(env -u PATH /usr/libexec/path_helper -s)"
 SHELL_ARCH="$(arch)"
 export SHELL_ARCH
 
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_CACHE_HOME="$HOME/.caches"
+# export XDG_CONFIG_HOME="$HOME/.config"
+# export XDG_CACHE_HOME="$HOME/.caches"
 
 eval "$(locale)"
 
@@ -22,8 +22,10 @@ if [[ -d "${HOME}/esp/esp-idf" ]]; then
   export IDF_PATH ESPIDF
 fi
 
-# Add pyenv to front of path
-if which pyenv >/dev/null; then
+# init Pyenv
+if [[ -d "$HOME/.pyenv" ]]; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
   eval "$(pyenv init --path)"
 fi
 

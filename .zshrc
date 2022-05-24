@@ -87,12 +87,13 @@ plugins=(
   gpg-agent
   jsontools
   pip
+  pyenv
   python
   zsh-interactive-cd
   ssh-agent
 )
 
-export FZF_BASE="$(brew --prefix fzf)/"
+export FZF_BASE="$(brew --prefix fzf)"
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 export FZF_DEFAULT_OPTS='--preview "bat --color=always --style=numbers --line-range=:500 {}"'
 if [ -f "${HOME}/.fzf.zsh" ]; then
@@ -143,6 +144,11 @@ alias ll='ls -GAhHlO'
 alias lll='ls -GAhHlO@'
 alias lr='ls -R'
 
+# fix brew doctor's warning
+# if which brew >/dev/null; then
+#   alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+# fi
+
 # replace cat with bat, but disable paging to make it behave like cat
 if which bat &>/dev/null; then
   alias cat='bat --paging never'
@@ -186,16 +192,15 @@ fi
 # Hombrew zsh-completions
 if type brew &>/dev/null; then
   FPATH="$(brew --prefix)/share/zsh-completions:$FPATH"
-
   autoload -Uz compinit
   compinit
 fi
 
 # Add pyenv to front of path
-if which pyenv >/dev/null; then
-  eval "$(pyenv init -)"
-  if which pyenv-virtualenv-init >/dev/null; then eval "$(pyenv virtualenv-init -)"; fi
-fi
+# if which pyenv >/dev/null; then
+#   eval "$(pyenv init -)"
+#   if which pyenv-virtualenv-init >/dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+# fi
 
 # homebrew zsh-autosuggestions plugin
 if [[ -s "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then

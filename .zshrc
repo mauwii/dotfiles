@@ -87,9 +87,7 @@ plugins=(
   gpg-agent
   jsontools
   pip
-  pyenv
   python
-  zsh-interactive-cd
   ssh-agent
 )
 
@@ -197,10 +195,10 @@ if type brew &>/dev/null; then
 fi
 
 # Add pyenv to front of path
-# if which pyenv >/dev/null; then
-#   eval "$(pyenv init -)"
-#   if which pyenv-virtualenv-init >/dev/null; then eval "$(pyenv virtualenv-init -)"; fi
-# fi
+if which pyenv >/dev/null; then
+  eval "$(pyenv init -)"
+  if which pyenv-virtualenv-init >/dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+fi
 
 # homebrew zsh-autosuggestions plugin
 if [[ -s "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then

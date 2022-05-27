@@ -36,3 +36,6 @@
 
 # jfrog
 .jfrog_vscode
+
+# snyk
+**/.dccache

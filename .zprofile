@@ -30,9 +30,4 @@ if [[ -d "$HOME/.pyenv" ]]; then
 fi
 
 # Dotnet Root
-export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
-
-fpath=(
-  /opt/homebrew/share/zsh/site-functions
-  ${fpath[@]}
-)
+# export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"

@@ -108,6 +108,7 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*:*:make::' tag-order 'targets variables'
 # give a preview of commandline arguments when completing `kill`
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+FPATH=/opt/homebrew/share/zsh/site-functions:$FPATH
 
 source "$ZSH/oh-my-zsh.sh"
 
@@ -143,9 +144,9 @@ alias lll='ls -GAhHlO@'
 alias lr='ls -R'
 
 # fix brew doctor's warning
-# if which brew >/dev/null; then
-#   alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
-# fi
+if which brew >/dev/null; then
+  alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+fi
 
 # replace cat with bat, but disable paging to make it behave like cat
 if which bat &>/dev/null; then
@@ -185,13 +186,6 @@ fi
 # iTerm 2 Shell Integration
 if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app ]]; then
   source "${HOME}/.iterm2_shell_integration.zsh"
-fi
-
-# Hombrew zsh-completions
-if type brew &>/dev/null; then
-  FPATH="$(brew --prefix)/share/zsh-completions:$FPATH"
-  autoload -Uz compinit
-  compinit
 fi
 
 # Add pyenv to front of path

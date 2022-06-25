@@ -17,10 +17,10 @@ if [[ -d "${HOME}/esp/esp-idf" ]]; then
   export IDF_PATH ESPIDF
 fi
 
-# Add pyenv to front of path
-if which pyenv >/dev/null; then
-  eval "$(pyenv init --path)"
-fi
+# Initialize Pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 
 # Bash completion
 if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
@@ -30,6 +30,6 @@ fi
 # Dotnet Root
 export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
 
-if [[ "${BASH-no}" != "no" ]]; then
-  [[ -r "${HOME}/.bashrc" ]] && . "$HOME/.bashrc"
-fi
+# if [[ "${BASH-no}" != "no" ]]; then
+#   [[ -r "${HOME}/.bashrc" ]] && . "$HOME/.bashrc"
+# fi

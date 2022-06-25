@@ -188,10 +188,12 @@ if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app
   source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
-# Add pyenv to front of path
+# Initialize pyenv
 if which pyenv >/dev/null; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
   eval "$(pyenv init -)"
-  if which pyenv-virtualenv-init >/dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+  command -v  pyenv-virtualenv-init >/dev/null && eval "$(pyenv virtualenv-init -)"
 fi
 
 # homebrew zsh-autosuggestions plugin

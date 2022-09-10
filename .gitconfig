@@ -1,8 +1,8 @@
 [include]
-    path = ~/.local.gitconfig
+	path = ~/.local.gitconfig
 [core]
-    editor = code --wait
-    fileMode = false
+	editor = code --wait
+	fileMode = false
 [pull]
 	rebase = false
 	ff = true
@@ -11,7 +11,7 @@
 [diff]
 	tool = vscode
 [difftool "vscode"]
-    cmd = code --new-window --wait --diff $LOCAL $REMOTE
+	cmd = code --new-window --wait --diff $LOCAL $REMOTE
 [init]
 	defaultBranch = main
 [color]
@@ -19,4 +19,4 @@
 [fetch]
 	prune = true
 [alias]
-    delete-local-merged = fetch && git branch --merged | egrep -v 'master' | egrep -v 'main' | xargs git branch -d
+	delete-local-merged = fetch && git branch --merged | egrep -v 'master' | egrep -v 'main' | xargs git branch -d

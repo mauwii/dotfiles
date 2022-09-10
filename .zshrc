@@ -1,11 +1,6 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# warn arch changed
-if [[ "${SHELL_ARCH}" != "$(arch)" ]]; then
-  echo "Be Careful - yor architecture changed so your env is likely to be messed up!!!"
-fi
-
 # Path to your oh-my-zsh installation.
 export ZSH="${HOME}/.oh-my-zsh"
 
@@ -40,7 +35,7 @@ zstyle ':omz:update' mode disabled # disable automatic updates
 # zstyle ':omz:update' frequency 13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
-DISABLE_MAGIC_FUNCTIONS="true"
+# DISABLE_MAGIC_FUNCTIONS="true"
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -94,7 +89,7 @@ plugins=(
 export FZF_BASE="$(brew --prefix fzf)"
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 export FZF_DEFAULT_OPTS='--preview "bat --color=always --style=numbers --line-range=:500 {}"'
-if [ -f "${HOME}/.fzf.zsh" ]; then
+if [[ -f "${HOME}/.fzf.zsh" ]]; then
   source "${HOME}/.fzf.zsh"
 fi
 
@@ -107,10 +102,14 @@ zstyle ':completion:*:descriptions' format '[%d]'
 # Only display targets tag for make command completion
 zstyle ':completion:*:*:make::' tag-order 'targets variables'
 # give a preview of commandline arguments when completing `kill`
-zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
-FPATH=/opt/homebrew/share/zsh/site-functions:$FPATH
+zstyle ':completion:*:*:*:*:processes' command "ps -u ${USER} -o pid,user,comm -w -w"
 
-source "$ZSH/oh-my-zsh.sh"
+if type brew &>/dev/null; then
+  fpath+="${HOMEBREW_PREFIX}/share/zsh/site-functions"
+  fpath+="${HOMEBREW_PREFIX}/share/zsh-completions"
+fi
+
+source "${ZSH}/oh-my-zsh.sh"
 
 # User configuration
 
@@ -120,10 +119,10 @@ export MANPATH="$(man --path)"
 # export LANG="en_US.UTF-8"
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
+if [[ -n "${SSH_CONNECTION}" ]]; then
   export EDITOR='nano'
 else
-  export EDITOR='vim'
+  export EDITOR='code'
 fi
 
 # Compilation flags
@@ -143,19 +142,21 @@ alias ll='ls -GAhHlO'
 alias lll='ls -GAhHlO@'
 alias lr='ls -R'
 
-# fix brew doctor's warning
-if which brew >/dev/null; then
-  alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+# add ESP-IDF Directory if it exists
+if [[ -d "${HOME}/esp/esp-idf" ]]; then
+  export IDF_PATH="${HOME}/esp/esp-idf"
+  export ESPIDF="${IDF_PATH}"
+  alias getidf='source "${ESPIDF}/export.sh"'
 fi
 
 # replace cat with bat, but disable paging to make it behave like cat
-if which bat &>/dev/null; then
+if type bat &>/dev/null; then
   alias cat='bat --paging never'
 fi
 
 # dotfiles management
-if [[ -d $HOME/.cfg ]]; then
-  alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+if [[ -d "${HOME}/.cfg" ]]; then
+  alias config='git --git-dir="${HOME}/.cfg/" --work-tree="${HOME}"'
 fi
 
 # alias to start adaptivecards-designer
@@ -175,33 +176,41 @@ function rosettaterm() {
   exit
 }
 
-# set History file
-export HISTFILE=$HOME/.zsh_history
-
-# only needed wenn $ESPIDF is set
-if [[ -d "${ESPIDF}" ]]; then
-  alias getidf="source ${IDF_PATH}/export.sh"
+# Homebrew Command-not-found
+if [[ -r "${HOMEBREW_PREFIX}/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh" ]]; then
+  HB_CNF_HANDLER="${HOMEBREW_PREFIX}/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
+  source "$HB_CNF_HANDLER"
 fi
 
+# set History file
+export HISTFILE="${HOME}/.zsh_history"
+
 # iTerm 2 Shell Integration
-if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && ${TERM_PROGRAM} == iTerm.app ]]; then
+if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && "${TERM_PROGRAM}" = "iTerm.app" ]]; then
   source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
 # Initialize pyenv
-if which pyenv >/dev/null; then
-  export PYENV_ROOT="$HOME/.pyenv"
-  command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+if [[ -d "${HOME}/.pyenv" || -n "${PYENV_ROOT}" ]]; then
+  [[ -z "${PYENV_ROOT}" && -d "${HOME}/.pyenv" ]] && export PYENV_ROOT="${HOME}/.pyenv"
+  command -v pyenv &>/dev/null || path+="${PYENV_ROOT}/bin"
   eval "$(pyenv init -)"
-  command -v  pyenv-virtualenv-init >/dev/null && eval "$(pyenv virtualenv-init -)"
+  # initialize pyenv-virtualenv
+  [[ -d "${PYENV_ROOT}/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
+  # fix brew doctor's warning
+  if type brew &>/dev/null; then
+    alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+  fi
 fi
 
-# homebrew zsh-autosuggestions plugin
-if [[ -s "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-  source "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-fi
+if type brew &>/dev/null; then
+  # homebrew zsh-autosuggestions plugin
+  if [[ -s "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+    source "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  fi
 
-# zsh fast syntax highlighting
-if [[ -r "$(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]]; then
-  source "$(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+  # zsh fast syntax highlighting
+  if [[ -r "$(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]]; then
+    source "$(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+  fi
 fi

@@ -1,22 +1,14 @@
-# shellcheck shell=bash source=./.bash_profile
+# shellcheck shell=bash source=/dev/null
 
-# ARCHFLAGS='-arch arm64 -arch x86_64'
-# export ARCHFLAGS
-
-# Warn if Arch changed
-if [[ "${SHELL_ARCH}" != "$(arch)" ]]; then
-  echo "Be Careful - yor architecture changed so your env is likely to be messed up!!!"
+# add ESP-IDF Directory if it exists
+if [[ -d "${HOME}/esp/esp-idf" ]]; then
+  IDF_PATH="${HOME}/esp/esp-idf"
+  ESPIDF="${IDF_PATH}"
+  export IDF_PATH ESPIDF
 fi
 
-# shellcheck disable=SC2167
+# brew bash completion@2
 [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
-# for bcfile in "${HOMEBREW_PREFIX}"/etc/bash_completion.d/*; do
-#     source "${bcfile}"
-# done
-
-if [[ "$SHELL_ARCH" = "arm64" ]]; then
-  alias rosettaterm="arch -arch x86_64 /bin/bash -l"
-fi
 
 # load direnv hook to automatically load/unload .envrc files
 [[ -x "${HOMEBREW_PREFIX}/bin/direnv" ]] &&
@@ -29,9 +21,17 @@ if [[ -f "$HB_CNF_HANDLER" ]]; then
   source "$HB_CNF_HANDLER"
 fi
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
 
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-command -v  pyenv-virtualenv-init >/dev/null && eval "$(pyenv virtualenv-init -)"
+# Initialize pyenv
+if [[ -d "${HOME}/.pyenv" || -n "${PYENV_ROOT}" ]]; then
+  [[ -z "${PYENV_ROOT}" && -d "${HOME}/.pyenv" ]] && export PYENV_ROOT="${HOME}/.pyenv"
+  command -v pyenv &>/dev/null || path+="${PYENV_ROOT}/bin"
+  eval "$(pyenv init -)"
+  # initialize pyenv-virtualenv
+  [[ -d "${PYENV_ROOT}/plugins/pyenv-virtualenv" && "${PYENV_VIRTUALENV_INIT}" -ne 1 ]] && eval "$(pyenv virtualenv-init -)"
+  # fix brew doctor's warning
+  if type brew &>/dev/null; then
+    alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+  fi
+fi

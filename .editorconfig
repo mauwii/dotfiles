@@ -18,9 +18,6 @@ trim_trailing_whitespace = false
 [*.{json,jsonc}]
 insert_final_newline = false
 
-[*.{yml,yaml}]
-insert_final_newline = false
-
 # Python
 [*.py]
 indent_size = 4
@@ -28,3 +25,5 @@ indent_size = 4
 # git config
 [*.gitconfig]
 indent_style = tab
+indent_size = 4
+insert_final_newline = false

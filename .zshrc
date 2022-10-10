@@ -35,7 +35,7 @@ zstyle ':omz:update' mode disabled # disable automatic updates
 # zstyle ':omz:update' frequency 13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
+DISABLE_MAGIC_FUNCTIONS="true"
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -50,12 +50,12 @@ zstyle ':omz:update' mode disabled # disable automatic updates
 # You can also set it to another string to have that shown instead of the default red dots.
 # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
+COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -81,17 +81,15 @@ plugins=(
   fzf
   gpg-agent
   jsontools
-  pip
-  python
   ssh-agent
 )
 
-export FZF_BASE="$(brew --prefix fzf)"
+FZF_BASE="$(brew --prefix fzf)"
+export FZF_BASE
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
 export FZF_DEFAULT_OPTS='--preview "bat --color=always --style=numbers --line-range=:500 {}"'
-if [[ -f "${HOME}/.fzf.zsh" ]]; then
-  source "${HOME}/.fzf.zsh"
-fi
+[[ -f "${HOME}/.fzf.zsh" ]] && source "${HOME}/.fzf.zsh"
+
 
 # silent SSH-Agent Start
 zstyle ':omz:plugins:ssh-agent' quiet yes
@@ -104,26 +102,26 @@ zstyle ':completion:*:*:make::' tag-order 'targets variables'
 # give a preview of commandline arguments when completing `kill`
 zstyle ':completion:*:*:*:*:processes' command "ps -u ${USER} -o pid,user,comm -w -w"
 
-if type brew &>/dev/null; then
-  fpath+="${HOMEBREW_PREFIX}/share/zsh/site-functions"
-  fpath+="${HOMEBREW_PREFIX}/share/zsh-completions"
-fi
+[[ $commands[brew] ]] \
+  && fpath+=(
+    "${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh/site-functions"
+    "${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh-completions"
+    )
+
 
 source "${ZSH}/oh-my-zsh.sh"
 
 # User configuration
 
-export MANPATH="$(man --path)"
-
 # You may need to manually set your language environment
 # export LANG="en_US.UTF-8"
 
 # Preferred editor for local and remote sessions
-if [[ -n "${SSH_CONNECTION}" ]]; then
-  export EDITOR='nano'
-else
-  export EDITOR='code'
-fi
+# if [[ -n "${SSH_CONNECTION}" ]]; then
+#   export EDITOR='nano'
+# else
+#   export EDITOR='code'
+# fi
 
 # Compilation flags
 # export ARCHFLAGS='-arch x86_64'
@@ -138,31 +136,27 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 alias l='ls -GAhH'
-alias ll='ls -GAhHlO'
-alias lll='ls -GAhHlO@'
+alias ll='ls -GAhHlOT'
+alias lll='ls -GAhHlOT@'
 alias lr='ls -R'
 
 # add ESP-IDF Directory if it exists
-if [[ -d "${HOME}/esp/esp-idf" ]]; then
-  export IDF_PATH="${HOME}/esp/esp-idf"
-  export ESPIDF="${IDF_PATH}"
-  alias getidf='source "${ESPIDF}/export.sh"'
-fi
+[[ -d "${HOME}/esp/esp-idf" ]] \
+  && export IDF_PATH="${HOME}/esp/esp-idf" \
+  && export ESPIDF="${IDF_PATH}" \
+  && alias getidf='source "${ESPIDF}/export.sh"'
 
 # replace cat with bat, but disable paging to make it behave like cat
-if type bat &>/dev/null; then
-  alias cat='bat --paging never'
-fi
+[[ $commands[bat] ]] \
+  && alias cat='bat --paging never'
 
 # dotfiles management
-if [[ -d "${HOME}/.cfg" ]]; then
-  alias config='git --git-dir="${HOME}/.cfg/" --work-tree="${HOME}"'
-fi
+[[ -d "${HOME}/.cfg" ]] \
+  && alias config='git --git-dir="${HOME}/.cfg/" --work-tree="${HOME}"'
 
 # alias to start adaptivecards-designer
-if [[ -d "${HOME}/Bots/AdaptiveCards/source/nodejs" ]]; then
-  alias acarddesigner="(cd ${HOME}/Bots/AdaptiveCards/source/nodejs && npx lerna run start --scope=adaptivecards-designer --stream)"
-fi
+[[ -d "${HOME}/Bots/AdaptiveCards/source/nodejs" ]] \
+  && alias acarddesigner="(cd ${HOME}/Bots/AdaptiveCards/source/nodejs && npx lerna run start --scope=adaptivecards-designer --stream)"
 
 # function to switch current Terminal Environment to rosetta emulated x86_64
 function rosettaterm() {
@@ -176,41 +170,44 @@ function rosettaterm() {
   exit
 }
 
-# Homebrew Command-not-found
-if [[ -r "${HOMEBREW_PREFIX}/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh" ]]; then
-  HB_CNF_HANDLER="${HOMEBREW_PREFIX}/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
-  source "$HB_CNF_HANDLER"
-fi
+# add completions if commands are available
+[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+[[ $commands[kompose] ]] && source <(kompose completion zsh)
+
+# Homebrew command not found
+HB_CNF_HANDLER="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
+[[ -f "$HB_CNF_HANDLER" ]] \
+  && source "$HB_CNF_HANDLER"
 
 # set History file
-export HISTFILE="${HOME}/.zsh_history"
+HISTFILE="${HOME}/.zsh_history"
+export HISTFILE
 
 # iTerm 2 Shell Integration
-if [[ -s "${HOME}/.iterm2_shell_integration.zsh" && "${TERM_PROGRAM}" = "iTerm.app" ]]; then
-  source "${HOME}/.iterm2_shell_integration.zsh"
-fi
+[[ -s "${HOME}/.iterm2_shell_integration.zsh" && "${TERM_PROGRAM}" = "iTerm.app" ]] \
+  && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # Initialize pyenv
-if [[ -d "${HOME}/.pyenv" || -n "${PYENV_ROOT}" ]]; then
-  [[ -z "${PYENV_ROOT}" && -d "${HOME}/.pyenv" ]] && export PYENV_ROOT="${HOME}/.pyenv"
-  command -v pyenv &>/dev/null || path+="${PYENV_ROOT}/bin"
+[[ -z "${PYENV_ROOT}" && -d "${HOME}/.pyenv" ]] && export PYENV_ROOT="${HOME}/.pyenv"
+if [[ -n "${PYENV_ROOT}" ]]; then
+  [[ $commands[pyenv] ]] || path+="${PYENV_ROOT}/bin"
   eval "$(pyenv init -)"
   # initialize pyenv-virtualenv
   [[ -d "${PYENV_ROOT}/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
   # fix brew doctor's warning
-  if type brew &>/dev/null; then
-    alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
-  fi
+  [[ $commands[brew] ]] && alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
 fi
 
-if type brew &>/dev/null; then
+if [[ $commands[brew] ]]; then
   # homebrew zsh-autosuggestions plugin
   if [[ -s "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
     source "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
   fi
-
   # zsh fast syntax highlighting
   if [[ -r "$(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]]; then
     source "$(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
   fi
 fi
+
+# export MANPATH="$(man --path)"
+

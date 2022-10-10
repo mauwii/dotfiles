@@ -8,18 +8,16 @@ if [[ -d "${HOME}/esp/esp-idf" ]]; then
 fi
 
 # brew bash completion@2
-[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] \
+  && source "/opt/homebrew/etc/profile.d/bash_completion.sh"
 
 # load direnv hook to automatically load/unload .envrc files
-[[ -x "${HOMEBREW_PREFIX}/bin/direnv" ]] &&
-  eval "$("${HOMEBREW_PREFIX}/bin/direnv" hook bash)"
+[[ -x "${HOMEBREW_PREFIX}/bin/direnv" ]] \
+  && eval "$("${HOMEBREW_PREFIX}/bin/direnv" hook bash)"
 
-if [[ -r "${HOMEBREW_PREFIX}/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh" ]]; then
-  HB_CNF_HANDLER="${HOMEBREW_PREFIX}/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
-fi
-if [[ -f "$HB_CNF_HANDLER" ]]; then
-  source "$HB_CNF_HANDLER"
-fi
+# brew command not found
+HB_CNF_HANDLER="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
+[[ -f "$HB_CNF_HANDLER" ]] && source "$HB_CNF_HANDLER"
 
 [[ -f ~/.fzf.bash ]] && source ~/.fzf.bash
 

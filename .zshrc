@@ -8,10 +8,10 @@ export ZSH="${HOME}/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME='agnoster'
+export ZSH_THEME='agnoster'
 
 # use DEFAULT_USER to disable "user@host" in agnoster-prompt when working locally
-DEFAULT_USER="$(whoami)"
+export DEFAULT_USER="$(whoami)"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -50,7 +50,7 @@ DISABLE_MAGIC_FUNCTIONS="true"
 # You can also set it to another string to have that shown instead of the default red dots.
 # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-COMPLETION_WAITING_DOTS="true"
+# COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -81,6 +81,7 @@ plugins=(
   fzf
   gpg-agent
   jsontools
+  kubectl
   ssh-agent
 )
 
@@ -104,10 +105,12 @@ zstyle ':completion:*:*:*:*:processes' command "ps -u ${USER} -o pid,user,comm -
 
 [[ $commands[brew] ]] \
   && fpath+=(
-    "${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh/site-functions"
-    "${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh-completions"
+    "${HOMEBREW_PREFIX:+${HOMEBREW_PREFIX}/share/zsh/site-functions}"
+    "${HOMEBREW_PREFIX:+${HOMEBREW_PREFIX}/share/zsh-completions}"
     )
 
+[[ -d $HOME/.oh-my-zsh/custom/plugins/conda-zsh-completion ]] \
+  && fpath+=("$HOME/.oh-my-zsh/custom/plugins/conda-zsh-completion")
 
 source "${ZSH}/oh-my-zsh.sh"
 
@@ -117,11 +120,11 @@ source "${ZSH}/oh-my-zsh.sh"
 # export LANG="en_US.UTF-8"
 
 # Preferred editor for local and remote sessions
-# if [[ -n "${SSH_CONNECTION}" ]]; then
-#   export EDITOR='nano'
-# else
-#   export EDITOR='code'
-# fi
+if [[ -n "${SSH_CONNECTION}" ]]; then
+  export EDITOR='nano'
+else
+  export EDITOR='code'
+fi
 
 # Compilation flags
 # export ARCHFLAGS='-arch x86_64'
@@ -171,16 +174,12 @@ function rosettaterm() {
 }
 
 # add completions if commands are available
-[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
-[[ $commands[kompose] ]] && source <(kompose completion zsh)
-
-# Homebrew command not found
-HB_CNF_HANDLER="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
-[[ -f "$HB_CNF_HANDLER" ]] \
-  && source "$HB_CNF_HANDLER"
+[[ $commands[pip] ]] && source <(pip completion --zsh)
+[[ $commands[pip3] ]] && source <(pip3 completion --zsh)
+[[ -x /usr/local/bin/docker-index ]] && source <(/usr/local/bin/docker-index completion zsh)
 
 # set History file
-HISTFILE="${HOME}/.zsh_history"
+HISTFILE=${HOME}/.zsh_history
 export HISTFILE
 
 # iTerm 2 Shell Integration
@@ -190,23 +189,21 @@ export HISTFILE
 # Initialize pyenv
 [[ -z "${PYENV_ROOT}" && -d "${HOME}/.pyenv" ]] && export PYENV_ROOT="${HOME}/.pyenv"
 if [[ -n "${PYENV_ROOT}" ]]; then
-  [[ $commands[pyenv] ]] || path+="${PYENV_ROOT}/bin"
+  pyenv &>/dev/null || path+="${PYENV_ROOT}/bin"
   eval "$(pyenv init -)"
   # initialize pyenv-virtualenv
   [[ -d "${PYENV_ROOT}/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
   # fix brew doctor's warning
-  [[ $commands[brew] ]] && alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+  [[ -z $HOMEBREW_PREFIX ]] || alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
 fi
 
-if [[ $commands[brew] ]]; then
+if [[ -d ${HOMEBREW_PREFIX} ]]; then
   # homebrew zsh-autosuggestions plugin
-  if [[ -s "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-    source "$(brew --prefix zsh-autosuggestions)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-  fi
+  [[ -s "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] \
+    && source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
   # zsh fast syntax highlighting
-  if [[ -r "$(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]]; then
-    source "$(brew --prefix zsh-fast-syntax-highlighting)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-  fi
+  [[ -r "${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]] \
+    && source "${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 fi
 
 # export MANPATH="$(man --path)"

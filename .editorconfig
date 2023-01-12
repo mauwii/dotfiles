@@ -26,3 +26,6 @@ indent_size = 4
 [*.gitconfig]
 tab_width = 8
 indent_style = tab
+
+[*.toml]
+indent_size = 4

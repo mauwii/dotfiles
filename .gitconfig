@@ -4,12 +4,14 @@
 	editor = code --wait
 	fileMode = false
 [pull]
-	rebase = false
+	rebase = true
 	ff = true
 [push]
 	default = "current"
 [merge]
 	tool = vscode
+	ff = only
+	autostash = true
 [mergetool]
 	keepBackup = false
 [mergetool "vscode"]
@@ -31,3 +33,5 @@
 	process = git-lfs filter-process
 	required = true
 	clean = git-lfs clean -- %f
+[rebase]
+	autoStash = true

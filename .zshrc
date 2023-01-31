@@ -82,6 +82,7 @@ plugins=(
   gpg-agent
   jsontools
   kubectl
+  pyenv
   ssh-agent
 )
 
@@ -105,8 +106,8 @@ zstyle ':completion:*:*:*:*:processes' command "ps -u ${USER} -o pid,user,comm -
 
 [[ $commands[brew] ]] \
   && fpath+=(
-    "${HOMEBREW_PREFIX:+${HOMEBREW_PREFIX}/share/zsh/site-functions}"
-    "${HOMEBREW_PREFIX:+${HOMEBREW_PREFIX}/share/zsh-completions}"
+    "$(brew --prefix)/share/zsh/site-functions"
+    "$(brew --prefix)/share/zsh-completions"
     )
 
 [[ -d $HOME/.oh-my-zsh/custom/plugins/conda-zsh-completion ]] \
@@ -186,25 +187,11 @@ export HISTFILE
 [[ -s "${HOME}/.iterm2_shell_integration.zsh" && "${TERM_PROGRAM}" = "iTerm.app" ]] \
   && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# Initialize pyenv
-[[ -z "${PYENV_ROOT}" && -d "${HOME}/.pyenv" ]] && export PYENV_ROOT="${HOME}/.pyenv"
-if [[ -n "${PYENV_ROOT}" ]]; then
-  pyenv &>/dev/null || path+="${PYENV_ROOT}/bin"
-  eval "$(pyenv init -)"
-  # initialize pyenv-virtualenv
-  [[ -d "${PYENV_ROOT}/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
-  # fix brew doctor's warning
-  [[ -z $HOMEBREW_PREFIX ]] || alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
-fi
-
-if [[ -d ${HOMEBREW_PREFIX} ]]; then
+if [[ -d $(brew --prefix) ]]; then
   # homebrew zsh-autosuggestions plugin
-  [[ -s "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] \
-    && source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  [[ -s "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] \
+    && source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
   # zsh fast syntax highlighting
-  [[ -r "${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]] \
-    && source "${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+  [[ -r "$(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]] \
+    && source "$(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 fi
-
-# export MANPATH="$(man --path)"
-

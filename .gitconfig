@@ -10,7 +10,7 @@
 	default = "current"
 [merge]
 	tool = vscode
-	ff = only
+	ff = true
 	autostash = true
 [mergetool]
 	keepBackup = false

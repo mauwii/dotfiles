@@ -1,11 +1,8 @@
-# Top-level config
-root = true
-
 # All files
 [*]
 charset = utf-8
 end_of_line = lf
-indent_size = 2
+indent_size = 4
 indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
@@ -18,14 +15,15 @@ trim_trailing_whitespace = false
 [*.{json,jsonc}]
 insert_final_newline = false
 
-# Python
-[*.py]
-indent_size = 4
-
 # git config
 [*.gitconfig]
-tab_width = 8
 indent_style = tab
 
-[*.toml]
-indent_size = 4
+[Makefile]
+indent_style = tab
+
+[Dockerfile{,.*}]
+indent_size = 2
+
+[*.{yml,yaml}]
+indent_size = 2

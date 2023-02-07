@@ -3,7 +3,7 @@ assume_yes = false
 
 # Disable specific steps - same options as the command line flag
 #disable = ["system", "emacs"]
-disable = ["powershell", "conda"]
+disable = ["powershell", "conda", "containers"]
 
 # Ignore failures for these steps
 #ignore_failures = ["powershell"]

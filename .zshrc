@@ -1,17 +1,18 @@
+# shellcheck shell=bash source=/dev/null
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-ZSH=~/.oh-my-zsh
+ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to 'random', it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME=${ZSH_THEME:-'agnoster'}
+ZSH_THEME="${ZSH_THEME:-agnoster}"
 
 # use DEFAULT_USER to disable "user@host" in agnoster-prompt when working locally
-DEFAULT_USER=${DEFAULT_USER:-"$(whoami)"}
+DEFAULT_USER="${DEFAULT_USER:-$(whoami)}"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -35,8 +36,7 @@ zstyle ':omz:update' mode disabled # disable automatic updates
 # zstyle ':omz:update' frequency 13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
-DISABLE_MAGIC_FUNCTIONS="true"
-export DISABLE_MAGIC_FUNCTIONS
+# export DISABLE_MAGIC_FUNCTIONS="true"
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -56,7 +56,7 @@ export DISABLE_MAGIC_FUNCTIONS
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-export DISABLE_UNTRACKED_FILES_DIRTY="true"
+# export DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -64,7 +64,7 @@ export DISABLE_UNTRACKED_FILES_DIRTY="true"
 # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # or set a custom format using the strftime function format specifications,
 # see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
+export HIST_STAMPS="dd.mm.yyyy"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
@@ -76,14 +76,13 @@ export DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Add wisely, as too many plugins slow down shell startup.
 
 plugins=(
-    colorize
     colored-man-pages
     direnv
+    docker
+    docker-compose
     fzf
-    gpg-agent
     jsontools
     kubectl
-    pyenv
     ssh-agent
 )
 
@@ -98,24 +97,34 @@ zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
 # # give a preview of commandline arguments when completing `kill`
 # zstyle ':completion:*:*:*:*:processes' command "ps -u ${USER} -o pid,user,comm -w -w"
 
-[[ -x $(which brew) ]] \
-    && fpath+=(
-        "$HOMEBREW_PREFIX/share/zsh/site-functions"
-        "$HOMEBREW_PREFIX/share/zsh-completions"
-    )
+# Do menu-driven completion.
+zstyle ':completion:*' menu select
+# Color completion for some things.
+# http://linuxshellaccount.blogspot.com/2008/12/color-completion-using-zsh-modules-on.html
+zstyle ':completion:*' list-colors ${(s.:.)LSCOLORS}
+# formatting and messages
+# http://www.masterzen.fr/2009/04/19/in-love-with-zsh-part-one/
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:descriptions' format "$fg[blue]%B--- %d%b"
+zstyle ':completion:*:messages' format '%d'
+zstyle ':completion:*:warnings' format "$fg[yellow]No matches for:$reset_color %d"
+zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
+zstyle ':completion:*' group-name ''
 
-[[ -d ~/.oh-my-zsh/custom/plugins/conda-zsh-completion ]] \
-    && fpath+=("$HOME/.oh-my-zsh/custom/plugins/conda-zsh-completion")
+[[ -x "$(which -p brew)" ]] && fpath+=(
+    "$(brew --prefix)/share/zsh/site-functions"
+    "$(brew --prefix)/share/zsh-completions"
+)
 
-source "$ZSH/oh-my-zsh.sh"
+. "$ZSH/oh-my-zsh.sh"
 
 # User configuration
 
 # You may need to manually set your language environment
-export LANG=en_US.UTF-8
+export LANG="en_US.UTF-8"
 
 # Preferred editor for local and remote sessions
-if [[ -n "${SSH_CONNECTION}" ]]; then
+if [[ -n $SSH_CONNECTION ]]; then
     export EDITOR='nano'
 else
     export EDITOR='code'
@@ -139,36 +148,32 @@ alias lll='ls -GAhHlOT@'
 alias lr='ls -R'
 
 # add ESP-IDF Directory if it exists
-[[ -d ~/esp/esp-idf ]] \
-    && export IDF_PATH=~/esp/esp-idf \
-    && export ESPIDF="${IDF_PATH}" \
-    && alias getidf='source "${ESPIDF}/export.sh"'
+IDF_PATH="$HOME/esp/esp-idf"
+if [[ -d "$IDF_PATH" && -s "${IDF_PATH}/export.sh" ]]; then
+    export ESPIDF="$IDF_PATH"
+    alias getidf='. "${ESPIDF}/export.sh"'
+fi
 
 # replace cat with bat, but disable paging to make it behave like cat
-[[ -x "$(which bat)" ]] \
-    && alias cat='bat --paging never'
+[[ -x "$(which -p bat)" ]] && alias cat='bat --paging never'
 
 # dotfiles management
-[[ -d "${HOME}/.cfg" ]] \
-    && alias config='git --git-dir="${HOME}/.cfg/" --work-tree="${HOME}"'
-
-# add completions if commands are available
-[[ -x "$(which pip)" ]] && eval "$(pip completion --zsh)"
-[[ -x "$(which pip3)" ]] && eval "$(pip3 completion --zsh)"
-[[ -x /usr/local/bin/docker-index ]] && eval "$(/usr/local/bin/docker-index completion zsh)"
+[[ -d "$HOME/.cfg" && -x "$(which -p git)" ]] \
+    && alias config='git --git-dir="$HOME/.cfg" --work-tree="$HOME"'
 
 # set History file
-export HISTFILE=~/.zsh_history
+[[ -z $HISTFILE ]] && export HISTFILE="$HOME/.zsh_history"
 
 # iTerm 2 Shell Integration
-[[ -s ~/.iterm2_shell_integration.zsh && ${TERM_PROGRAM} == "iTerm.app" ]] \
-    && source ~/.iterm2_shell_integration.zsh
+ITERM2_SHELL_INTEGRATION="$HOME/.iterm2_shell_integration.zsh"
+[[ -s $ITERM2_SHELL_INTEGRATION && $TERM_PROGRAM == "iTerm.app" ]] \
+    && . "$ITERM2_SHELL_INTEGRATION"
 
-if [[ -d $HOMEBREW_PREFIX ]]; then
+if [[ -d "$(brew --prefix)" ]]; then
     # homebrew zsh-autosuggestions plugin
-    [[ -s $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]] \
-        && source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    HB_ZSH_AUTO_SUGGESTIONS="$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    [[ -s $HB_ZSH_AUTO_SUGGESTIONS ]] && . "$HB_ZSH_AUTO_SUGGESTIONS"
     # zsh fast syntax highlighting
-    [[ -r $HOMEBREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh ]] \
-        && source $HOMEBREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+    HB_ZSH_FAST_SYNTAX_HIGHLIGHTING="$(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+    [[ -s $HB_ZSH_FAST_SYNTAX_HIGHLIGHTING ]] && . "$HB_ZSH_FAST_SYNTAX_HIGHLIGHTING"
 fi

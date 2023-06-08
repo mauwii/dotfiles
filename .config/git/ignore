@@ -39,3 +39,9 @@
 
 # snyk
 **/.dccache
+
+# invokeai configs
+~/git/mauwii/InvokeAI/configs
+~/git/mauwii/InvokeAI/models
+~/git/mauwii/InvokeAI/.version
+~/git/mauwii/InvokeAI/.last_model

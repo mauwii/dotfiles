@@ -7,7 +7,7 @@
 	rebase = true
 	ff = true
 [push]
-	default = "current"
+	default = current
 [merge]
 	tool = vscode
 	ff = true

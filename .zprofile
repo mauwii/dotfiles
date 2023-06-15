@@ -1,23 +1,54 @@
+# set language environment
 export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 # Begin with a clean path
-[[ -x /usr/libexec/path_helper ]] && eval "$(/usr/libexec/path_helper -s)"
+if [[ -x /usr/libexec/path_helper ]]; then
+    eval $(/usr/libexec/path_helper -s)
+fi
+
+# # clean manpath
+unset MANPATH
+MANPATH="$(manpath)"
+export MANPATH
 
 # add brew to env
-[[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval $(/opt/homebrew/bin/brew shellenv)
+    export HOMEBREW_BUNDLE_FILE=~/.config/Brewfile
+    HOMEBREW_ZCOMP="${HOMEBREW_PREFIX}/share/zsh-completions"
+    if [[ -d "${HOMEBREW_ZCOMP}" && "${FPATH}" != *"${HOMEBREW_ZCOMP}"* ]]; then
+        fpath+=("${HOMEBREW_ZCOMP}")
+    fi
+    HOMEBREW_ZFUNC="${HOMEBREW_PREFIX}/share/zsh/site-functions"
+    if [[ -d "${HOMEBREW_ZFUNC}" && "${FPATH}" != *"${HOMEBREW_ZFUNC}"* ]]; then
+        fpath+=("${HOMEBREW_ZFUNC}")
+    fi
+fi
 
 # private docker bins
 DOCKER_BIN="$HOME/.docker/bin"
-[[ -d $DOCKER_BIN && $PATH != *"$DOCKER_BIN"* ]] && export PATH="$DOCKER_BIN${PATH+:$PATH}"
+if [[ -d "${DOCKER_BIN}" && "${PATH}" != *"$DOCKER_BIN"* ]]; then
+    export PATH="$DOCKER_BIN${PATH+:$PATH}"
+fi
 
-# initialize pyenv
-[[ -d "$HOME/.pyenv" && -z "$PYENV_ROOT" ]] && export PYENV_ROOT="$HOME/.pyenv"
-[[ -d "$PYENV_ROOT/bin" && $PATH != *"$PYENV_ROOT/bin"* ]] \
-    && export PATH="$PYENV_ROOT/bin${PATH+:$PATH}"
-[[ -x $(which pyenv) ]] && eval "$(pyenv init -)"
-[[ -x "$(which pyenv-virtualenv-init)" && $PYENV_VIRTUALENV_INIT -ne 1 ]] \
-    && eval "$(pyenv virtualenv-init -)"
+# initialize pyenv path
+if [[ -d "${HOME}/.pyenv" && -z "${PYENV_ROOT}" ]]; then
+    export PYENV_ROOT="${HOME}/.pyenv"
+fi
+if [[ -d "${PYENV_ROOT}/bin" && "${PATH}" != *"${PYENV_ROOT}/bin"* ]]; then
+    export PATH="${PYENV_ROOT}/bin${PATH+:$PATH}"
+fi
+if [ -x $(which -p pyenv) ]; then
+    eval "$(pyenv init --path)"
+fi
 
-# clean MANPATH
-MANPATH=$(manpath)
-export MANPATH
+# set kubeconfig
+if [[ -r "${HOME}/.kube/config" ]]; then
+    KUBECONFIG="${HOME}/.kube/config${KUBECONFIG+:$KUBECONFIG}"
+    export KUBECONFIG
+fi
+
+# set completion dump file
+_comp_dumpfile="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
+export ZSH_COMPDUMP="${_comp_dumpfile}"

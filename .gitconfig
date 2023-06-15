@@ -4,7 +4,7 @@
 	editor = code --wait
 	fileMode = false
 [pull]
-	rebase = true
+	; rebase = true
 	ff = true
 [push]
 	default = current

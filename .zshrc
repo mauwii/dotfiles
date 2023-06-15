@@ -1,18 +1,23 @@
-# shellcheck shell=bash source=/dev/null
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+# check if this is a login shell
+[ "$0" = "-zsh" ] && export LOGIN_ZSH=1
+
+# run zprofile if this is not a login shell
+[ -n "$LOGIN_ZSH" ] && source ~/.zprofile
+
 # Path to your oh-my-zsh installation.
-ZSH="$HOME/.oh-my-zsh"
+export ZSH="${HOME}/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to 'random', it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="${ZSH_THEME:-agnoster}"
+ZSH_THEME=agnoster
 
 # use DEFAULT_USER to disable "user@host" in agnoster-prompt when working locally
-DEFAULT_USER="${DEFAULT_USER:-$(whoami)}"
+DEFAULT_USER="$(id -un)"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -56,7 +61,7 @@ zstyle ':omz:update' mode disabled # disable automatic updates
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-# export DISABLE_UNTRACKED_FILES_DIRTY="true"
+export DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -65,6 +70,9 @@ zstyle ':omz:update' mode disabled # disable automatic updates
 # or set a custom format using the strftime function format specifications,
 # see 'man strftime' for details.
 export HIST_STAMPS="dd.mm.yyyy"
+
+# set History file
+HISTFILE="${HOME}/.zsh_history"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
@@ -76,13 +84,12 @@ export HIST_STAMPS="dd.mm.yyyy"
 # Add wisely, as too many plugins slow down shell startup.
 
 plugins=(
+    azure
     colored-man-pages
     direnv
     docker
-    docker-compose
-    fzf
-    jsontools
     kubectl
+    pyenv
     ssh-agent
 )
 
@@ -90,44 +97,36 @@ plugins=(
 zstyle ':omz:plugins:ssh-agent' quiet yes
 # add Identities from Keychain
 zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
-# # set descriptions format to enable group support
-# zstyle ':completion:*:descriptions' format '[%d]'
-# # Only display targets tag for make command completion
-# zstyle ':completion:*:*:make::' tag-order 'targets variables'
-# # give a preview of commandline arguments when completing `kill`
-# zstyle ':completion:*:*:*:*:processes' command "ps -u ${USER} -o pid,user,comm -w -w"
 
-# Do menu-driven completion.
-zstyle ':completion:*' menu select
-# Color completion for some things.
-# http://linuxshellaccount.blogspot.com/2008/12/color-completion-using-zsh-modules-on.html
-zstyle ':completion:*' list-colors ${(s.:.)LSCOLORS}
-# formatting and messages
-# http://www.masterzen.fr/2009/04/19/in-love-with-zsh-part-one/
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*:descriptions' format "$fg[blue]%B--- %d%b"
-zstyle ':completion:*:messages' format '%d'
-zstyle ':completion:*:warnings' format "$fg[yellow]No matches for:$reset_color %d"
-zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
-zstyle ':completion:*' group-name ''
+# style for no matches
+zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
 
-[[ -x "$(which -p brew)" ]] && fpath+=(
-    "$(brew --prefix)/share/zsh/site-functions"
-    "$(brew --prefix)/share/zsh-completions"
-)
-
-. "$ZSH/oh-my-zsh.sh"
+. $ZSH/oh-my-zsh.sh
 
 # User configuration
 
 # You may need to manually set your language environment
-export LANG="en_US.UTF-8"
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+# Don't show duplicate history entires
+setopt hist_find_no_dups
+
+# Remove unnecessary blanks from history
+setopt hist_reduce_blanks
+
+# Share history between instances
+setopt share_history
+
+# Don't hang up background jobs
+setopt no_hup
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
+if [ -n "$SSH_CONNECTION" ]; then
     export EDITOR='nano'
 else
     export EDITOR='code'
+    export GIT_EDITOR="$EDITOR -w"
 fi
 
 # Compilation flags
@@ -142,38 +141,49 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-alias l='ls -GAhH'
-alias ll='ls -GAhHlOT'
-alias lll='ls -GAhHlOT@'
-alias lr='ls -R'
+# use exa as modern ls-replacement
+if [ -x $(which exa) ]; then
+    alias ls="exa --icons --group-directories-first"
+fi
+
+alias l="ls -a -h"
+alias ll="l -l -g"
+alias lll="ll -@"
+alias lr="ls -R"
+alias llr="lr -l"
 
 # add ESP-IDF Directory if it exists
-IDF_PATH="$HOME/esp/esp-idf"
-if [[ -d "$IDF_PATH" && -s "${IDF_PATH}/export.sh" ]]; then
-    export ESPIDF="$IDF_PATH"
-    alias getidf='. "${ESPIDF}/export.sh"'
+IDF_PATH=~/esp/esp-idf
+if [ -s "${IDF_PATH}/export.sh" ]; then
+    export ESPIDF="${IDF_PATH}"
+    alias getidf=". \"${ESPIDF}/export.sh\""
 fi
 
 # replace cat with bat, but disable paging to make it behave like cat
-[[ -x "$(which -p bat)" ]] && alias cat='bat --paging never'
+if [ -x "$(which -p bat)" ]; then
+    alias cat="bat --paging=never"
+fi
 
 # dotfiles management
-[[ -d "$HOME/.cfg" && -x "$(which -p git)" ]] \
-    && alias config='git --git-dir="$HOME/.cfg" --work-tree="$HOME"'
-
-# set History file
-[[ -z $HISTFILE ]] && export HISTFILE="$HOME/.zsh_history"
+if [ -d "${HOME}/.cfg" ] && [ -x "$(which -p git)" ]; then
+    alias config="git --git-dir=\"${HOME}/.cfg/\" --work-tree=\"$HOME\""
+fi
 
 # iTerm 2 Shell Integration
-ITERM2_SHELL_INTEGRATION="$HOME/.iterm2_shell_integration.zsh"
-[[ -s $ITERM2_SHELL_INTEGRATION && $TERM_PROGRAM == "iTerm.app" ]] \
-    && . "$ITERM2_SHELL_INTEGRATION"
+ITERM2_SHELL_INTEGRATION="${HOME}/.iterm2_shell_integration.zsh"
+if [ -s "$ITERM2_SHELL_INTEGRATION" ] && [ "$TERM_PROGRAM" = "iTerm.app" ]; then
+    . "$ITERM2_SHELL_INTEGRATION"
+fi
 
-if [[ -d "$(brew --prefix)" ]]; then
+if [ -d "$HOMEBREW_PREFIX" ]; then
     # homebrew zsh-autosuggestions plugin
-    HB_ZSH_AUTO_SUGGESTIONS="$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-    [[ -s $HB_ZSH_AUTO_SUGGESTIONS ]] && . "$HB_ZSH_AUTO_SUGGESTIONS"
-    # zsh fast syntax highlighting
-    HB_ZSH_FAST_SYNTAX_HIGHLIGHTING="$(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-    [[ -s $HB_ZSH_FAST_SYNTAX_HIGHLIGHTING ]] && . "$HB_ZSH_FAST_SYNTAX_HIGHLIGHTING"
+    HB_ZSH_AUTO_SUGGESTIONS="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    if [ -s "$HB_ZSH_AUTO_SUGGESTIONS" ]; then
+        . "$HB_ZSH_AUTO_SUGGESTIONS"
+    fi
+    # homebrew zsh-fast-syntax-highlighting
+    HB_ZSH_FAST_SYNTAX_HIGHLIGHTING="${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+    if [ -s "$HB_ZSH_FAST_SYNTAX_HIGHLIGHTING" ]; then
+        . "$HB_ZSH_FAST_SYNTAX_HIGHLIGHTING"
+    fi
 fi

@@ -142,7 +142,7 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # use exa as modern ls-replacement
-if [ -x $(which exa) ]; then
+if [ -x "$(which exa)" ]; then
     alias ls="exa --icons --group-directories-first"
 fi
 

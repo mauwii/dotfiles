@@ -1,12 +1,6 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# check if this is a login shell
-[ "$0" = "-zsh" ] && export LOGIN_ZSH=1
-
-# run zprofile if this is not a login shell
-[ -n "$LOGIN_ZSH" ] && source ~/.zprofile
-
 # Path to your oh-my-zsh installation.
 export ZSH="${HOME}/.oh-my-zsh"
 
@@ -87,8 +81,8 @@ plugins=(
     azure
     colored-man-pages
     direnv
-    docker
     kubectl
+    multipass
     pyenv
     ssh-agent
 )
@@ -105,21 +99,13 @@ zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
 
 # User configuration
 
+# Ignore duplicate commands and commands starting with space
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
-
-# Don't show duplicate history entires
-setopt hist_find_no_dups
-
-# Remove unnecessary blanks from history
-setopt hist_reduce_blanks
-
-# Share history between instances
-setopt share_history
-
-# Don't hang up background jobs
-setopt no_hup
 
 # Preferred editor for local and remote sessions
 if [ -n "$SSH_CONNECTION" ]; then
@@ -142,12 +128,13 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # use exa as modern ls-replacement
-if [ -x "$(which exa)" ]; then
-    alias ls="exa --icons --group-directories-first"
+if [ -x "$(which -p exa)" ]; then
+    alias ls="$(which exa) --icons --group-directories-first --git"
+    LS_EXA=true
 fi
 
 alias l="ls -a -h"
-alias ll="l -l -g"
+alias ll="l -l -g${LS_EXA:+ --accessed --modified --created}"
 alias lll="ll -@"
 alias lr="ls -R"
 alias llr="lr -l"
@@ -166,7 +153,13 @@ fi
 
 # dotfiles management
 if [ -d "${HOME}/.cfg" ] && [ -x "$(which -p git)" ]; then
-    alias config="git --git-dir=\"${HOME}/.cfg/\" --work-tree=\"$HOME\""
+    # alias config="git --git-dir=\"${HOME}/.cfg/\" --work-tree=\"$HOME\""
+    alias config="git --git-dir=${HOME}/.cfg/ --work-tree=$HOME"
+fi
+
+# pipx completion
+if [ -x $(which -p pipx) ]; then
+    eval "$(register-python-argcomplete pipx)"
 fi
 
 # iTerm 2 Shell Integration
@@ -175,15 +168,15 @@ if [ -s "$ITERM2_SHELL_INTEGRATION" ] && [ "$TERM_PROGRAM" = "iTerm.app" ]; then
     . "$ITERM2_SHELL_INTEGRATION"
 fi
 
-if [ -d "$HOMEBREW_PREFIX" ]; then
-    # homebrew zsh-autosuggestions plugin
-    HB_ZSH_AUTO_SUGGESTIONS="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-    if [ -s "$HB_ZSH_AUTO_SUGGESTIONS" ]; then
-        . "$HB_ZSH_AUTO_SUGGESTIONS"
-    fi
+if [ -d "${HOMEBREW_PREFIX}" ]; then
     # homebrew zsh-fast-syntax-highlighting
     HB_ZSH_FAST_SYNTAX_HIGHLIGHTING="${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-    if [ -s "$HB_ZSH_FAST_SYNTAX_HIGHLIGHTING" ]; then
+    if [ -s "${HB_ZSH_FAST_SYNTAX_HIGHLIGHTING}" ]; then
         . "$HB_ZSH_FAST_SYNTAX_HIGHLIGHTING"
+    fi
+    # homebrew zsh-autosuggestions plugin
+    HB_ZSH_AUTO_SUGGESTIONS="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    if [ -s "${HB_ZSH_AUTO_SUGGESTIONS}" ]; then
+        . "$HB_ZSH_AUTO_SUGGESTIONS"
     fi
 fi

@@ -77,28 +77,39 @@ HISTFILE="${HOME}/.zsh_history"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 
-plugins=()
-function __add_plugin {
-    local plugin=$1
-    if command -v $plugin >/dev/null 2>&1; then
-        plugins+=($plugin)
-    fi
-}
-plugins_to_check=(
-    direnv
-    kubectl
-    multipass
-    pyenv
-)
-for plugin in $plugins_to_check; do
-    __add_plugin $plugin
-done
-
-plugins+=(
-    azure
+plugins=(
     colored-man-pages
     ssh-agent
 )
+
+# Function to add plugin if executable is found
+function __add_plugin() {
+    if [ $# -gt 2 ]; then
+        echo "Usage: __add_plugin <plugin> [<executable>]"
+        return 1
+    fi
+    local _plugin="$1"
+    [[ $# -eq 2 ]] && local _executable="$2"
+    if command -v "${_executable:-$_plugin}" >/dev/null 2>&1; then
+        plugins+=($_plugin)
+    fi
+}
+
+# plugin array to check
+plugins_to_check=(
+    argocd
+    direnv
+    kubectl
+    multipass
+    poetry
+    pyenv
+)
+
+# add plugins if executable is found
+for plugin in "${plugins_to_check[@]}"; do
+    __add_plugin "${plugin}"
+done
+__add_plugin azure az
 
 # silent SSH-Agent Start
 zstyle ':omz:plugins:ssh-agent' quiet yes
@@ -117,15 +128,19 @@ setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE
 
 # You may need to manually set your language environment
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+if [[ -z $LANG ]]; then
+    export LANG=en_US.UTF-8
+fi
+if [[ -z $LC_ALL ]]; then
+    export LC_ALL=en_US.UTF-8
+fi
 
 # Preferred editor for local and remote sessions
 if [ -n "$SSH_CONNECTION" ]; then
     export EDITOR='nano'
 else
-    export EDITOR='code'
-    export GIT_EDITOR="$EDITOR -w"
+    export EDITOR='code --wait'
+    # export GIT_EDITOR="$EDITOR -w"
 fi
 
 # Compilation flags
@@ -154,9 +169,11 @@ alias llr="lr -l"
 
 # add ESP-IDF Directory if it exists
 IDF_PATH=~/esp/esp-idf
-if [ -s "${IDF_PATH}/export.sh" ]; then
+if [ -f "${IDF_PATH}/export.sh" ]; then
     export ESPIDF="${IDF_PATH}"
-    alias getidf=". \"${ESPIDF}/export.sh\""
+    alias getidf=". ${ESPIDF}/export.sh"
+else
+    unset IDF_PATH
 fi
 
 # replace cat with bat, but disable paging to make it behave like cat

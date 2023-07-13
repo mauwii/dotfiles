@@ -77,13 +77,26 @@ HISTFILE="${HOME}/.zsh_history"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 
-plugins=(
-    azure
-    colored-man-pages
+plugins=()
+function __add_plugin {
+    local plugin=$1
+    if command -v $plugin >/dev/null 2>&1; then
+        plugins+=($plugin)
+    fi
+}
+plugins_to_check=(
     direnv
     kubectl
     multipass
     pyenv
+)
+for plugin in $plugins_to_check; do
+    __add_plugin $plugin
+done
+
+plugins+=(
+    azure
+    colored-man-pages
     ssh-agent
 )
 

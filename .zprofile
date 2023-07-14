@@ -1,13 +1,8 @@
-# set language environment
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-
 # function to append fpath if dir exists
 function __append_fpath() {
     local _fpath="$1"
-    # if [[ -d "${_fpath}" && $FPATH!=*"${_fpath}"* ]]; then
     if [[ -d "${_fpath}" ]]; then
-        fpath+=("${_fpath}")
+        fpath+=($_fpath)
     fi
 }
 
@@ -15,20 +10,22 @@ function __append_fpath() {
 function __prepend_path() {
     local _path="$1"
     if [[ -d "${_path}" ]]; then
-        # PATH="${_path}${PATH:+:$PATH}"
-        path=($_path $path)
+        path=($_path "${path[@]}")
     fi
 }
 
 # Begin with a clean path
 if [[ -x /usr/libexec/path_helper ]]; then
-    eval $(/usr/libexec/path_helper -s)
+    PATH="" eval "$(/usr/libexec/path_helper -s)"
 else
-    export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    path=(
+        /usr/local/bin
+        /usr/bin
+        /bin
+        /usr/sbin
+        /sbin
+    )
 fi
-
-# clean manpath
-MANPATH="$(manpath)"
 
 # add brew to env
 if [[ -x /opt/homebrew/bin/brew ]]; then
@@ -36,7 +33,6 @@ if [[ -x /opt/homebrew/bin/brew ]]; then
     if [[ -f ~/.config/Brewfile ]]; then
         export HOMEBREW_BUNDLE_FILE=~/.config/Brewfile
     fi
-    __append_fpath "${HOMEBREW_PREFIX}/share/zsh-completions"
     __append_fpath "${HOMEBREW_PREFIX}/share/zsh/site-functions"
 fi
 
@@ -71,3 +67,7 @@ fi
 # set completion dump file
 _comp_dumpfile="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
 export ZSH_COMPDUMP="${_comp_dumpfile}"
+
+# clean MANPATH
+MANPATH="$(manpath)"
+export MANPATH

@@ -7,12 +7,10 @@ export LC_ALL=en_US.UTF-8
 # Begin with a clean path
 if [ -x /usr/libexec/path_helper ]; then eval "$(/usr/libexec/path_helper -s)"; fi
 
-# clear manpath
-MANPATH=$(manpath)
-export MANPATH
-
 # add brew to env
-if [ -x /opt/homebrew/bin/brew ]; then eval "$(/opt/homebrew/bin/brew shellenv)"; fi
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
 # brew completion
 if [ -d "$HOMEBREW_PREFIX" ]; then
@@ -40,3 +38,7 @@ if which -s pyenv; then eval "$(pyenv init -)"; fi
 if [ "${BASH-no}" != "no" ]; then
     [ -r "$HOME/.bashrc" ] && . "$HOME/.bashrc"
 fi
+
+# clean manpath
+MANPATH=$(manpath)
+export MANPATH

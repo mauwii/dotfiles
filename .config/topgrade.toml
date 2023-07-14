@@ -42,19 +42,6 @@ assume_yes = false
 #    "~/src/*/",
 #    "~/.config/something"
 #]
-repos = [
-  "~/.bashtop",
-  "~/git/microsoft/vscode-dev-containers",
-  "~/.oh-my-zsh",
-  "~/.pyenv",
-  "~/git/github/vscode-codeql-starter",
-  "~/git/microsoft/azure-pipelines-tasks",
-  "~/git/microsoft/azure-pipelines-vscode",
-  "~/git/microsoft/azure-pipelines-yaml",
-  "~/git/microsoft/devops-project-samples",
-  "~/git/MicrosoftDocs/azure-devops-docs",
-  "~/git/MicrosoftDocs/codecoverage-yaml-samples"
-]
 # Don't pull the predefined git repos
 #predefined_repos = false
 

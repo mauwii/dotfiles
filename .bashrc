@@ -7,7 +7,8 @@ fi
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+# export LC_ALL=en_US.UTF-8
+eval "$(locale)"
 
 # add ESP-IDF Directory if it exists
 IDF_PATH="$HOME/esp/esp-idf"
@@ -32,7 +33,7 @@ fi
 
 if [ -d "$PYENV_ROOT/bin" ]; then
     if echo "$PATH" | grep -q "$PYENV_ROOT/bin"; then
-        export PATH="$PYENV_ROOT/bin${PATH+:$PATH}"
+        export PATH="$PYENV_ROOT/bin${PATH:+:$PATH}"
     fi
 fi
 if which -s pyenv; then eval "$(pyenv init -)"; fi

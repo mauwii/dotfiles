@@ -78,8 +78,8 @@ HISTFILE="${HOME}/.zsh_history"
 # Add wisely, as too many plugins slow down shell startup.
 
 plugins=(
-    colored-man-pages
     ssh-agent
+    colored-man-pages
 )
 
 # Function to add plugin if executable is found
@@ -109,6 +109,7 @@ plugins_to_check=(
 for plugin in "${plugins_to_check[@]}"; do
     __add_plugin "${plugin}"
 done
+unset plugins_to_check
 __add_plugin azure az
 
 # silent SSH-Agent Start
@@ -128,12 +129,8 @@ setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE
 
 # You may need to manually set your language environment
-if [[ -z $LANG ]]; then
-    export LANG=en_US.UTF-8
-fi
-if [[ -z $LC_ALL ]]; then
-    export LC_ALL=en_US.UTF-8
-fi
+export LC_ALL='en_US.UTF-8'
+eval $(locale)
 
 # Preferred editor for local and remote sessions
 if [ -n "$SSH_CONNECTION" ]; then
@@ -177,18 +174,18 @@ else
 fi
 
 # replace cat with bat, but disable paging to make it behave like cat
-if [ -x "$(which -p bat)" ]; then
+if command -v bat >/dev/null 2>&1; then
     alias cat="bat --paging=never"
 fi
 
 # dotfiles management
-if [ -d "${HOME}/.cfg" ] && [ -x "$(which -p git)" ]; then
+if [ -d "${HOME}/.cfg" ] && command -v git >/dev/null 2>&1; then
     # alias config="git --git-dir=\"${HOME}/.cfg/\" --work-tree=\"$HOME\""
     alias config="git --git-dir=${HOME}/.cfg/ --work-tree=$HOME"
 fi
 
 # pipx completion
-if [ -x $(which -p pipx) ]; then
+if command -v pipx >/dev/null 2>&1; then
     eval "$(register-python-argcomplete pipx)"
 fi
 
@@ -202,11 +199,11 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
     # homebrew zsh-fast-syntax-highlighting
     HB_ZSH_FAST_SYNTAX_HIGHLIGHTING="${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
     if [ -s "${HB_ZSH_FAST_SYNTAX_HIGHLIGHTING}" ]; then
-        . "$HB_ZSH_FAST_SYNTAX_HIGHLIGHTING"
+        . "${HB_ZSH_FAST_SYNTAX_HIGHLIGHTING}"
     fi
     # homebrew zsh-autosuggestions plugin
     HB_ZSH_AUTO_SUGGESTIONS="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
     if [ -s "${HB_ZSH_AUTO_SUGGESTIONS}" ]; then
-        . "$HB_ZSH_AUTO_SUGGESTIONS"
+        . "${HB_ZSH_AUTO_SUGGESTIONS}"
     fi
 fi

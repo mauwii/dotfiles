@@ -6,10 +6,10 @@ export LC_ALL='en_US.UTF-8'
 eval "$(locale)"
 
 # function to append fpath if dir exists
-function __append_fpath() {
+function __prepend_fpath() {
     local _fpath="$1"
     if [[ -d "${_fpath}" && $SHELL == *"zsh" ]]; then
-        fpath+=("$_fpath")
+        export FPATH="${_fpath}${FPATH+:${FPATH//${_fpath}:/}}"
     fi
 }
 
@@ -30,7 +30,7 @@ if [[ -x /opt/homebrew/bin/brew ]]; then
     else
         unset HOMEBREW_BUNDLE_FILE
     fi
-    __append_fpath "${HOMEBREW_PREFIX}/share/zsh/site-functions"
+    __prepend_fpath "$(brew --prefix)/share/zsh/site-functions"
 fi
 
 # docker bins

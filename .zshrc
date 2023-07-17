@@ -124,8 +124,8 @@ zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
 zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
 
 # set completion dump file
-_comp_dumpfile="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
-export ZSH_COMPDUMP="${_comp_dumpfile}"
+ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
+export ZSH_COMPDUMP
 
 . $ZSH/oh-my-zsh.sh
 

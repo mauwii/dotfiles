@@ -78,7 +78,7 @@ fi
 # clean manpath
 if command -v manpath >/dev/null 2>&1; then
     MANPATH=$(manpath)
-    if [[ $(uname -s) == Darwin ]]; then
+   if [[ "$OSTYPE" =~ ^darwin ]]; then
         # replace ":/usr/share/man:" with ":" in MANPATH
         # since /usr/share/man is readonly and a whatis file cannot be created there
         export MANPATH=${MANPATH//:\/usr\/share\/man:/:}

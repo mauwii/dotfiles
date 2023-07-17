@@ -120,6 +120,10 @@ zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
 # style for no matches
 zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
 
+# set completion dump file
+_comp_dumpfile="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
+export ZSH_COMPDUMP="${_comp_dumpfile}"
+
 . $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -127,10 +131,6 @@ zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
 # Ignore duplicate commands and commands starting with space
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE
-
-# You may need to manually set your language environment
-export LC_ALL='en_US.UTF-8'
-eval $(locale)
 
 # Preferred editor for local and remote sessions
 if [ -n "$SSH_CONNECTION" ]; then

@@ -1,4 +1,4 @@
-# shellcheck shell=bash source=./.bashrc
+# shellcheck shell=bash
 
 # set locale
 export LANG="en_US.UTF-8"
@@ -24,8 +24,11 @@ function __prepend_path() {
 # add brew to env
 if [[ -x /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
-    if [[ -f ~/.config/Brewfile ]]; then
-        export HOMEBREW_BUNDLE_FILE=~/.config/Brewfile
+    HOMEBREW_BUNDLE_FILE=~/.config/Brewfile
+    if [[ -f $HOMEBREW_BUNDLE_FILE ]]; then
+        export HOMEBREW_BUNDLE_FILE
+    else
+        unset HOMEBREW_BUNDLE_FILE
     fi
     __append_fpath "${HOMEBREW_PREFIX}/share/zsh/site-functions"
 fi
@@ -53,7 +56,29 @@ if command -v pyenv >/dev/null 2>&1; then
 fi
 
 # set kubeconfig
-if [[ -r "${HOME}/.kube/config" ]]; then
-    KUBECONFIG="${HOME}/.kube/config${KUBECONFIG:+:$KUBECONFIG}"
+_local_kubeconfig="${HOME}/.kube/config.local"
+if [[ -r "${_local_kubeconfig}" ]]; then
+    KUBECONFIG="${_local_kubeconfig}${KUBECONFIG:+:$KUBECONFIG}"
     export KUBECONFIG
+fi
+unset _local_kubeconfig
+
+# set dotnet root if dir exists
+DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
+if [[ -d "${DOTNET_ROOT}" ]]; then
+    export DOTNET_ROOT
+else
+    unset DOTNET_ROOT
+fi
+
+# clean manpath
+if command -v manpath >/dev/null 2>&1; then
+    MANPATH=$(manpath)
+    if [[ $(uname -s) == Darwin ]]; then
+        # replace ":/usr/share/man:" with ":" in MANPATH
+        # since /usr/share/man is readonly and a whatis file cannot be created there
+        export MANPATH=${MANPATH//:\/usr\/share\/man:/:}
+    else
+        export MANPATH
+    fi
 fi

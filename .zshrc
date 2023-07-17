@@ -99,6 +99,7 @@ function __add_plugin() {
 plugins_to_check=(
     argocd
     direnv
+    dotnet
     kubectl
     multipass
     poetry
@@ -110,6 +111,8 @@ for plugin in "${plugins_to_check[@]}"; do
     __add_plugin "${plugin}"
 done
 unset plugins_to_check
+
+# Add Plugins with different executable
 __add_plugin azure az
 
 # silent SSH-Agent Start
@@ -201,9 +204,12 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
     if [ -s "${HB_ZSH_FAST_SYNTAX_HIGHLIGHTING}" ]; then
         . "${HB_ZSH_FAST_SYNTAX_HIGHLIGHTING}"
     fi
+    unset HB_ZSH_FAST_SYNTAX_HIGHLIGHTING
     # homebrew zsh-autosuggestions plugin
     HB_ZSH_AUTO_SUGGESTIONS="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
     if [ -s "${HB_ZSH_AUTO_SUGGESTIONS}" ]; then
         . "${HB_ZSH_AUTO_SUGGESTIONS}"
+        # ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=(man)
     fi
+    unset HB_ZSH_AUTO_SUGGESTIONS
 fi

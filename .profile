@@ -2,8 +2,12 @@
 
 # set locale
 export LANG="en_US.UTF-8"
-export LC_ALL='en_US.UTF-8'
-eval "$(locale)"
+export LC_ALL="en_US.UTF-8"
+for line in $(locale); do
+    KEY="${line%=*}"
+    VALUE="${line#*=}"
+    export "${KEY?}"="${VALUE//\"/}"
+done
 
 # function to append fpath if dir exists
 function __prepend_fpath() {

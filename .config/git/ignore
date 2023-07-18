@@ -1,35 +1,35 @@
 # Compiled Python files
-**/*.pyc
-**/*.egg-info
+*.pyc
+*.egg-info
 
 # Python Environment
-**/.venv
-**/.python-version
+.venv
+.python-version
 
 # Folder view configuration files
-**/.DS_Store
-**/Desktop.ini
+.DS_Store
+Desktop.ini
 
 # Thumbnail cache files
-**/._*
-**/Thumbs.db
+._*
+Thumbs.db
 
 # Files that might appear on external disks
-**/.Spotlight-V100
-**/.Trashes
+.Spotlight-V100
+.Trashes
 
 # Environment variables
-**/.envrc
-**/.dockerenv
-**/.env
+.envrc
+.dockerenv
+.env
 
 # dotfiles Bare Repository
 ~/.cfg
 
 # build-artifacts
-**/dist
-**/pkg
-**/build
+dist
+pkg
+build
 
 # local gitconfig
 ~/.config/.local.gitconfig
@@ -38,7 +38,7 @@
 .jfrog_vscode
 
 # snyk
-**/.dccache
+.dccache
 
 # files I only want on my mac
-**/*.mac.local.*
+*.mac.local.*

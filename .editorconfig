@@ -23,8 +23,5 @@ indent_style = tab
 [Makefile]
 indent_style = tab
 
-[Dockerfile{,.*}]
-indent_size = 2
-
 [*.{yml,yaml}]
 indent_size = 2

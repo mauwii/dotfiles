@@ -1,37 +1,52 @@
 [include]
 	path = ~/.local.gitconfig
+
 [core]
 	editor = code --wait
 	fileMode = false
+	attributesFile = ~/.config/git/gitattributes
+
 [pull]
 	; rebase = true
 	ff = true
+
 [push]
 	default = current
+
 [merge]
 	tool = vscode
 	ff = true
 	autostash = true
+
 [mergetool]
 	keepBackup = false
+
 [mergetool "vscode"]
 	cmd = code --wait $MERGED
+
 [diff]
 	tool = vscode
+
+[difftool]
+	prompt = false
+
 [difftool "vscode"]
 	cmd = code --wait --diff $LOCAL $REMOTE
+
 [init]
 	defaultBranch = main
+
 [color]
 	ui = auto
+
 [fetch]
 	prune = true
-[alias]
-	delete-local-merged = fetch && git branch --merged | egrep -v 'master' | egrep -v 'main' | xargs git branch -d
+
 [filter "lfs"]
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
 	clean = git-lfs clean -- %f
+
 [rebase]
 	autoStash = true

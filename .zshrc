@@ -1,3 +1,5 @@
+# shellcheck shell=bash source=/dev/null
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -88,10 +90,8 @@ function __add_plugin() {
         echo "Usage: __add_plugin <plugin> [<executable>]"
         return 1
     fi
-    local _plugin="$1"
-    [[ $# -eq 2 ]] && local _executable="$2"
-    if command -v "${_executable:-$_plugin}" >/dev/null 2>&1; then
-        plugins+=($_plugin)
+    if command -v "${2:-$1}" >/dev/null 2>&1; then
+        plugins+=("${1}")
     fi
 }
 
@@ -157,12 +157,18 @@ fi
 
 # use exa as modern ls-replacement
 if [ -x "$(which -p exa)" ]; then
-    alias ls="$(which exa) --icons --group-directories-first --git"
+    alias ls='$(which -p exa) --icons --group-directories-first --git'
     LS_EXA=true
+else
+    LS_EXA=false
 fi
 
 alias l="ls -a -h"
-alias ll="l -l -g${LS_EXA:+ --accessed --modified --created}"
+if $LS_EXA; then
+    alias ll='l -l -g --accessed --modified --created'
+else
+    alias ll='l -l -g'
+fi
 alias lll="ll -@"
 alias lr="ls -R"
 alias llr="lr -l"
@@ -171,7 +177,7 @@ alias llr="lr -l"
 IDF_PATH=~/esp/esp-idf
 if [ -f "${IDF_PATH}/export.sh" ]; then
     export ESPIDF="${IDF_PATH}"
-    alias getidf=". ${ESPIDF}/export.sh"
+    alias getidf='. ${ESPIDF}/export.sh'
 else
     unset IDF_PATH
 fi
@@ -183,7 +189,7 @@ fi
 
 # dotfiles management
 if [ -d "${HOME}/.cfg" ] && command -v git >/dev/null 2>&1; then
-    alias config="git --git-dir=${HOME}/.cfg/ --work-tree=$HOME"
+    alias config='git --git-dir=${HOME}/.cfg/ --work-tree=${HOME}'
 fi
 # link all files to ~/.dotfiles to open in code
 if command -v config >/dev/null 2>&1; then

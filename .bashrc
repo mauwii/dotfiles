@@ -5,15 +5,37 @@ if [ -z "$PS1" ]; then
     return
 fi
 
+# source bash_prompt
+if [ -f ~/.bash_prompt ]; then
+    . ~/.bash_prompt
+fi
+
 # add ESP-IDF Directory if it exists
-IDF_PATH="$HOME/esp/esp-idf"
-if [ -d "$IDF_PATH" ] && [ -s "$IDF_PATH"/export.sh ]; then
-    export ESPIDF="$IDF_PATH"
-    alias getidf='. "${ESPIDF}/export.sh"'
+IDF_PATH=~/esp/esp-idf
+if [ -f "${IDF_PATH}/export.sh" ]; then
+    export ESPIDF="${IDF_PATH}"
+    alias getidf='. ${ESPIDF}/export.sh'
+else
+    unset IDF_PATH
 fi
 
 # direnv hook to automatically load/unload .envrc files
 if which -s direnv; then eval "$(direnv hook bash)"; fi
+
+# dotfiles management
+if [ -d "${HOME}/.cfg" ] && command -v git >/dev/null 2>&1; then
+    alias config='git --git-dir=${HOME}/.cfg/ --work-tree=${HOME}'
+fi
+# link all files to ~/.dotfiles to open in code
+if command -v config >/dev/null 2>&1; then
+    function link-dotfiles() {
+        for file in $(config ls-tree --full-tree -r --name-only HEAD); do
+            local _path="${HOME}/.dotfiles/${file}"
+            mkdir -p "${_path%/*}"
+            ln -sf "${HOME}/${file}" "${HOME}/.dotfiles/${file}"
+        done
+    }
+fi
 
 # Initialize pyenv
 if [ -d ~/.pyenv ] && [ -z "$PYENV_ROOT" ]; then
@@ -30,6 +52,7 @@ if which -s pyenv-virtualenv && [ "$PYENV_VIRTUALENV_INIT" != 1 ]; then
     eval "$(pyenv virtualenv-init -)"
 fi
 
+alias ls="ls --color=auto"
 alias l="ls -a -h"
 alias ll="l -l -g"
 alias lll="ll -@"
@@ -39,6 +62,11 @@ alias llr="lr -l"
 # replace cat with bat, but disable paging to make it behave like cat
 if which -s bat; then
     alias cat="bat --paging=never"
+fi
+
+# pipx completion
+if command -v pipx >/dev/null 2>&1; then
+    eval "$(register-python-argcomplete pipx)"
 fi
 
 # brew completion

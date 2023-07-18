@@ -8,10 +8,10 @@ export ZSH="${HOME}/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME=agnoster
+export ZSH_THEME=agnoster
 
 # use DEFAULT_USER to disable "user@host" in agnoster-prompt when working locally
-DEFAULT_USER="${USER}"
+export DEFAULT_USER="${USER}"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -127,7 +127,7 @@ zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
 ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
 export ZSH_COMPDUMP
 
-. $ZSH/oh-my-zsh.sh
+. "$ZSH/oh-my-zsh.sh"
 
 # User configuration
 
@@ -183,8 +183,17 @@ fi
 
 # dotfiles management
 if [ -d "${HOME}/.cfg" ] && command -v git >/dev/null 2>&1; then
-    # alias config="git --git-dir=\"${HOME}/.cfg/\" --work-tree=\"$HOME\""
     alias config="git --git-dir=${HOME}/.cfg/ --work-tree=$HOME"
+fi
+# link all files to ~/.dotfiles to open in code
+if command -v config >/dev/null 2>&1; then
+    function link-dotfiles() {
+        for file in $(config ls-tree --full-tree -r --name-only HEAD); do
+            local _path="${HOME}/.dotfiles/${file}"
+            mkdir -p "${_path%/*}"
+            ln -sf "${HOME}/${file}" "${HOME}/.dotfiles/${file}"
+        done
+    }
 fi
 
 # pipx completion
@@ -196,6 +205,8 @@ fi
 ITERM2_SHELL_INTEGRATION="${HOME}/.iterm2_shell_integration.zsh"
 if [ -s "$ITERM2_SHELL_INTEGRATION" ] && [ "$TERM_PROGRAM" = "iTerm.app" ]; then
     . "$ITERM2_SHELL_INTEGRATION"
+else
+    unset ITERM2_SHELL_INTEGRATION
 fi
 
 if [ -d "${HOMEBREW_PREFIX}" ]; then
@@ -208,8 +219,11 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
     # homebrew zsh-autosuggestions plugin
     HB_ZSH_AUTO_SUGGESTIONS="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
     if [ -s "${HB_ZSH_AUTO_SUGGESTIONS}" ]; then
+        # Disable autosuggestion for large buffers.
+        export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
+        # Enable aynchronous mode.
+        export ZSH_AUTOSUGGEST_USE_ASYNC=true
         . "${HB_ZSH_AUTO_SUGGESTIONS}"
-        # ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=(man)
     fi
     unset HB_ZSH_AUTO_SUGGESTIONS
 fi

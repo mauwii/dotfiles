@@ -5,6 +5,7 @@
 # Python Environment
 .venv
 .python-version
+.version
 
 # Folder view configuration files
 .DS_Store

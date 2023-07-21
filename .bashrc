@@ -79,3 +79,6 @@ if [ -d "$HOMEBREW_PREFIX" ]; then
         done
     fi
 fi
+
+# initialize starship prompt
+eval "$(starship init bash)"

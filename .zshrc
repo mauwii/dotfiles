@@ -104,6 +104,7 @@ plugins_to_check=(
     multipass
     poetry
     pyenv
+    starship
 )
 
 # add plugins if executable is found

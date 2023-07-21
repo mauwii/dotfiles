@@ -9,7 +9,7 @@ export LC_ALL="en_US.UTF-8"
 #     export "${KEY?}"="$(echo "${VALUE}" | sed 's/\"//g')"
 # done
 
-# function to append fpath if dir exists
+# function to prepend fpath if dir exists
 __prepend_fpath() {
     _fpath="$1"
     if [ -d "${1}" ] && echo "${SHELL}" | grep -q "zsh"; then

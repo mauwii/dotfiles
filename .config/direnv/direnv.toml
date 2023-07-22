@@ -1,3 +1,7 @@
 [global]
-# bash_path = "/bin/bash"
+bash_path = "/bin/bash"
 load_dotenv = true
+strict_env = true
+
+[whitelist]
+prefix = [ "/Users/matthias.wild/git/mauwii", "/Users/mauwii/git/mauwii" ]

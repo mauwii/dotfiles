@@ -7,8 +7,9 @@
 	attributesFile = ~/.config/git/gitattributes
 
 [pull]
-	; rebase = true
-	ff = true
+	# rebase = true
+	ff = only
+	default = current
 
 [push]
 	default = current
@@ -50,3 +51,4 @@
 
 [rebase]
 	autoStash = true
+	autosquash = true

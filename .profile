@@ -12,10 +12,10 @@ export LC_ALL="en_US.UTF-8"
 # function to prepend fpath if dir exists
 __prepend_fpath() {
     _fpath="$1"
-    if [ -d "${1}" ] && echo "${SHELL}" | grep -q "zsh"; then
-        _escaped=$(echo "$1" | sed 's/\//\\\//g')
+    if [ -d "${_fpath}" ] && echo "${SHELL}" | grep -q "zsh"; then
+        _escaped=$(echo "$_fpath" | sed 's/\//\\\//g')
         _cleaned=$(echo "$FPATH" | sed "s/:${_escaped}:/:/g")
-        export FPATH="${1}${_cleaned:+:$_cleaned}"
+        export FPATH="${_fpath}${_cleaned:+:$_cleaned}"
         unset _escaped _cleaned
     fi
     unset _fpath
@@ -42,7 +42,8 @@ if [ -x /opt/homebrew/bin/brew ]; then
     # else
     #     unset HOMEBREW_BUNDLE_FILE
     # fi
-    __prepend_fpath "$(brew --prefix)/share/zsh/site-functions"
+    __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh/site-functions/"
+    __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh-completions/"
 fi
 
 # Add Ruby gems to PATH.
@@ -69,11 +70,11 @@ __prepend_path "${PYENV_ROOT}/bin"
 
 # initialize pyenv
 if command -v pyenv >/dev/null 2>&1; then
-    eval "$(pyenv init -)"
+    eval "$(pyenv init --path)"
 fi
 
 # set kubeconfig
-_local_kubeconfig="${HOME}/.kube/config.local"
+_local_kubeconfig="${HOME}/.kube/config"
 if [ -r "${_local_kubeconfig}" ]; then
     KUBECONFIG="${_local_kubeconfig}${KUBECONFIG:+:$KUBECONFIG}"
     export KUBECONFIG

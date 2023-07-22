@@ -22,7 +22,7 @@ export DEFAULT_USER="${USER}"
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
 # Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
+CASE_SENSITIVE="true"
 
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
@@ -86,12 +86,14 @@ plugins=(
 
 # Function to add plugin if executable is found
 function __add_plugin() {
+    _plugin="${1}"
+    _executable="${2}"
     if [ $# -gt 2 ]; then
         echo "Usage: __add_plugin <plugin> [<executable>]"
         return 1
     fi
-    if command -v "${2:-$1}" >/dev/null 2>&1; then
-        plugins+=("${1}")
+    if command -v "${_exectuable:-$_plugin}" >/dev/null 2>&1; then
+        plugins+=("${_plugin}")
     fi
 }
 
@@ -157,8 +159,8 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # use exa as modern ls-replacement
-if [ -x "$(which -p exa)" ]; then
-    alias ls='$(which -p exa) --icons --group-directories-first --git'
+if command -v exa >/dev/null 2>&1; then
+    alias ls='exa --icons --group-directories-first --git'
     LS_EXA=true
 else
     LS_EXA=false
@@ -189,11 +191,11 @@ if command -v bat >/dev/null 2>&1; then
 fi
 
 # dotfiles management
-if [ -d "${HOME}/.cfg" ] && command -v git >/dev/null 2>&1; then
-    alias config='git --git-dir=${HOME}/.cfg/ --work-tree=${HOME}'
+if [ -d "${HOME}/.cfg" ] && command -v /usr/bin/git >/dev/null 2>&1; then
+    alias config='git --git-dir ${HOME}/.cfg/ --work-tree ${HOME}'
 fi
 # link all files to ~/.dotfiles to open in code
-if command -v config >/dev/null 2>&1; then
+if alias config >/dev/null 2>&1; then
     function link-dotfiles() {
         for file in $(config ls-tree --full-tree -r --name-only HEAD); do
             local _path="${HOME}/.dotfiles/${file}"

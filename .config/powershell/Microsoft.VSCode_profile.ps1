@@ -7,3 +7,5 @@
 # }
 
 $(/opt/homebrew/bin/brew shellenv pwsh) | Invoke-Expression
+
+$(starship init powershell) | Invoke-Expression # initialize starship prompt

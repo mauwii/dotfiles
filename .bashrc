@@ -81,4 +81,6 @@ if [ -d "$HOMEBREW_PREFIX" ]; then
 fi
 
 # initialize starship prompt
-eval "$(starship init bash)"
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init bash)"
+fi

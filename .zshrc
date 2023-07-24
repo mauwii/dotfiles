@@ -158,23 +158,7 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# use exa as modern ls-replacement
-if command -v exa >/dev/null 2>&1; then
-    alias ls='exa --icons --group-directories-first --git'
-    LS_EXA=true
-else
-    LS_EXA=false
-fi
-
-alias l="ls -a -h"
-if $LS_EXA; then
-    alias ll='l -l -g --accessed --modified --created'
-else
-    alias ll='l -l -g'
-fi
-alias lll="ll -@"
-alias lr="ls -R"
-alias llr="lr -l"
+source ~/.aliases
 
 # add ESP-IDF Directory if it exists
 IDF_PATH=~/esp/esp-idf
@@ -183,26 +167,6 @@ if [ -f "${IDF_PATH}/export.sh" ]; then
     alias getidf='. ${ESPIDF}/export.sh'
 else
     unset IDF_PATH
-fi
-
-# replace cat with bat, but disable paging to make it behave like cat
-if command -v bat >/dev/null 2>&1; then
-    alias cat="bat --paging=never"
-fi
-
-# dotfiles management
-if [ -d "${HOME}/.cfg" ] && command -v /usr/bin/git >/dev/null 2>&1; then
-    alias config='git --git-dir ${HOME}/.cfg/ --work-tree ${HOME}'
-fi
-# link all files to ~/.dotfiles to open in code
-if alias config >/dev/null 2>&1; then
-    function link-dotfiles() {
-        for file in $(config ls-tree --full-tree -r --name-only HEAD); do
-            local _path="${HOME}/.dotfiles/${file}"
-            mkdir -p "${_path%/*}"
-            ln -sf "${HOME}/${file}" "${HOME}/.dotfiles/${file}"
-        done
-    }
 fi
 
 # pipx completion

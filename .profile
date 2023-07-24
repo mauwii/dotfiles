@@ -87,6 +87,14 @@ else
     unset DOTNET_ROOT
 fi
 
+# change docker socket
+DOCKER_HOST="$HOME/.docker/run/docker.sock"
+if [ -S "$DOCKER_HOST" ]; then
+    export DOCKER_HOST="unix://$DOCKER_HOST"
+else
+    unset DOCKER_HOST
+fi
+
 # clean manpath
 if command -v manpath >/dev/null 2>&1; then
     MANPATH="$(manpath)"

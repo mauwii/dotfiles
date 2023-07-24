@@ -57,11 +57,7 @@ if [ -d "$HOMEBREW_PREFIX" ]; then
     fi
 fi
 
-# initialize starship prompt
+# initialize starship prompt if available
 if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
-# source bash_prompt if starship is not available
-elif [ -f ~/.bash_prompt ]; then
-    #shellcheck source=.bash_prompt
-    . ~/.bash_prompt
 fi

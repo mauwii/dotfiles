@@ -10,6 +10,9 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
+# enable cli color
+export CLICOLOR=true
+
 # add ESP-IDF Directory if it exists
 IDF_PATH=~/esp/esp-idf
 if [ -f "${IDF_PATH}/export.sh" ]; then

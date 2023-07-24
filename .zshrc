@@ -158,7 +158,10 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-source ~/.aliases
+# source aliases
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
 
 # add ESP-IDF Directory if it exists
 IDF_PATH=~/esp/esp-idf

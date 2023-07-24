@@ -6,8 +6,8 @@ if [ -z "$PS1" ]; then
 fi
 
 # source aliases
-if [ -f ~/.aliases ]; then
-    . ~/.aliases
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
 fi
 
 # add ESP-IDF Directory if it exists

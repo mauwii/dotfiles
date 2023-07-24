@@ -1,4 +1,4 @@
-# shellcheck shell=bash source=/dev/null
+# shellcheck shell=bash
 
 # chck if this is a interactive shell
 if [ -z "$PS1" ]; then
@@ -7,11 +7,9 @@ fi
 
 # source aliases
 if [ -f ~/.bash_aliases ]; then
+    # shellcheck source=.bash_aliases
     . ~/.bash_aliases
 fi
-
-# enable cli color
-export CLICOLOR=true
 
 # add ESP-IDF Directory if it exists
 IDF_PATH=~/esp/esp-idf
@@ -49,9 +47,11 @@ fi
 # brew completion
 if [ -d "$HOMEBREW_PREFIX" ]; then
     if [ -r "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh" ]; then
+        #shellcheck source=/opt/homebrew/etc/profile.d/bash_completion.sh
         . "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
     else
         for completionscript in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+            #shellcheck source=/dev/null
             [ -r "${completionscript}" ] && . "$completionscript"
         done
     fi
@@ -62,5 +62,6 @@ if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
 # source bash_prompt if starship is not available
 elif [ -f ~/.bash_prompt ]; then
+    #shellcheck source=.bash_prompt
     . ~/.bash_prompt
 fi

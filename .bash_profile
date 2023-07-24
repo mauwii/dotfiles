@@ -1,7 +1,8 @@
-# shellcheck shell=bash source=.bashrc
+# shellcheck shell=bash
 
 # load cross-compatible profile
-source ~/.profile
+# shellcheck source=.profile
+. ~/.profile
 
 # load rc if interactive
 if [ "${BASH-no}" != "no" ]; then

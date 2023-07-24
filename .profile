@@ -3,11 +3,9 @@
 # set locale
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
-# for line in $(locale); do
-#     KEY="${line%=*}"
-#     VALUE="${line#*=}"
-#     export "${KEY?}"="$(echo "${VALUE}" | sed 's/\"//g')"
-# done
+
+# enable cli color
+export CLICOLOR=true
 
 # function to prepend fpath if dir exists
 __prepend_fpath() {

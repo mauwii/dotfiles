@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+#!/usr/bin/env bash
 
 # chck if this is a interactive shell
 if [ -z "$PS1" ]; then
@@ -28,8 +28,8 @@ if [ -d ~/.pyenv ] && [ -z "$PYENV_ROOT" ]; then
     export PYENV_ROOT=~/.pyenv
 fi
 if [ -d "$PYENV_ROOT/bin" ]; then
-    if echo "$PATH" | grep -q "$PYENV_ROOT/bin"; then
-        export PATH="$PYENV_ROOT/bin:${PATH//${PYENV_ROOT}\/bin/}"
+    if echo "${PATH}" | grep -q "$PYENV_ROOT/bin"; then
+        export PATH="${PYENV_ROOT}/bin:${PATH//${PYENV_ROOT}\/bin/}"
     fi
 fi
 if which -s pyenv; then eval "$(pyenv init -)"; fi
@@ -46,16 +46,20 @@ fi
 
 # brew completion
 if [ -d "$HOMEBREW_PREFIX" ]; then
-    if [ -r "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh" ]; then
+    if [ -r "${HOMEBREW_PREFIX}"/etc/profile.d/bash_completion.sh ]; then
         #shellcheck source=/opt/homebrew/etc/profile.d/bash_completion.sh
-        . "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
+        . "${HOMEBREW_PREFIX}"/etc/profile.d/bash_completion.sh
     else
-        for completionscript in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
-            #shellcheck source=/dev/null
-            [ -r "${completionscript}" ] && . "$completionscript"
-        done
+        find "${HOMEBREW_PREFIX}"/etc/bash_completion.d -type l \
+            | while IFS= read -r completionscript; do
+                #shellcheck source=/dev/null
+                [ -r "${completionscript}" ] && . "${completionscript}"
+            done
     fi
 fi
+
+# enable cli color
+export CLICOLOR=true
 
 # initialize starship prompt if available
 if command -v starship >/dev/null 2>&1; then

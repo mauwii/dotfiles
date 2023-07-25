@@ -4,8 +4,8 @@
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
-# enable cli color
-export CLICOLOR=true
+# set command mode
+export COMMAND_MODE="unix2003"
 
 # function to prepend fpath if dir exists
 __prepend_fpath() {
@@ -40,8 +40,8 @@ if [ -x /opt/homebrew/bin/brew ]; then
     # else
     #     unset HOMEBREW_BUNDLE_FILE
     # fi
-    __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh/site-functions/"
-    __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh-completions/"
+    __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh/site-functions"
+    __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh-completions"
 fi
 
 # Add Ruby gems to PATH.
@@ -50,13 +50,13 @@ if command -v ruby >/dev/null && command -v gem >/dev/null; then
 fi
 
 # docker bins
-__prepend_path ~/.docker/bin
+__prepend_path "$HOME/.docker/bin"
 
 # docker cli-plugins
-__prepend_path ~/.docker/cli-plugins
+__prepend_path "$HOME/.docker/cli-plugins"
 
 # personal bins
-__prepend_path ~/.local/bin
+__prepend_path "$HOME/.local/bin"
 
 # set PYENV_ROOT if dir exists and not set
 if [ -d "${HOME}/.pyenv" ] && [ -z "${PYENV_ROOT}" ]; then
@@ -107,4 +107,9 @@ if command -v manpath >/dev/null 2>&1; then
     else
         export MANPATH
     fi
+fi
+
+if [ "$SHELL" = "/bin/sh" ]; then
+    # shellcheck source=.bash_aliases
+    . ~/.bash_aliases
 fi

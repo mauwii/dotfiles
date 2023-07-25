@@ -1,0 +1,36 @@
+#!/usr/bin/env zsh
+
+# check if this scritp was sourced
+if ! (( zsh_eval_context[(I)file] )); then
+    echo 'Error: Script must be sourced!'
+    exit 1
+fi
+
+# zstyle ':completion:*' completer _extensions _complete
+# zstyle ':completion:*' completer _expand _complete _match _oldlist _ignored
+# zstyle ':completion:*' completer _complete _oldlist _extensions
+
+# sort completions
+# zstyle ':completion:*:*:command-:*:*' group-order alias builtins functions commands
+
+# # use cache
+zstyle ':completion:*' use-cache false
+# # zstyle ':completion:*' cache-path "${HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
+
+# use menu selection
+zstyle ':completion:*' menu select
+
+# use compinit
+
+#Set Styles
+# zstyle ':completion:*:*:*:*:descriptions' format '%B-- %d --%b'
+
+# style for no matches
+# zstyle ':completion:*:messages' format ' %F{purple} -- %d --%f'
+zstyle ':completion:*:warnings' format ' %F{yellow}-- no matches found --%f'
+
+# detailed filelist
+# zstyle ':completion:*' file-list all
+# zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+
+zstyle ':completion:*' squeeze-slashes true

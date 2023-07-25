@@ -1,143 +1,139 @@
-# shellcheck shell=bash source=/dev/null
+#!/usr/bin/env zsh
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+# Path to your oh-my-zsh installation.
+export ZSH="${HOME}/.oh-my-zsh"
+
+# Set name of the theme to load --- if set to 'random', it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+export ZSH_THEME=agnoster
+
+# use DEFAULT_USER to disable "user@host" in agnoster-prompt when working locally
+export DEFAULT_USER="${USER}"
+
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in $ZSH/themes/
+# If set to an empty array, this variable will have no effect.
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+
+# Uncomment the following line to use case-sensitive completion.
+CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment one of the following lines to change the auto-update behavior
+zstyle ':omz:update' mode disabled # disable automatic updates
+# zstyle ':omz:update' mode auto # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+
+# Uncomment the following line to change how often to auto-update (in days).
+# zstyle ':omz:update' frequency 13
+
+# Uncomment the following line if pasting URLs and other text is messed up.
+# export DISABLE_MAGIC_FUNCTIONS="true"
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# silent SSH-Agent Start
+zstyle ':omz:plugins:ssh-agent' quiet yes
+
+# add Identities from Keychain
+zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# You can also set it to another string to have that shown instead of the default red dots.
+# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+export DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
+export HIST_STAMPS="dd.mm.yyyy"
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
+# set completion dump file
+ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
+# export ZSH_COMPDUMP
+
 # set History file
 HISTFILE="${HOME}/.zsh_history"
 
-# Path to your oh-my-zsh installation.
-ohmyzsh="${HOME}/.oh-my-zsh"
-if [ -d "$ohmyzsh" ]; then
-    export ZSH="${ohmyzsh}"
-    unset ohmyzsh
-
-    # Set name of the theme to load --- if set to 'random', it will
-    # load a random theme each time oh-my-zsh is loaded, in which case,
-    # to know which specific one was loaded, run: echo $RANDOM_THEME
-    # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-    export ZSH_THEME=agnoster
-
-    # use DEFAULT_USER to disable "user@host" in agnoster-prompt when working locally
-    export DEFAULT_USER="${USER}"
-
-    # Set list of themes to pick from when loading at random
-    # Setting this variable when ZSH_THEME=random will cause zsh to load
-    # a theme from this variable instead of looking in $ZSH/themes/
-    # If set to an empty array, this variable will have no effect.
-    # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-
-    # Uncomment the following line to use case-sensitive completion.
-    CASE_SENSITIVE="true"
-
-    # Uncomment the following line to use hyphen-insensitive completion.
-    # Case-sensitive completion must be off. _ and - will be interchangeable.
-    # HYPHEN_INSENSITIVE="true"
-
-    # Uncomment one of the following lines to change the auto-update behavior
-    zstyle ':omz:update' mode disabled # disable automatic updates
-    # zstyle ':omz:update' mode auto # update automatically without asking
-    # zstyle ':omz:update' mode reminder  # just remind me to update when it's time
-
-    # Uncomment the following line to change how often to auto-update (in days).
-    # zstyle ':omz:update' frequency 13
-
-    # Uncomment the following line if pasting URLs and other text is messed up.
-    # export DISABLE_MAGIC_FUNCTIONS="true"
-
-    # Uncomment the following line to disable colors in ls.
-    # DISABLE_LS_COLORS="true"
-
-    # Uncomment the following line to disable auto-setting terminal title.
-    # DISABLE_AUTO_TITLE="true"
-
-    # Uncomment the following line to enable command auto-correction.
-    # ENABLE_CORRECTION="true"
-
-    # Uncomment the following line to display red dots whilst waiting for completion.
-    # You can also set it to another string to have that shown instead of the default red dots.
-    # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
-    # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-    # COMPLETION_WAITING_DOTS="true"
-
-    # Uncomment the following line if you want to disable marking untracked files
-    # under VCS as dirty. This makes repository status check for large repositories
-    # much, much faster.
-    export DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-    # Uncomment the following line if you want to change the command execution time
-    # stamp shown in the history command output.
-    # You can set one of the optional three formats:
-    # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-    # or set a custom format using the strftime function format specifications,
-    # see 'man strftime' for details.
-    export HIST_STAMPS="dd.mm.yyyy"
-
-    # Would you like to use another custom folder than $ZSH/custom?
-    # ZSH_CUSTOM=/path/to/new-custom-folder
-
-    # Which plugins would you like to load?
-    # Standard plugins can be found in $ZSH/plugins/
-    # Custom plugins may be added to $ZSH_CUSTOM/plugins/
-    # Example format: plugins=(rails git textmate ruby lighthouse)
-    # Add wisely, as too many plugins slow down shell startup.
-
-    plugins=(
-        ssh-agent
-        colored-man-pages
-    )
-
-    # Function to add plugin if executable is found
-    function __add_plugin() {
-        _plugin="${1}"
-        _executable="${2}"
-        if [ $# -gt 2 ]; then
-            echo "Usage: __add_plugin <plugin> [<executable>]"
-            return 1
-        fi
-        if command -v "${_exectuable:-$_plugin}" >/dev/null 2>&1; then
-            plugins+=("${_plugin}")
-        fi
-    }
-
-    # plugin array to check
-    plugins_to_check=(
-        argocd
-        direnv
-        dotnet
-        kubectl
-        multipass
-        poetry
-        pyenv
-        starship
-    )
-
-    # add plugins if executable is found
-    for plugin in "${plugins_to_check[@]}"; do
-        __add_plugin "${plugin}"
-    done
-    unset plugins_to_check
-
-    # Add Plugins with different executable
-    __add_plugin azure az
-
-    # silent SSH-Agent Start
-    zstyle ':omz:plugins:ssh-agent' quiet yes
-    # add Identities from Keychain
-    zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
-
-    # style for no matches
-    zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
-
-    # set completion dump file
-    ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
-    export ZSH_COMPDUMP
-
-    . "$ZSH/oh-my-zsh.sh"
-
-else
-    unset ohmyzsh
+# source zstyles
+if [ -r ~/.zstyles ]; then
+    source ~/.zstyles
 fi
+
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+
+plugins=(
+    colored-man-pages
+    ssh-agent
+)
+
+# Function to add plugin if executable is found
+function __add_plugin() {
+    _plugin="${1}"
+    _executable="${2}"
+    if [ $# -gt 2 ]; then
+        echo "Usage: __add_plugin <plugin> [<executable>]"
+        return 1
+    fi
+    if command -v "${_exectuable:-$_plugin}" >/dev/null 2>&1; then
+        plugins+=("${_plugin}")
+    fi
+}
+
+# plugin array to check
+plugins_to_check=(
+    argocd
+    direnv
+    dotnet
+    kubectl
+    multipass
+    poetry
+    pyenv
+    starship
+)
+
+# add plugins if executable is found
+for plugin in "${plugins_to_check[@]}"; do
+    __add_plugin "${plugin}"
+done
+unset plugins_to_check
+
+# Add Plugins with different executable
+__add_plugin azure az
+
+source ${ZSH}/oh-my-zsh.sh
 
 # User configuration
 
@@ -165,16 +161,11 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# source aliases
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
 # add ESP-IDF Directory if it exists
 IDF_PATH=~/esp/esp-idf
-if [ -f "${IDF_PATH}/export.sh" ]; then
+if [ -r "${IDF_PATH}/export.sh" ]; then
     export ESPIDF="${IDF_PATH}"
-    alias getidf='. ${ESPIDF}/export.sh'
+    alias getidf="source ${ESPIDF}/export.sh"
 else
     unset IDF_PATH
 fi
@@ -195,18 +186,25 @@ fi
 if [ -d "${HOMEBREW_PREFIX}" ]; then
     # homebrew zsh-fast-syntax-highlighting
     HB_ZSH_FAST_SYNTAX_HIGHLIGHTING="${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-    if [ -s "${HB_ZSH_FAST_SYNTAX_HIGHLIGHTING}" ]; then
-        . "${HB_ZSH_FAST_SYNTAX_HIGHLIGHTING}"
+    if [ -r ${HB_ZSH_FAST_SYNTAX_HIGHLIGHTING} ]; then
+        source ${HB_ZSH_FAST_SYNTAX_HIGHLIGHTING}
     fi
     unset HB_ZSH_FAST_SYNTAX_HIGHLIGHTING
     # homebrew zsh-autosuggestions plugin
     HB_ZSH_AUTO_SUGGESTIONS="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-    if [ -s "${HB_ZSH_AUTO_SUGGESTIONS}" ]; then
+    if [ -r "${HB_ZSH_AUTO_SUGGESTIONS}" ]; then
         # Disable autosuggestion for large buffers.
-        export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
+        ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
         # Enable aynchronous mode.
-        export ZSH_AUTOSUGGEST_USE_ASYNC=true
+        ZSH_AUTOSUGGEST_USE_ASYNC=true
+        # set strategy
+        ZSH_AUTOSUGGEST_STRATEGY=(history completion)
         . "${HB_ZSH_AUTO_SUGGESTIONS}"
     fi
     unset HB_ZSH_AUTO_SUGGESTIONS
+fi
+
+# source aliases
+if [ -r ${HOME}/.bash_aliases ]; then
+    source ${HOME}/.bash_aliases
 fi

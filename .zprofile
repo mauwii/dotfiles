@@ -1,5 +1,7 @@
-# shellcheck shell=bash
+# shellcheck shell=sh
 
 # load cross-compatible profile
-# shellcheck source=.profile
-source ~/.profile
+if [ -r ~/.profile ]; then
+    # shellcheck source=.profile
+    source ~/.profile
+fi

@@ -1,5 +1,5 @@
 [include]
-	path = ~/.local.gitconfig
+	path = ~/config/.gitconfig.local
 
 [core]
 	editor = code --wait

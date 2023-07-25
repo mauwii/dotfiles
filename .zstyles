@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
 # check if this scritp was sourced
-if ! (( zsh_eval_context[(I)file] )); then
-    echo 'Error: Script must be sourced!'
+if [[ ! $zsh_eval_context == *"file"* ]]; then
+    echo "Error: Script must be sourced!"
     exit 1
 fi
 
@@ -14,13 +14,11 @@ fi
 # zstyle ':completion:*:*:command-:*:*' group-order alias builtins functions commands
 
 # # use cache
-zstyle ':completion:*' use-cache false
+# zstyle ':completion:*' use-cache true
 # # zstyle ':completion:*' cache-path "${HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
 
 # use menu selection
 zstyle ':completion:*' menu select
-
-# use compinit
 
 #Set Styles
 # zstyle ':completion:*:*:*:*:descriptions' format '%B-- %d --%b'
@@ -33,4 +31,10 @@ zstyle ':completion:*:warnings' format ' %F{yellow}-- no matches found --%f'
 # zstyle ':completion:*' file-list all
 # zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
+zstyle ':completion:*' squeeze-slashes true
+
+# Directories
+zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories
+zstyle ':completion:*:*:cd:*:directory-stack' menu yes select
+zstyle ':completion:*:-tilde-:*' group-order 'named-directories' 'path-directories' 'users' 'expand'
 zstyle ':completion:*' squeeze-slashes true

@@ -89,11 +89,13 @@ fi
 
 # change docker socket
 DOCKER_HOST="$HOME/.docker/run/docker.sock"
-if [ -S "$DOCKER_HOST" ]; then
+context=$(docker context show)
+if [ -S "$DOCKER_HOST" ] && [ ! -S /var/run/docker.socket ] && [ "$context" = "default" ]; then
     export DOCKER_HOST="unix://$DOCKER_HOST"
 else
     unset DOCKER_HOST
 fi
+unset context
 
 # clean manpath
 if command -v manpath >/dev/null 2>&1; then

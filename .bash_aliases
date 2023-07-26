@@ -27,7 +27,7 @@ fi
 
 # dotfiles management
 if [[ -d "${HOME}/.cfg" ]] && command -v /usr/bin/git >/dev/null 2>&1; then
-    alias config="git --git-dir=${HOME}/.cfg/ --work-tree=${HOME}"
+    alias config='git --git-dir="${HOME}/.cfg" --work-tree="${HOME}"'
 fi
 if command -v config >/dev/null 2>&1; then
     # link all files to ~/.dotfiles to open in code
@@ -47,4 +47,10 @@ fi
 # Copy public SSH Key
 if command -v pbcopy >/dev/null 2>&1; then
     alias pubkey='pbcopy < ${HOME}/.ssh/id_ed25519.pub'
+fi
+
+# dump and install ~/.Brewfile
+if [ -n "${HOMEBREW_BUNDLE_FILE}" ]; then
+    alias dump-brewfile='brew bundle dump --file="${HOMEBREW_BUNDLE_FILE:-${HOME}/.Brewfile}" --force'
+    alias install-brewfile='brew bundle --file="${HOMEBREW_BUNDLE_FILE:-${HOME}/.Brewfile}"'
 fi

@@ -32,12 +32,24 @@ __prepend_path() {
     unset _path
 }
 
+# function to initialize brew
+__brew_init() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: __brew_init <brew_prefix>"
+        return 1
+    elif [ -x "${1}/bin/brew" ]; then
+        eval "$("${1}/bin/brew" shellenv)"
+        export HOMEBREW_BUNDLE_FILE="${HOME}/.Brewfile"
+        __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh/site-functions"
+        __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh-completions"
+    fi
+}
+
 # add brew to env
-if [ -x /opt/homebrew/bin/brew ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-    export HOMEBREW_BUNDLE_FILE="${HOME}/.Brewfile"
-    __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh/site-functions"
-    __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh-completions"
+if [ -d "/opt/homebrew" ]; then
+    __brew_init "/opt/homebrew"
+elif [ -d "/usr/local" ]; then
+    __brew_init "/usr/local"
 fi
 
 # Add Ruby gems to PATH.
@@ -101,6 +113,13 @@ if command -v manpath >/dev/null 2>&1; then
     else
         export MANPATH
     fi
+fi
+
+# add function to view markdown files
+if command -v pandoc >/dev/null 2>&1 && command -v pandoc >/dev/null 2>&1; then
+    viewmd() {
+        pandoc -f markdown -t html "$1" | lynx -stdin
+    }
 fi
 
 if [ "$SHELL" = "/bin/sh" ]; then

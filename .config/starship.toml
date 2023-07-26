@@ -1,3 +1,6 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
 [aws]
 symbol = "  "
 
@@ -101,18 +104,18 @@ Mint = " "
 NetBSD = " "
 NixOS = " "
 OpenBSD = "󰈺 "
-openSUSE = " "
 OracleLinux = "󰌷 "
 Pop = " "
 Raspbian = " "
-Redhat = " "
 RedHatEnterprise = " "
+Redhat = " "
 Redox = "󰀘 "
-Solus = "󰠳 "
 SUSE = " "
+Solus = "󰠳 "
 Ubuntu = " "
 Unknown = " "
 Windows = "󰍲 "
+openSUSE = " "
 
 [package]
 symbol = "󰏗 "
@@ -135,5 +138,28 @@ symbol = " "
 [scala]
 symbol = " "
 
+[shell]
+bash_indicator = ""
+disabled = false
+powershell_indicator = ""
+zsh_indicator = "󱆃"
+
+[custom.direnvblocked]
+command = '[[ $(direnv status | grep "Found RC allowed") = "Found RC allowed false" ]] && echo "🔑  $(direnv status | grep "Loaded RC path" | sed -e "s:[^\`].*\/::")"'
+description = "Currently blocked dotenv file"
+detect_files = [ '.env', '.envrc' ]
+shell = [ "/bin/bash" ]
+style = "red bold"
+
+[custom.direnvloaded]
+command = '[[ "$(direnv status | grep "Found RC allowed")" = "Found RC allowed true" ]] && echo "🔑  $(direnv status | grep "Loaded RC path" | sed -e "s:[^\`].*\/::")"'
+description = "Currently loaded dotenv file"
+detect_files = [ '.env', '.envrc' ]
+shell = [ "/bin/bash" ]
+style = "green bold"
+
 [spack]
 symbol = "🅢 "
+
+[line_break]
+disabled = false

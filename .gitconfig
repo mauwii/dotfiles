@@ -18,6 +18,7 @@
 	tool = vscode
 	ff = true
 	autostash = true
+	log = true
 
 [mergetool]
 	keepBackup = false
@@ -27,6 +28,7 @@
 
 [diff]
 	tool = vscode
+	renames = copies
 
 [difftool]
 	prompt = false

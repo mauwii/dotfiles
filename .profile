@@ -12,8 +12,8 @@ export COMMAND_MODE="unix2003"
 __prepend_fpath() {
     _fpath="$1"
     if [ -d "${_fpath}" ] && echo "${SHELL}" | grep -q "zsh"; then
-        _escaped=$(echo "$_fpath" | sed 's/\//\\\//g')
-        _cleaned=$(echo "$FPATH" | sed "s/:${_escaped}:/:/g")
+        _escaped=$(echo "$_fpath" | sed 's#\/#\\/#g')
+        _cleaned=$(echo "$FPATH" | sed "s#:${_escaped}:#:#g")
         export FPATH="${_fpath}${_cleaned:+:$_cleaned}"
         unset _escaped _cleaned
     fi
@@ -24,9 +24,9 @@ __prepend_fpath() {
 __prepend_path() {
     _path="$1"
     if [ -d "${_path}" ]; then
-        _escaped=$(echo "$_path" | sed 's/\//\\\//g')
-        _cleaned=$(echo "$PATH" | sed "s/:${_escaped}:/:/g")
-        export PATH="${_path}:${_cleaned}"
+        _escaped=$(echo "$_path" | sed 's#\/#\\/#g')
+        _cleaned=$(echo "$PATH" | sed "s#:${_escaped}:#:#g")
+        export PATH="${_path}${_cleaned:+:$_cleaned}"
         unset _escaped _cleaned
     fi
     unset _path
@@ -35,12 +35,7 @@ __prepend_path() {
 # add brew to env
 if [ -x /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
-    # HOMEBREW_BUNDLE_FILE=~/.config/Brewfile
-    # if [ -f "$HOMEBREW_BUNDLE_FILE" ]; then
-    #     export HOMEBREW_BUNDLE_FILE
-    # else
-    #     unset HOMEBREW_BUNDLE_FILE
-    # fi
+    export HOMEBREW_BUNDLE_FILE="${HOME}/.Brewfile"
     __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh/site-functions"
     __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh-completions"
 fi
@@ -90,13 +85,11 @@ fi
 
 # change docker socket
 DOCKER_HOST="$HOME/.docker/run/docker.sock"
-context=$(docker context show)
-if [ -S "$DOCKER_HOST" ] && [ ! -S /var/run/docker.socket ] && [ "$context" = "default" ]; then
+if [ -S "$DOCKER_HOST" ] && [ ! -S /var/run/docker.socket ] && [ "$(docker context show)" = "default" ]; then
     export DOCKER_HOST="unix://$DOCKER_HOST"
 else
     unset DOCKER_HOST
 fi
-unset context
 
 # clean manpath
 if command -v manpath >/dev/null 2>&1; then

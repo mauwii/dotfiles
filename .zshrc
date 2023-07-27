@@ -146,8 +146,8 @@ if [ "${SHRC_LOADED}" != "true" ] && [ -r ~/.shrc ]; then
     source ~/.shrc
 fi
 
-if [ -r ~/.bash_aliases ]; then
-    source ~/.bash_aliases
+if [ -r ~/.aliases ]; then
+    source ~/.aliases
 fi
 
 # Ignore duplicate commands and commands starting with space

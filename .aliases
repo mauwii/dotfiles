@@ -31,7 +31,7 @@ if [[ -d "${HOME}/.cfg" ]] && command -v /usr/bin/git >/dev/null 2>&1; then
 fi
 if command -v config >/dev/null 2>&1; then
     # link all files to ~/.dotfiles to open in code
-    function link-dotfiles() {
+    function link_dotfiles() {
         cd "${HOME}" || return 1
         for file in $(config ls-tree --full-tree -r --name-only HEAD); do
             # skip .dotfiles folder
@@ -45,7 +45,7 @@ if command -v config >/dev/null 2>&1; then
     }
     # open ~/.dotfiles in code
     if command -v code >/dev/null 2>&1; then
-        alias dotfiles='link-dotfiles && code ~/.dotfiles'
+        alias dotfiles='link_dotfiles && code ~/.dotfiles'
     fi
 fi
 

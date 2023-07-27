@@ -35,7 +35,7 @@ if command -v config >/dev/null 2>&1; then
         cd "${HOME}" || return 1
         for file in $(config ls-tree --full-tree -r --name-only HEAD); do
             # skip .dotfiles folder
-            if [[ "${file%/*}" == ".dotfiles" ]]; then
+            if [[ "${file}" =~ .dotfiles ]]; then
                 continue
             fi
             local _path="${HOME}/.dotfiles/${file}"

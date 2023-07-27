@@ -1,10 +1,20 @@
 #!/usr/bin/env zsh
 
+# load ~/.zprofile if not loaded yet
+if [ "${ZPROFILE_LOADED}" != "true" ] && [ -r ~/.zprofile ]; then
+    source ~/.zprofile
+fi
+
+# load shared shell configuration if not loaded yet
+if [ "${SHRC_LOADED}" != "true" ] && [ -r ~/.shrc ]; then
+    source ~/.shrc
+fi
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="${HOME}/.oh-my-zsh"
+export ZSH=~/.oh-my-zsh
 
 # Set name of the theme to load --- if set to 'random', it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -81,7 +91,7 @@ ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
 # export ZSH_COMPDUMP
 
 # set History file
-HISTFILE="${HOME}/.zsh_history"
+HISTFILE=~/.zsh_history
 
 # source zstyles
 if [ -r ~/.zstyles ]; then
@@ -136,22 +146,9 @@ source ${ZSH}/oh-my-zsh.sh
 
 # User configuration
 
-# load shared shell configuration
-if [ -r ~/.shrc ]; then
-    source ~/.shrc
-fi
-
 # Ignore duplicate commands and commands starting with space
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE
-
-# Preferred editor for local and remote sessions
-if [ -n "$SSH_CONNECTION" ]; then
-    export EDITOR='nano'
-else
-    export EDITOR='code --wait'
-    # export GIT_EDITOR="$EDITOR -w"
-fi
 
 # Compilation flags
 # export ARCHFLAGS='-arch x86_64'
@@ -180,9 +177,9 @@ if command -v pipx >/dev/null 2>&1; then
 fi
 
 # iTerm 2 Shell Integration
-ITERM2_SHELL_INTEGRATION="${HOME}/.iterm2_shell_integration.zsh"
-if [ -s "$ITERM2_SHELL_INTEGRATION" ] && [ "$TERM_PROGRAM" = "iTerm.app" ]; then
-    . "$ITERM2_SHELL_INTEGRATION"
+ITERM2_SHELL_INTEGRATION=~/.iterm2_shell_integration.zsh
+if [ -r "$ITERM2_SHELL_INTEGRATION" ] && [ "$TERM_PROGRAM" = "iTerm.app" ]; then
+    source $ITERM2_SHELL_INTEGRATION
 else
     unset ITERM2_SHELL_INTEGRATION
 fi
@@ -203,7 +200,9 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
         ZSH_AUTOSUGGEST_USE_ASYNC=true
         # set strategy
         ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-        . "${HB_ZSH_AUTO_SUGGESTIONS}"
+        source $HB_ZSH_AUTO_SUGGESTIONS
     fi
     unset HB_ZSH_AUTO_SUGGESTIONS
 fi
+
+export ZSHRC_LOADED="true"

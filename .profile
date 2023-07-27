@@ -43,8 +43,8 @@ prepend_path "$HOME/.docker/cli-plugins"
 prepend_path "$HOME/.local/bin"
 
 # set PYENV_ROOT if dir exists and not set
-if [ -d "${HOME}/.pyenv" ] && [ -z "${PYENV_ROOT}" ]; then
-    export PYENV_ROOT="${HOME}/.pyenv"
+if [ -d ~/.pyenv ] && [ -z "${PYENV_ROOT}" ]; then
+    export PYENV_ROOT=~/.pyenv
 fi
 
 # add pyenv bins to path if dir exists
@@ -101,8 +101,18 @@ if command -v manpath >/dev/null 2>&1; then
     export MANPATH
 fi
 
-# source .shrc if interactive sh
-if [ "$SHELL" = "/bin/sh" ] && echo $- | grep -q "i" && [ -r ~/.shrc ]; then
+# source .shrc if interactive or login shell and not yet loaded
+case $- in
+    *l*) INTERACTIVE_SHELL="true" ;;
+    *i*) INTERACTIVE_SHELL="true" ;;
+    *) return ;;
+esac
+if [ "${INTERACTIVE_SHELL}" = "true" ] \
+    && [ "${SHELL}" = "/bin/sh" ] \
+    && [ -r ~/.shrc ] \
+    && [ "${SHRC_LOADED}" != "true" ]; then
     # shellcheck source=.shrc
     . ~/.shrc
 fi
+
+export PROFILE_LOADED="true"

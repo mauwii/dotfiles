@@ -155,8 +155,7 @@ zsh_indicator = "󱆃"
 command = '[ "$(direnv status | grep "Found RC allowed")" = "Found RC allowed false" ] && echo "󱃬 $(direnv status | grep "Loaded RC path" | sed -e "s:[^\`].*\/::")"'
 description = "Currently blocked dotenv file"
 detect_files = [ '.env', '.envrc' ]
-shell = [ "/bin/bash", "-c" ]
-use_stdin = false
+shell = [ "/bin/bash" ]
 style = "red bold"
 
 [custom.direnvloaded]

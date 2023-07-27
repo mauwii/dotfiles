@@ -1,13 +1,15 @@
-#!/usr/bin/env bash
+# shellcheck shell=bash
 
-# load cross-compatible profile
-if [ -r ~/.profile ]; then
+# load cross-compatible profile if not loaded yet
+if [ -r ~/.profile ] && [ "$PROFILE_LOADED" != "true" ]; then
     # shellcheck source=.profile
     . ~/.profile
 fi
 
-# load rc if interactive
-if [ "${BASH-no}" != "no" ] && [ -r ~/.bashrc ]; then
+# load bashrc if interactive and not loaded yet
+if [ -r ~/.bashrc ] && [ "$BASHRC_LOADED" != "true" ]; then
     # shellcheck source=.bashrc
     . ~/.bashrc
 fi
+
+export BASHPROFILE_LOADED="true"

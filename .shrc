@@ -1,6 +1,12 @@
 #!/bin/sh
 # shellcheck disable=SC3003
 
+# load aliases
+if [ -r ~/.bash_aliases ]; then
+    # shellcheck source=.bash_aliases
+    . ~/.bash_aliases
+fi
+
 # Colourful manpages
 export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'
@@ -14,8 +20,15 @@ export LESS_TERMEND=$'\E[0m'
 
 export LESS="--RAW-CONTROL-CHARS"
 
-# load aliases
-if [ -r ~/.bash_aliases ]; then
-    # shellcheck source=.bash_aliases
-    . ~/.bash_aliases
+# enable cli color
+export CLICOLOR=true
+
+# Preferred editor for local and remote sessions
+if [ -n "${SSH_CONNECTION}" ]; then
+    export EDITOR="nano"
+else
+    export EDITOR="code"
+    export GIT_EDITOR="$EDITOR -w"
 fi
+
+export SHRC_LOADED="true"

@@ -1,7 +1,8 @@
-# shellcheck shell=sh
+#!/usr/bin/env zsh
 
 # load cross-compatible profile
 if [ -r ~/.profile ]; then
-    # shellcheck source=.profile
     source ~/.profile
 fi
+
+export ZPROFILE_LOADED="true"

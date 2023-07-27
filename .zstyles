@@ -11,7 +11,7 @@ fi
 # zstyle ':completion:*' completer _complete _oldlist _extensions
 
 # sort completions
-zstyle ':completion:*:*:command-:*:*' group-order alias builtins functions commands
+# zstyle ':completion:*:*:command-:*:*' group-order alias builtins functions commands
 
 # # use cache
 # zstyle ':completion:*' use-cache true
@@ -30,8 +30,6 @@ zstyle ':completion:*:warnings' format ' %F{yellow}-- no matches found --%f'
 # detailed filelist
 # zstyle ':completion:*' file-list all
 # zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-
-zstyle ':completion:*' squeeze-slashes true
 
 # Directories
 zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories

@@ -2,9 +2,9 @@
 # shellcheck disable=SC3003
 
 # load aliases
-if [ -r ~/.bash_aliases ]; then
-    # shellcheck source=.bash_aliases
-    . ~/.bash_aliases
+if [ -r ~/.aliases ]; then
+    # shellcheck source=.aliases
+    . ~/.aliases
 fi
 
 # Colourful manpages

@@ -27,13 +27,17 @@ fi
 
 # dotfiles management
 if [[ -d "${HOME}/.cfg" ]] && command -v /usr/bin/git >/dev/null 2>&1; then
-    alias config="git --git-dir=\"${HOME}/.cfg\" --work-tree=\"${HOME}\""
+    alias config="command git --git-dir=\"${HOME}/.cfg\" --work-tree=\"${HOME}\""
 fi
 if command -v config >/dev/null 2>&1; then
     # link all files to ~/.dotfiles to open in code
     function link-dotfiles() {
         cd "${HOME}" || return 1
         for file in $(config ls-tree --full-tree -r --name-only HEAD); do
+            # skip .dotfiles folder
+            if [[ "${file%/*}" == ".dotfiles" ]]; then
+                continue
+            fi
             local _path="${HOME}/.dotfiles/${file}"
             mkdir -p "${_path%/*}"
             ln -sf "${HOME}/${file}" "${_path}"

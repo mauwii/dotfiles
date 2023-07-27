@@ -11,7 +11,7 @@ fi
 # zstyle ':completion:*' completer _complete _oldlist _extensions
 
 # sort completions
-# zstyle ':completion:*:*:command-:*:*' group-order alias builtins functions commands
+zstyle ':completion:*:*:command-:*:*' group-order alias builtins functions commands
 
 # # use cache
 # zstyle ':completion:*' use-cache true

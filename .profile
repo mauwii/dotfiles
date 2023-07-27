@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC3003
 
 # set locale
 export LANG="en_US.UTF-8"
@@ -8,63 +9,38 @@ eval "$(locale)"
 # set command mode
 export COMMAND_MODE="unix2003"
 
-# function to prepend fpath if dir exists
-__prepend_fpath() {
-    _fpath="$1"
-    if [ -d "${_fpath}" ] && echo "${SHELL}" | grep -q "zsh"; then
-        _escaped=$(echo "$_fpath" | sed 's#\/#\\/#g')
-        _cleaned=$(echo "$FPATH" | sed "s#:${_escaped}:#:#g")
-        export FPATH="${_fpath}${_cleaned:+:$_cleaned}"
-        unset _escaped _cleaned
-    fi
-    unset _fpath
-}
+# add shell functions
+if [ -r ~/.functions ]; then
+    # shellcheck source=.functions
+    . ~/.functions
+fi
 
-# function to prepend path if dir exists
-__prepend_path() {
-    _path="$1"
-    if [ -d "${_path}" ]; then
-        _escaped=$(echo "$_path" | sed 's#\/#\\/#g')
-        _cleaned=$(echo "$PATH" | sed "s#:${_escaped}:#:#g")
-        export PATH="${_path}${_cleaned:+:$_cleaned}"
-        unset _escaped _cleaned
-    fi
-    unset _path
-}
-
-# function to initialize brew
-__brew_init() {
-    if [ $# -ne 1 ]; then
-        echo "Usage: __brew_init <brew_prefix>"
-        return 1
-    elif [ -x "${1}/bin/brew" ]; then
-        eval "$("${1}/bin/brew" shellenv)"
-        export HOMEBREW_BUNDLE_FILE="${HOME}/.Brewfile"
-        __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh/site-functions"
-        __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh-completions"
-    fi
-}
+# OS variables
+[ "$(uname -s)" = "Darwin" ] && export MACOS=1 && export UNIX=1
+[ "$(uname -s)" = "Linux" ] && export LINUX=1 && export UNIX=1
+uname -s | grep -q "_NT-" && export WINDOWS=1
+grep -q "Microsoft" /proc/version 2>/dev/null && export UBUNTU_ON_WINDOWS=1
 
 # add brew to env
 if [ -d "/opt/homebrew" ]; then
-    __brew_init "/opt/homebrew"
+    brew_init "/opt/homebrew"
 elif [ -d "/usr/local" ]; then
-    __brew_init "/usr/local"
+    brew_init "/usr/local"
 fi
 
 # Add Ruby gems to PATH.
-if command -v ruby >/dev/null && command -v gem >/dev/null; then
-    __prepend_path "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+if command -v ruby >/dev/null 2>&1 && command -v gem >/dev/null 2>&1; then
+    prepend_path "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
 fi
 
 # docker bins
-__prepend_path "$HOME/.docker/bin"
+prepend_path "$HOME/.docker/bin"
 
 # docker cli-plugins
-__prepend_path "$HOME/.docker/cli-plugins"
+prepend_path "$HOME/.docker/cli-plugins"
 
 # personal bins
-__prepend_path "$HOME/.local/bin"
+prepend_path "$HOME/.local/bin"
 
 # set PYENV_ROOT if dir exists and not set
 if [ -d "${HOME}/.pyenv" ] && [ -z "${PYENV_ROOT}" ]; then
@@ -72,7 +48,9 @@ if [ -d "${HOME}/.pyenv" ] && [ -z "${PYENV_ROOT}" ]; then
 fi
 
 # add pyenv bins to path if dir exists
-__prepend_path "${PYENV_ROOT}/bin"
+if [ -d "${PYENV_ROOT}/bin" ]; then
+    prepend_path "${PYENV_ROOT}/bin"
+fi
 
 # initialize pyenv
 if command -v pyenv >/dev/null 2>&1; then
@@ -80,12 +58,9 @@ if command -v pyenv >/dev/null 2>&1; then
 fi
 
 # set kubeconfig
-_local_kubeconfig="${HOME}/.kube/config"
-if [ -r "${_local_kubeconfig}" ]; then
-    KUBECONFIG="${_local_kubeconfig}${KUBECONFIG:+:$KUBECONFIG}"
-    export KUBECONFIG
+if [ -r "${HOME}/.kube/config" ]; then
+    export KUBECONFIG="${HOME}/.kube/config${KUBECONFIG:+:$KUBECONFIG}"
 fi
-unset _local_kubeconfig
 
 # set dotnet root if dir exists
 DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
@@ -103,26 +78,31 @@ else
     unset DOCKER_HOST
 fi
 
+# Count CPUs for Make jobs
+if [ "${MACOS}" ]; then
+    CPUCOUNT="$(sysctl -n hw.ncpu)"
+elif [ "${LINUX}" ]; then
+    CPUCOUNT="$(getconf _NPROCESSORS_ONLN)"
+else
+    CPUCOUNT=1
+fi
+if [ "${CPUCOUNT}" -gt 1 ]; then
+    export MAKEFLAGS="${MAKEFLAGS:+$MAKEFLAGS }-j${CPUCOUNT}"
+    export BUNDLE_JOBS="${CPUCOUNT}"
+fi
+
 # clean manpath
 if command -v manpath >/dev/null 2>&1; then
     MANPATH="$(manpath)"
-    if [ "$(uname -s)" = Darwin ]; then
+    if [ "$(uname -s)" = "Darwin" ]; then
         # remove read-only path "/usr/share/man" from MANPATH
-        MANPATH="$(echo "$MANPATH" | sed -e 's/:\/usr\/share\/man:/:/g')"
-        export MANPATH
-    else
-        export MANPATH
+        MANPATH="$(echo "$MANPATH" | sed -e 's#:\/usr\/share\/man:#:#g')"
     fi
+    export MANPATH
 fi
 
-# add function to view markdown files
-if command -v pandoc >/dev/null 2>&1 && command -v pandoc >/dev/null 2>&1; then
-    viewmd() {
-        pandoc -f markdown -t html "$1" | lynx -stdin
-    }
-fi
-
-if [ "$SHELL" = "/bin/sh" ]; then
-    # shellcheck source=.bash_aliases
-    . ~/.bash_aliases
+# source .shrc if interactive sh
+if [ "$SHELL" = "/bin/sh" ] && echo $- | grep -q "i" && [ -r ~/.shrc ]; then
+    # shellcheck source=.shrc
+    . ~/.shrc
 fi

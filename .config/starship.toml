@@ -138,6 +138,13 @@ symbol = " "
 [scala]
 symbol = " "
 
+[spack]
+symbol = "🅢 "
+
+[sudo]
+disabled = false
+style = "bold red"
+
 [shell]
 bash_indicator = ""
 disabled = false
@@ -145,21 +152,16 @@ powershell_indicator = ""
 zsh_indicator = "󱆃"
 
 [custom.direnvblocked]
-command = '[[ $(direnv status | grep "Found RC allowed") = "Found RC allowed false" ]] && echo "🔑  $(direnv status | grep "Loaded RC path" | sed -e "s:[^\`].*\/::")"'
+command = '[ "$(direnv status | grep "Found RC allowed")" = "Found RC allowed false" ] && echo "󱃬 $(direnv status | grep "Loaded RC path" | sed -e "s:[^\`].*\/::")"'
 description = "Currently blocked dotenv file"
 detect_files = [ '.env', '.envrc' ]
-shell = [ "/bin/bash" ]
+shell = [ "/bin/bash", "-c" ]
+use_stdin = false
 style = "red bold"
 
 [custom.direnvloaded]
-command = '[[ "$(direnv status | grep "Found RC allowed")" = "Found RC allowed true" ]] && echo "🔑  $(direnv status | grep "Loaded RC path" | sed -e "s:[^\`].*\/::")"'
+command = '[[ "$(direnv status | grep "Found RC allowed")" = "Found RC allowed true" ]] && echo "󱃬 $(direnv status | grep "Loaded RC path" | sed -e "s:[^\`].*\/::")"'
 description = "Currently loaded dotenv file"
 detect_files = [ '.env', '.envrc' ]
 shell = [ "/bin/bash" ]
 style = "green bold"
-
-[spack]
-symbol = "🅢 "
-
-[line_break]
-disabled = false

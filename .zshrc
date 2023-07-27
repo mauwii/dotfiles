@@ -95,7 +95,6 @@ fi
 # Add wisely, as too many plugins slow down shell startup.
 
 plugins=(
-    colored-man-pages
     ssh-agent
 )
 
@@ -136,6 +135,11 @@ __add_plugin azure az
 source ${ZSH}/oh-my-zsh.sh
 
 # User configuration
+
+# load shared shell configuration
+if [ -r ~/.shrc ]; then
+    source ~/.shrc
+fi
 
 # Ignore duplicate commands and commands starting with space
 setopt HIST_IGNORE_ALL_DUPS
@@ -202,9 +206,4 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
         . "${HB_ZSH_AUTO_SUGGESTIONS}"
     fi
     unset HB_ZSH_AUTO_SUGGESTIONS
-fi
-
-# source aliases
-if [ -r ${HOME}/.bash_aliases ]; then
-    source ${HOME}/.bash_aliases
 fi

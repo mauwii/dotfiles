@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# function to prepend fpath if dir exists
-__prepend_fpath() {
+# prepend dir to fpath if dir exists
+prepend_fpath() {
     if [ $# -ne 1 ]; then
-        echo "Usage: $0 <path>"
+        printf "Usage: %s <path>" "$0"
         return 1
     elif [ ! -d "$1" ]; then
         printf "%s Error:\n\t%s is not a directory" "$0" "$1"
@@ -16,8 +16,8 @@ __prepend_fpath() {
     fi
 }
 
-# function to prepend path if dir exists
-__prepend_path() {
+# prepend dir to path if dir exists
+prepend_path() {
     if [ $# -ne 1 ]; then
         echo "Usage: $0 <path>"
         return 1
@@ -32,15 +32,58 @@ __prepend_path() {
     fi
 }
 
-# function to initialize brew
-__brew_init() {
+# initialize brew
+brew_init() {
+    # fail if no or to many arguments are provided
     if [ $# -ne 1 ]; then
-        echo "Usage: __brew_init <brew_prefix>"
+        echo "Usage: $0 <brew_prefix>"
         return 1
+    # check if brew is available and initialize
     elif [ -x "${1}/bin/brew" ]; then
+        # add brew to shell environment
         eval "$("${1}/bin/brew" shellenv)"
-        export HOMEBREW_BUNDLE_FILE="${HOME}/.Brewfile"
-        __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh/site-functions"
-        __prepend_fpath "${HOMEBREW_PREFIX}/share/zsh-completions"
+        # set brew bundle file
+        export HOMEBREW_BUNDLE_FILE=~/.Brewfile
+        # enable autoremove
+        export HOMEBREW_AUTOREMOVE=1
+        # enable bat
+        if command -v bat >/dev/null 2>&1; then
+            export HOMEBREW_BAT=1
+        fi
+        # add fpaths if dirs exist
+        if [ -d "${1}/share/zsh/site-functions" ]; then
+            prepend_fpath "${1}/share/zsh/site-functions"
+        fi
+        if [ -d "${1}/share/zsh-completions" ]; then
+            prepend_fpath "${1}/share/zsh-completions"
+        fi
+    fi
+}
+
+# view markdown files
+viewmd() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: $0 <path to md file>"
+        return 1
+    elif ! command -v pandoc >/dev/null 2>&1; then
+        echo "Error: pandoc not found"
+    elif ! command -v w3m >/dev/null 2>&1; then
+        echo "Error: w3m not found"
+    else
+        pandoc -f markdown -t html "$1" | w3m -T text/html
+    fi
+}
+
+# view git flavored markdown files
+viewgitmd() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: $0 <path to md file>"
+        return 1
+    elif ! command -v pandoc >/dev/null 2>&1; then
+        echo "Error: pandoc not found"
+    elif ! command -v w3m >/dev/null 2>&1; then
+        echo "Error: w3m not found"
+    else
+        pandoc -f gfm -t html "$1" | w3m -T text/html -o display_image=true
     fi
 }

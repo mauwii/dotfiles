@@ -5,10 +5,10 @@ if [ -z "$PS1" ]; then
     return
 fi
 
-# source aliases
-if [ -f ~/.bash_aliases ]; then
-    # shellcheck source=.bash_aliases
-    . ~/.bash_aliases
+# load shared shell configuration
+if [ -r ~/.shrc ]; then
+    # shellcheck source=.shrc
+    source ~/.shrc
 fi
 
 # add ESP-IDF Directory if it exists

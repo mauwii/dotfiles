@@ -4,7 +4,7 @@
 # set locale
 export LANG="en_US.UTF-8"
 export LANGUAGE="en_US.UTF-8"
-export LC_ALL="de_DE.UTF-8"
+export LC_ALL="en_US.UTF-8"
 # eval "$(locale)"
 
 # set command mode
@@ -35,13 +35,19 @@ if command -v ruby >/dev/null 2>&1 && command -v gem >/dev/null 2>&1; then
 fi
 
 # docker bins
-prepend_path "$HOME/.docker/bin"
+if [ -d "$HOME/.docker/bin" ]; then
+    prepend_path "$HOME/.docker/bin"
+fi
 
 # docker cli-plugins
-prepend_path "$HOME/.docker/cli-plugins"
+if [ -d "$HOME/.docker/cli-plugins" ]; then
+    prepend_path "$HOME/.docker/cli-plugins"
+fi
 
 # personal bins
-prepend_path "$HOME/.local/bin"
+if [ -d "$HOME/.local/bin" ]; then
+    prepend_path "$HOME/.local/bin"
+fi
 
 # set PYENV_ROOT if dir exists and not set
 if [ -d ~/.pyenv ] && [ -z "${PYENV_ROOT}" ]; then

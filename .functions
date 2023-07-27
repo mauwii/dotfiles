@@ -36,7 +36,7 @@ prepend_path() {
 brew_init() {
     # fail if no or to many arguments are provided
     if [ $# -ne 1 ]; then
-        echo "Usage: $0 <brew_prefix>"
+        printf "Usage: %s <brew_prefix>\n" "$0"
         return 1
     # check if brew is available and initialize
     elif [ -x "${1}/bin/brew" ]; then

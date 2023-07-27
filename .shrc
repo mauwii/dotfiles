@@ -31,4 +31,6 @@ else
     export GIT_EDITOR="$EDITOR -w"
 fi
 
+export ARCHFLAGS='-arch arm64 -arch x86_64'
+
 export SHRC_LOADED="true"

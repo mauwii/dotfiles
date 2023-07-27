@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+# shellcheck shell=sh
 
 # check if this scritp was sourced
-if [ "$0" = "${BASH_SOURCE[0]}" ]; then
+if [[ "$-" != *"i"* ]]; then
     echo "Error: Script must be sourced"
     exit 1
 fi
@@ -27,7 +27,7 @@ fi
 
 # dotfiles management
 if [[ -d "${HOME}/.cfg" ]] && command -v /usr/bin/git >/dev/null 2>&1; then
-    alias config='git --git-dir="${HOME}/.cfg" --work-tree="${HOME}"'
+    alias config="git --git-dir=\"${HOME}/.cfg\" --work-tree=\"${HOME}\""
 fi
 if command -v config >/dev/null 2>&1; then
     # link all files to ~/.dotfiles to open in code

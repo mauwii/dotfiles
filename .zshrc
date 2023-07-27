@@ -5,11 +5,6 @@ if [ "${ZPROFILE_LOADED}" != "true" ] && [ -r ~/.zprofile ]; then
     source ~/.zprofile
 fi
 
-# load shared shell configuration if not loaded yet
-if [ "${SHRC_LOADED}" != "true" ] && [ -r ~/.shrc ]; then
-    source ~/.shrc
-fi
-
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -146,6 +141,15 @@ source ${ZSH}/oh-my-zsh.sh
 
 # User configuration
 
+# load shared shell configuration if not loaded yet
+if [ "${SHRC_LOADED}" != "true" ] && [ -r ~/.shrc ]; then
+    source ~/.shrc
+fi
+
+if [ -r ~/.bash_aliases ]; then
+    source ~/.bash_aliases
+fi
+
 # Ignore duplicate commands and commands starting with space
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE
@@ -186,23 +190,21 @@ fi
 
 if [ -d "${HOMEBREW_PREFIX}" ]; then
     # homebrew zsh-fast-syntax-highlighting
-    HB_ZSH_FAST_SYNTAX_HIGHLIGHTING="${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-    if [ -r ${HB_ZSH_FAST_SYNTAX_HIGHLIGHTING} ]; then
-        source ${HB_ZSH_FAST_SYNTAX_HIGHLIGHTING}
+    ZSH_FAST_SYNTAX_HIGHLIGHTING="${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+    if [ -r ${ZSH_FAST_SYNTAX_HIGHLIGHTING} ]; then
+        source ${ZSH_FAST_SYNTAX_HIGHLIGHTING}
     fi
-    unset HB_ZSH_FAST_SYNTAX_HIGHLIGHTING
     # homebrew zsh-autosuggestions plugin
-    HB_ZSH_AUTO_SUGGESTIONS="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-    if [ -r "${HB_ZSH_AUTO_SUGGESTIONS}" ]; then
+    ZSH_AUTOSUGGEST="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    if [ -r "${ZSH_AUTOSUGGEST}" ]; then
         # Disable autosuggestion for large buffers.
         ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
         # Enable aynchronous mode.
         ZSH_AUTOSUGGEST_USE_ASYNC=true
         # set strategy
         ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-        source $HB_ZSH_AUTO_SUGGESTIONS
+        source $ZSH_AUTOSUGGEST
     fi
-    unset HB_ZSH_AUTO_SUGGESTIONS
 fi
 
 export ZSHRC_LOADED="true"

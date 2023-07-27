@@ -3,8 +3,9 @@
 
 # set locale
 export LANG="en_US.UTF-8"
+export LANGUAGE="en_US.UTF-8"
 export LC_ALL="de_DE.UTF-8"
-eval "$(locale)"
+# eval "$(locale)"
 
 # set command mode
 export COMMAND_MODE="unix2003"

@@ -95,3 +95,5 @@ viewgitmd() {
         pandoc -f gfm -t html "$1" | w3m -T text/html -o display_image=true
     fi
 }
+
+export DOT_FUNCTIONS="true"

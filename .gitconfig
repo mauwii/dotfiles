@@ -7,8 +7,8 @@
 	attributesFile = ~/.config/git/gitattributes
 
 [pull]
-	# rebase = true
-	ff = only
+	rebase = true
+	ff = true
 	default = current
 
 [push]

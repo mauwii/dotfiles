@@ -1,0 +1,110 @@
+#!/bin/bash
+
+# I wanted to learn how to use case/shift, so I wrote this script which
+# makes debugging the dotfiles in different Distros a bit more comfy.
+
+for arg in "$@"; do
+    case "${arg[@]}" in
+        -h | --help)
+            printf "\nUsage:\t%s [Options]\n" "${0##*/}"
+            printf "\nLittle helper to test and debug the dotfiles in different Distros\n"
+            printf "\nOptions:\n\n"
+            printf "  -p, --dotfiles <path>\t\tPath to your dotfiles repo\t~/git/mauwii/dotfiles\n"
+            printf "  -i, --image <image:tag>\tContainer image to use\t\tdebian:bookworm\n"
+            printf "  -0, --no-pkgs\t\t\tswitch to install without pkgs\n"
+            printf "  -d, --debug\t\t\tswitch to enable debug messages\n"
+            exit 0
+            ;;
+        -p | --dotfiles*)
+            [ "${dotfiles:-unset}" != "unset" ] \
+                && echo "error: dotfiles can only be set once" \
+                && exit 1
+            if [[ "${arg}" != *"="* ]]; then
+                shift
+                dotfiles="$1"
+                return
+            else
+                dotfiles="${arg#*=}"
+            fi
+            export dotfiles
+            ;;
+        -i | --image*)
+            [ "${image:-unset}" != "unset" ] \
+                && echo "error: image can only be set once" \
+                && exit 1
+            if [[ "${arg}" != *"="* ]]; then
+                shift
+                image="$1"
+            else
+                image="${arg#*=}"
+            fi
+            export image
+            ;;
+        -d | --debug)
+            export DEBUG=true
+            ;;
+        -0 | --no-pkgs)
+            export no_pkgs=true
+            ;;
+        *)
+            shift
+            [[ -z $arg ]] \
+                && printf "error: unknown argument: %s\n" "$arg" \
+                && exit 1
+            ;;
+    esac
+    shift
+done
+
+# set dotfiles to default if not set
+export dotfiles=${dotfiles:-$HOME/git/mauwii/dotfiles}
+[[ "${DEBUG:-false}" == "true" ]] \
+    && echo "dotfiles set to: ${dotfiles}"
+
+# set image to default if not set
+export image="${image:-debian:bookworm}"
+[[ "${image}" == "debian:bookworm" && "$no_pkgs" != true && "${DEBUG:-false}" == "true" ]] \
+    && printf "no image set, using default: %s\n" "${image}"
+
+# set shell and installcmd based on image
+case "${image}" in
+    */alpine:* | */alpine | alpine:*)
+        shell="/bin/ash"
+        installcmd="apk add --no-cache"
+        pkgs="bat direnv exa nano pandoc w3m w3m-image"
+        ;;
+    */ubuntu:* | */ubuntu | ubuntu:*)
+        shell="/bin/bash"
+        installcmd="apt-get update && apt-get install -y --no-install-recommends"
+        pkgs="bat direnv exa nano pandoc w3m w3m-img"
+        ;;
+    */debian:* | */debian | debian:*)
+        shell="/bin/bash"
+        installcmd="apt-get update && apt-get install -y --no-install-recommends"
+        pkgs="bat direnv exa nano pandoc w3m w3m-img"
+        ;;
+    *)
+        printf "couldn't detect distro, will try to install %s without packages\n" "${image}"
+        no_img=true
+        ;;
+esac
+
+# unset pkgs if no_pkgs is set
+if [ "$no_pkgs" == true ]; then
+    unset pkgs installcmd \
+        && [ "$DEBUG" = "true" ] \
+        && printf "no packages will be installed\n"
+fi
+
+# print debug message if DEBUG is set
+[[ "${DEBUG:-false}" == "true" && "$no_pkgs" != true && "$no_img" != true ]] \
+    && printf "will use %s with these options:\n\t%s%s%s\n" "${image}" "${shell}" "${installcmd}" "${pkgs}"
+
+# execute container interactive
+docker run \
+    --rm --interactive --tty --workdir=/root \
+    -v "${dotfiles}:/root/dotfiles" \
+    -e DEBIAN_FRONTEND=noninteractive \
+    -e "DEBUG=$DEBUG" \
+    "${image:-debian:bookworm}" \
+    sh -c "${installcmd:+$installcmd $pkgs &&} $shell dotfiles/.dotfiles/setup_local.sh && $shell -l"

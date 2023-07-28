@@ -115,8 +115,6 @@ export dotfiles=${dotfiles:-$HOME/git/mauwii/dotfiles}
 
 # set image to default if not set
 export image="${image:-debian:bookworm}"
-[[ "${image}" == "debian:bookworm" && "${no_pkgs}" != true && "${DEBUG}" == true ]] \
-    && printf "no image set, using default: %s\n" "${image}"
 
 # set shell and installcmd based on image
 case "${image}" in
@@ -141,6 +139,9 @@ case "${image}" in
         ;;
 esac
 
+[[ "${no_img}" != true && "${DEBUG}" == true ]] \
+    && printf "image is set to: %s\n" "${image}"
+
 # unset installcmd and pkgs if no_pkgs is set
 if [ "$no_pkgs" == true ]; then
     pkgs=()
@@ -152,13 +153,14 @@ fi
 container_cmd=(
     "${installcmd[@]}" "${pkgs[@]}" ${pkgs:+&&} "${shell}" "dotfiles/.dotfiles/setup_local.sh" ${shell:+&&} "${shell}" "-l"
 )
-[ "${DEBUG}" == true ] && printf "container cmd set to: %s\n" "${container_cmd[*]}"
+[ "${DEBUG}" == true ] && printf "container cmd set to:\n%s\n" "${container_cmd[*]}"
 
-# print debug message if DEBUG is set
-[[ "${DEBUG}" == true && "$no_pkgs" != true && "$no_img" != true ]] \
-    && printf "will use %s with these options:\n\t%s %s %s\n" "${image}" "${shell}" "${installcmd[*]}" "${pkgs[*]}"
+# # print debug message if DEBUG is set
+# [[ "${DEBUG}" == true && "$no_pkgs" != true && "$no_img" != true ]] \
+#     && printf "will use %s with these options:\n\t%s %s %s\n" "${image}" "${shell}" "${installcmd[*]}" "${pkgs[*]}"
 
-# execute container interactive
+# execute container interactive in pseudo tty
+[ "${DEBUG}" == true ] && printf "executing container\n"
 docker run \
     --rm \
     --interactive \

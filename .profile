@@ -1,6 +1,12 @@
 #!/bin/sh
 # shellcheck disable=SC3003
 
+# ensure .profile is only loaded once
+if [ "${DOT_PROFILE}" = true ]; then
+    [ "${DEBUG}" = true ] && printf "already loaded .profile\n"
+    return
+fi
+
 [ "${DEBUG}" = "true" ] && printf "loading .profile\n"
 
 # set locale
@@ -21,24 +27,14 @@ if [ -r ~/.functions ]; then
 fi
 
 # OS variables
-[ "$(uname -s)" = "Darwin" ] \
-    && export MACOS=1 \
-    && export UNIX=1 \
-    && [ "$DEBUG" = "true" ] \
-    && printf "identified MACOS\n"
-[ "$(uname -s)" = "Linux" ] \
-    && export LINUX=1 \
-    && export UNIX=1 \
-    && [ "$DEBUG" = "true" ] \
-    && printf "identified LINUX\n"
-uname -s | grep -q "_NT-" \
-    && export WINDOWS=1 \
-    && [ "$DEBUG" = "true" ] \
-    && printf "identified WINDOWS\n"
-grep -q "Microsoft" /proc/version 2>/dev/null \
-    && export UBUNTU_ON_WINDOWS=1 \
-    && [ "$DEBUG" = "true" ] \
-    && printf "identified UBUNTU_ON_WINDOWS\n"
+[ "$(uname -s)" = "Darwin" ] && export MACOS=1 && export UNIX=1 \
+    && [ "$DEBUG" = "true" ] && printf "identified MACOS\n"
+[ "$(uname -s)" = "Linux" ] && export LINUX=1 && export UNIX=1 \
+    && [ "$DEBUG" = "true" ] && printf "identified LINUX\n"
+uname -s | grep -q "_NT-" && export WINDOWS=1 \
+    && [ "$DEBUG" = "true" ] && printf "identified WINDOWS\n"
+grep -q "Microsoft" /proc/version 2>/dev/null && export UBUNTU_ON_WINDOWS=1 \
+    && [ "$DEBUG" = "true" ] && printf "identified UBUNTU_ON_WINDOWS\n"
 
 # add brew to env
 if [ -d "/opt/homebrew" ]; then
@@ -138,19 +134,21 @@ case $- in
             && printf "case to find out if INTERACTIVE_SHELL seems broken\n"
         ;;
 esac
-if [ -n "${SHELL_IS}" ]; then
+
+if [ "${SHELL_IS:-unset}" != "unset" ]; then
     export SHELL_IS \
-        && LOAD_SHRC="true" \
-        && [ "${DEBUG}" = "true" ] \
+        && LOAD_SHRC=true \
+        && [ "${DEBUG}" = true ] \
         && printf "identified %s shell\n" "${SHELL_IS}"
 fi
-if [ "${LOAD_SHRC}" = "true" ] \
-    && [ "${SHELL}" = "/bin/sh" ] \
+
+if [ "${LOAD_SHRC}" = true ] \
+    && [ "${SHELL}" = /bin/sh ] \
     && [ -r ~/.shrc ] \
-    && [ "${DOT_SHRC}" != "true" ]; then
+    && [ "${DOT_SHRC}" != true ]; then
     # shellcheck source=.shrc
     . ~/.shrc
-    unset LOAD_SHRC
 fi
+unset LOAD_SHRC
 
 export DOT_PROFILE="true"

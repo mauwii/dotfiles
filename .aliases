@@ -1,11 +1,12 @@
 # shellcheck shell=sh
 
 # check if this scritp was sourced
-if [[ "$-" != *"i"* ]]; then
-    echo "Error: Script must be sourced"
-    exit 1
-elif [ "${DEBUG}" = "true" ]; then
-    printf "loading .aliases\n"
+if echo "$-" | grep -q '^[i]*$'; then
+    printf "%s must be sourced" "$0"
+    return 1
+else
+    [ "${DEBUG}" = "true" ] \
+        && printf "loading .aliases\n"
 fi
 
 # use exa as modern ls-replacement if available

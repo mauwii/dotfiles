@@ -1,6 +1,6 @@
 #!/bin/sh
 
-[ "${DEBUG}" = "true" ] && printf "loading .functions"
+[ "${DEBUG}" = "true" ] && printf "loading .functions\n"
 
 # prepend dir to fpath if dir exists
 prepend_fpath() {

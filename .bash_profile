@@ -1,5 +1,4 @@
 # shellcheck shell=bash
-set -x
 
 [ "$DEBUG" = "true" ] && printf "loading .bash_profile\n"
 

@@ -21,10 +21,24 @@ if [ -r ~/.functions ]; then
 fi
 
 # OS variables
-[ "$(uname -s)" = "Darwin" ] && export MACOS=1 && export UNIX=1
-[ "$(uname -s)" = "Linux" ] && export LINUX=1 && export UNIX=1
-uname -s | grep -q "_NT-" && export WINDOWS=1
-grep -q "Microsoft" /proc/version 2>/dev/null && export UBUNTU_ON_WINDOWS=1
+[ "$(uname -s)" = "Darwin" ] \
+    && export MACOS=1 \
+    && export UNIX=1 \
+    && [ "$DEBUG" = "true" ] \
+    && printf "identified MACOS\n"
+[ "$(uname -s)" = "Linux" ] \
+    && export LINUX=1 \
+    && export UNIX=1 \
+    && [ "$DEBUG" = "true" ] \
+    && printf "identified LINUX\n"
+uname -s | grep -q "_NT-" \
+    && export WINDOWS=1 \
+    && [ "$DEBUG" = "true" ] \
+    && printf "identified WINDOWS\n"
+grep -q "Microsoft" /proc/version 2>/dev/null \
+    && export UBUNTU_ON_WINDOWS=1 \
+    && [ "$DEBUG" = "true" ] \
+    && printf "identified UBUNTU_ON_WINDOWS\n"
 
 # add brew to env
 if [ -d "/opt/homebrew" ]; then
@@ -114,22 +128,29 @@ fi
 # source .shrc if interactive or login shell and not yet loaded
 case $- in
     *"l"*)
-        export INTERACTIVE_SHELL="true"
+        SHELL_IS="login"
         ;;
     *"i"*)
-        export INTERACTIVE_SHELL="true"
+        SHELL_IS="interactive"
         ;;
     *)
         [ "$DEBUG" = "true" ] \
             && printf "case to find out if INTERACTIVE_SHELL seems broken\n"
         ;;
 esac
-if [ "${INTERACTIVE_SHELL}" = "true" ] \
+if [ -n "${SHELL_IS}" ]; then
+    export SHELL_IS \
+        && LOAD_SHRC="true" \
+        && [ "${DEBUG}" = "true" ] \
+        && printf "identified %s shell\n" "${SHELL_IS}"
+fi
+if [ "${LOAD_SHRC}" = "true" ] \
     && [ "${SHELL}" = "/bin/sh" ] \
     && [ -r ~/.shrc ] \
     && [ "${DOT_SHRC}" != "true" ]; then
     # shellcheck source=.shrc
     . ~/.shrc
+    unset LOAD_SHRC
 fi
 
 export DOT_PROFILE="true"

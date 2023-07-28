@@ -1,9 +1,11 @@
 #!/usr/bin/env zsh
 
 # load ~/.zprofile if not loaded yet
-if [ "${ZPROFILE_LOADED}" != "true" ] && [ -r ~/.zprofile ]; then
+if [ "${DOT_ZPROFILE}" != "true" ] && [ -r ~/.zprofile ]; then
     source ~/.zprofile
 fi
+
+[ "$DEBUG" = "true" ] && printf "loading .zshrc\n"
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -142,7 +144,7 @@ source ${ZSH}/oh-my-zsh.sh
 # User configuration
 
 # load shared shell configuration if not loaded yet
-if [ "${SHRC_LOADED}" != "true" ] && [ -r ~/.shrc ]; then
+if [ "${DOT_SHRC}" != "true" ] && [ -r ~/.shrc ]; then
     source ~/.shrc
 fi
 
@@ -207,4 +209,4 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
     fi
 fi
 
-export ZSHRC_LOADED="true"
+export DOT_ZSHRC="true"

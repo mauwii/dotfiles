@@ -1,5 +1,7 @@
 #!/bin/sh
 
+[ "${DEBUG}" = "true" ] && printf "loading .functions"
+
 # prepend dir to fpath if dir exists
 prepend_fpath() {
     if [ $# -ne 1 ]; then
@@ -11,7 +13,9 @@ prepend_fpath() {
     elif [ -d "${1}" ] && echo "${SHELL}" | grep -q "zsh"; then
         _escaped=$(echo "${1}" | sed 's#\/#\\/#g')
         _cleaned=$(echo "$FPATH" | sed "s#:${_escaped}:#:#g")
-        export FPATH="${1}${_cleaned:+:$_cleaned}"
+        export FPATH="${1}${_cleaned:+:$_cleaned}" \
+            && [ "${DEBUG}" = "true" ] \
+            && printf "updated FPATH:\n\t%s\n" "$FPATH"
         unset _escaped _cleaned
     fi
 }
@@ -27,7 +31,9 @@ prepend_path() {
     else
         _escaped=$(echo "${1}" | sed 's#\/#\\/#g')
         _cleaned=$(echo "$PATH" | sed "s#:${_escaped}:#:#g")
-        export PATH="${1}${_cleaned:+:$_cleaned}"
+        export PATH="${1}${_cleaned:+:$_cleaned}" \
+            && [ "${DEBUG}" = "true" ] \
+            && printf "updated PATH:\n\t%s\n" "$PATH"
         unset _escaped _cleaned
     fi
 }
@@ -41,7 +47,9 @@ brew_init() {
     # check if brew is available and initialize
     elif [ -x "${1}/bin/brew" ]; then
         # add brew to shell environment
-        eval "$("${1}/bin/brew" shellenv)"
+        eval "$("${1}/bin/brew" shellenv)" \
+            && [ "${DEBUG}" = "true" ] \
+            && printf "brew initialized\n"
         # set brew bundle file
         export HOMEBREW_BUNDLE_FILE=~/.Brewfile
         # enable autoremove

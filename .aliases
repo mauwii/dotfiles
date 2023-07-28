@@ -4,13 +4,17 @@
 if [[ "$-" != *"i"* ]]; then
     echo "Error: Script must be sourced"
     exit 1
+elif [ "${DEBUG}" = "true" ]; then
+    printf "loading .aliases\n"
 fi
 
 # use exa as modern ls-replacement if available
 if command -v exa >/dev/null 2>&1; then
     alias ls='exa --icons --group-directories-first --git --accessed --modified --created'
-else
+elif [ "$(uname -s)" = "Darwin" ]; then
     alias ls='ls -G'
+else
+    alias ls='ls --color=auto --group-directories-first'
 fi
 
 # ls aliases
@@ -21,13 +25,17 @@ alias lr='ls -R'
 alias llr='lr -l'
 
 # replace cat with bat, but disable paging to make it behave like cat
+if command -v batcat >/dev/null 2>&1; then
+    batbin=$(which batcat)
+    ln -s "${batbin}" ~/.local/bin/bat
+fi
 if command -v bat >/dev/null 2>&1; then
     alias cat="bat --paging=never"
 fi
 
 # dotfiles management
 if [[ -d "${HOME}/.cfg" ]] && command -v /usr/bin/git >/dev/null 2>&1; then
-    alias config="command git --git-dir=\"${HOME}/.cfg\" --work-tree=\"${HOME}\""
+    alias config="/usr/bin/git --git-dir=${HOME}/.cfg --work-tree=${HOME}"
 fi
 if command -v config >/dev/null 2>&1; then
     # link all files to ~/.dotfiles to open in code
@@ -64,3 +72,5 @@ if [ -f "${HOMEBREW_BUNDLE_FILE}" ]; then
     alias install-brewfile='brew bundle --file="${HOMEBREW_BUNDLE_FILE}"'
     alias match-brewfile='brew bundle --force cleanup --file="${HOMEBREW_BUNDLE_FILE}"'
 fi
+
+export DOT_ALIASES=true

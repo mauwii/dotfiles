@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
 # load shared shell configuration if not loaded yet
-if [ "$SHRC_LOADED" != "true" ] && [ -r ~/.shrc ]; then
+if [ "$DOT_SHRC" != "true" ] && [ -r ~/.shrc ]; then
     # shellcheck source=.shrc
     . ~/.shrc
 fi
+
+[ "$DEBUG" = "true" ] && printf "loading .bashrc\n"
 
 # add ESP-IDF Directory if it exists
 IDF_PATH=~/esp/esp-idf
@@ -23,8 +25,10 @@ fi
 # Initialize pyenv
 if [ -d ~/.pyenv ] && [ -z "${PYENV_ROOT}" ]; then
     export PYENV_ROOT=~/.pyenv
+    [ "$DEBUG" = "true" ] \
+        && printf "setting PYENV_ROOT to %s\n" "$PYENV_ROOT"
 fi
-if [ -d "${PYENV_ROOT}/bin" ]; then
+if [ -n "$PYENV_ROOT" ] && [ -d "${PYENV_ROOT}/bin" ]; then
     if echo "${PATH}" | grep -q "$PYENV_ROOT/bin"; then
         export PATH="${PYENV_ROOT}/bin:${PATH//${PYENV_ROOT}\/bin/}"
     fi
@@ -62,4 +66,4 @@ if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
 fi
 
-export BASHRC_LOADED="true"
+export DOT_BASHRC="true"

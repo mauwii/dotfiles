@@ -1,13 +1,11 @@
 # setup
 
 Those are my dotfiles. Primary used on MacOS but I also want to use them in VMs,
-Containers, ...
-
-Find the original docs [here](https://www.atlassian.com/git/tutorials/dotfiles)
-
-Here are some options how you can set them up:
+Containers, ... Find the original docs [here](https://www.atlassian.com/git/tutorials/dotfiles)
 
 ## Locally
+
+Here you can find some options about how to install the dotfiles locally and how to update them.
 
 ### MacOS
 
@@ -55,14 +53,26 @@ I create an alias named `config`, which can be used as if you would use `git`. S
 
 ### Quick example
 
-This is just a quick example, of course it works better in a prepared container (like your Dev Containers or Codespaces) where you already have `git` and `curl` installed:
+This is just a quick example, of course it works better in a prepared container (like your Dev Containers or Codespaces) where you already have `git` and `curl` installed.
+
+The best option is if to create your own dotfiles, which you configure the way you need them :see_no_evil:
+
+#### via script
 
 ```sh
-docker run -it --rm alpine --workdir=/root \
+docker run -it --rm --workdir=/root alpine:3.18 \
 sh -c "wget -qO - https://bit.ly/baredotfiles | sh && sh -l"
 ```
 
-It works best if you create your own dotfiles which you configure the way you need :see_no_evil:
+#### mount cloned repo
+
+This example asumes that you execute the command from within the cloned repo:
+
+```sh
+docker run --rm -it --workdir=/root -v $(pwd):/root/dotfiles debian \
+sh -c "apt-get update && apt-get install -y exa nano pandoc w3m w3m-img \
+&& sh dotfiles/.dotfiles/setup_local.sh && bash -l"
+```
 
 ### Dockerfile
 
@@ -72,8 +82,12 @@ FROM debian:stable
 ...
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        git \
         curl \
+        exa \
+        git \
+        pandoc \
+        w3m \
+        w3m-img \
     && curl -Lks https://bit.ly/baredotfiles | /bin/bash \
     && rm -rf /var/lib/apt/lists/*
 ...

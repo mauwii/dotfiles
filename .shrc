@@ -1,8 +1,10 @@
 #!/bin/sh
 # shellcheck disable=SC3003
 
+[ "${DEBUG}" = "true" ] && printf "loading .shrc\n"
+
 # load aliases
-if [ -r ~/.aliases ]; then
+if [ -r ~/.aliases ] && [ "${DOT_ALIASES}" != "true" ]; then
     # shellcheck source=.aliases
     . ~/.aliases
 fi
@@ -33,4 +35,4 @@ fi
 
 export ARCHFLAGS='-arch arm64 -arch x86_64'
 
-export SHRC_LOADED="true"
+export DOT_SHRC="true"

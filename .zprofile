@@ -1,13 +1,13 @@
 #!/usr/bin/env zsh
 
 # load cross-compatible profile
-if [ -r ~/.profile ]; then
+if [ -r ~/.profile ] && [ "${DOT_PROFILE}" != "true!" ]; then
     source ~/.profile
 fi
 
 # # load ~/.zshrc if not loaded yet
-# if [ "${ZSHRC_LOADED}" != "true" ] && [ -r ~/.zshrc ]; then
+# if [ "${DOT_ZSHRC}" != "true" ] && [ -r ~/.zshrc ]; then
 #     source ~/.zshrc
 # fi
 
-export ZPROFILE_LOADED="true"
+export DOT_ZPROFILE="true"

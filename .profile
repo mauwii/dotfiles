@@ -1,6 +1,8 @@
 #!/bin/sh
 # shellcheck disable=SC3003
 
+[ "${DEBUG}" = "true" ] && printf "loading .profile\n"
+
 # set locale
 export LANG="en_US.UTF-8"
 export LANGUAGE="en_US.UTF-8"
@@ -13,7 +15,9 @@ export COMMAND_MODE="unix2003"
 # add shell functions
 if [ -r ~/.functions ]; then
     # shellcheck source=.functions
-    . ~/.functions
+    . ~/.functions \
+        && [ "${DEBUG}" = "true" ] \
+        && printf "loaded .functions\n"
 fi
 
 # OS variables
@@ -45,9 +49,8 @@ if [ -d "$HOME/.docker/cli-plugins" ]; then
 fi
 
 # personal bins
-if [ -d "$HOME/.local/bin" ]; then
-    prepend_path "$HOME/.local/bin"
-fi
+mkdir -p ~/.local/bin
+prepend_path "$HOME/.local/bin"
 
 # set PYENV_ROOT if dir exists and not set
 if [ -d ~/.pyenv ] && [ -z "${PYENV_ROOT}" ]; then
@@ -110,16 +113,23 @@ fi
 
 # source .shrc if interactive or login shell and not yet loaded
 case $- in
-    *l*) INTERACTIVE_SHELL="true" ;;
-    *i*) INTERACTIVE_SHELL="true" ;;
-    *) return ;;
+    *"l"*)
+        export INTERACTIVE_SHELL="true"
+        ;;
+    *"i"*)
+        export INTERACTIVE_SHELL="true"
+        ;;
+    *)
+        [ "$DEBUG" = "true" ] \
+            && printf "case to find out if INTERACTIVE_SHELL seems broken\n"
+        ;;
 esac
 if [ "${INTERACTIVE_SHELL}" = "true" ] \
     && [ "${SHELL}" = "/bin/sh" ] \
     && [ -r ~/.shrc ] \
-    && [ "${SHRC_LOADED}" != "true" ]; then
+    && [ "${DOT_SHRC}" != "true" ]; then
     # shellcheck source=.shrc
     . ~/.shrc
 fi
 
-export PROFILE_LOADED="true"
+export DOT_PROFILE="true"

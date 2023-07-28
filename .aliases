@@ -2,7 +2,7 @@
 
 # check if this scritp was sourced
 if echo "$-" | grep -q '^[i]*$'; then
-    printf "%s must be sourced" "$0"
+    printf "%s must be sourced\n" "$0"
     return 1
 else
     [ "${DEBUG}" = "true" ] \

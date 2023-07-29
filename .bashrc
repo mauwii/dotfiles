@@ -6,7 +6,7 @@ if [ "$DOT_SHRC" != "true" ] && [ -r ~/.shrc ]; then
     . ~/.shrc
 fi
 
-[ "$DEBUG" = "true" ] && printf "loading .bashrc\n"
+debuglog "loading .bashrc\n"
 
 # add ESP-IDF Directory if it exists
 IDF_PATH=~/esp/esp-idf
@@ -25,8 +25,7 @@ fi
 # Initialize pyenv
 if [ -d ~/.pyenv ] && [ -z "${PYENV_ROOT}" ]; then
     export PYENV_ROOT=~/.pyenv
-    [ "$DEBUG" = "true" ] \
-        && printf "setting PYENV_ROOT to %s\n" "$PYENV_ROOT"
+    debuglog "setting PYENV_ROOT to %s\n" "$PYENV_ROOT"
 fi
 if [ -n "$PYENV_ROOT" ] && [ -d "${PYENV_ROOT}/bin" ]; then
     if echo "${PATH}" | grep -q "$PYENV_ROOT/bin"; then

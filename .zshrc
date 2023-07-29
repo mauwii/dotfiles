@@ -5,7 +5,7 @@ if [ "${DOT_ZPROFILE}" != "true" ] && [ -r ~/.zprofile ]; then
     source ~/.zprofile
 fi
 
-[ "$DEBUG" = "true" ] && printf "loading .zshrc\n"
+debuglog "loading .zshrc\n"
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH

@@ -5,9 +5,9 @@
 if [ "${DOT_PROFILE}" = true ]; then
     [ "${DEBUG}" = true ] && printf "already loaded .profile\n"
     return
+else
+    [ "${DEBUG}" = true ] && printf "loading .profile\n"
 fi
-
-[ "${DEBUG}" = "true" ] && printf "loading .profile\n"
 
 # set locale
 export LANG="en_US.UTF-8"
@@ -22,19 +22,18 @@ export COMMAND_MODE="unix2003"
 if [ -r ~/.functions ]; then
     # shellcheck source=.functions
     . ~/.functions \
-        && [ "${DEBUG}" = "true" ] \
-        && printf "loaded .functions\n"
+        && debuglog "loaded .functions\n"
 fi
 
 # OS variables
 [ "$(uname -s)" = "Darwin" ] && export MACOS=1 && export UNIX=1 \
-    && [ "$DEBUG" = "true" ] && printf "identified MACOS\n"
+    && debuglog "identified MACOS\n"
 [ "$(uname -s)" = "Linux" ] && export LINUX=1 && export UNIX=1 \
-    && [ "$DEBUG" = "true" ] && printf "identified LINUX\n"
+    && debuglog "identified LINUX\n"
 uname -s | grep -q "_NT-" && export WINDOWS=1 \
-    && [ "$DEBUG" = "true" ] && printf "identified WINDOWS\n"
+    && debuglog "identified WINDOWS\n"
 grep -q "Microsoft" /proc/version 2>/dev/null && export UBUNTU_ON_WINDOWS=1 \
-    && [ "$DEBUG" = "true" ] && printf "identified UBUNTU_ON_WINDOWS\n"
+    && debuglog "identified UBUNTU_ON_WINDOWS\n"
 
 # add brew to env
 if [ -d "/opt/homebrew" ]; then
@@ -92,7 +91,8 @@ fi
 
 # change docker socket
 DOCKER_HOST="$HOME/.docker/run/docker.sock"
-if [ -S "$DOCKER_HOST" ] && [ ! -S /var/run/docker.socket ] && [ "$(docker context show)" = "default" ]; then
+if [ -S "$DOCKER_HOST" ] && [ ! -S /var/run/docker.socket ] \
+    && [ "$(docker context show)" = "default" ]; then
     export DOCKER_HOST="unix://$DOCKER_HOST"
 else
     unset DOCKER_HOST
@@ -130,16 +130,14 @@ case $- in
         SHELL_IS="interactive"
         ;;
     *)
-        [ "$DEBUG" = "true" ] \
-            && printf "case to find out if INTERACTIVE_SHELL seems broken\n"
+        debuglog "case to find out if INTERACTIVE_SHELL seems broken\n"
         ;;
 esac
 
 if [ "${SHELL_IS:-unset}" != "unset" ]; then
     export SHELL_IS \
         && LOAD_SHRC=true \
-        && [ "${DEBUG}" = true ] \
-        && printf "identified %s shell\n" "${SHELL_IS}"
+        && debuglog "identified %s shell\n" "${SHELL_IS}"
 fi
 
 if [ "${LOAD_SHRC}" = true ] \

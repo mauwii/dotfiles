@@ -1,6 +1,15 @@
-#!/bin/sh
+# shellcheck shell=sh
 
-[ "${DEBUG}" = "true" ] && printf "loading .functions\n"
+# small function to print log messages if $DEBUG is true
+# for info how to format check out the manpage of printf
+debuglog() {
+    if [ "${DEBUG}" = true ]; then
+        printf -v _logmsg "$@"
+        printf "%s: %s" "$(date "+%T")" "${_logmsg}"
+    fi
+}
+
+debuglog "loading .functions\n"
 
 # prepend dir to fpath if dir exists
 prepend_fpath() {
@@ -14,8 +23,7 @@ prepend_fpath() {
         _escaped=$(echo "${1}" | sed 's#\/#\\/#g')
         _cleaned=$(echo "$FPATH" | sed "s#:${_escaped}:#:#g")
         export FPATH="${1}${_cleaned:+:$_cleaned}" \
-            && [ "${DEBUG}" = "true" ] \
-            && printf "updated FPATH:\n\t%s\n" "$FPATH"
+            && debuglog "updated FPATH: %s\n" "$FPATH"
         unset _escaped _cleaned
     fi
 }
@@ -32,8 +40,7 @@ prepend_path() {
         _escaped=$(echo "${1}" | sed 's#\/#\\/#g')
         _cleaned=$(echo "$PATH" | sed "s#:${_escaped}:#:#g")
         export PATH="${1}${_cleaned:+:$_cleaned}" \
-            && [ "${DEBUG}" = "true" ] \
-            && printf "updated PATH:\n\t%s\n" "$PATH"
+            && debuglog "updated PATH: %s\n" "$PATH"
         unset _escaped _cleaned
     fi
 }
@@ -48,8 +55,7 @@ brew_init() {
     elif [ -x "${1}/bin/brew" ]; then
         # add brew to shell environment
         eval "$("${1}/bin/brew" shellenv)" \
-            && [ "${DEBUG}" = "true" ] \
-            && printf "brew initialized\n"
+            && debuglog "brew initialized\n"
         # set brew bundle file
         export HOMEBREW_BUNDLE_FILE=~/.Brewfile
         # enable autoremove

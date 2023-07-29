@@ -1,7 +1,6 @@
-#!/bin/sh
-# shellcheck disable=SC3003
+# shellcheck shell=sh
 
-[ "${DEBUG}" = "true" ] && printf "loading .shrc\n"
+debuglog "loading .shrc\n"
 
 # load aliases
 if [ -r ~/.aliases ] && [ "${DOT_ALIASES}" != "true" ]; then

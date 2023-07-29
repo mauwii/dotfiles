@@ -18,8 +18,6 @@ if [ "$DOT_SHRC" != true ] && [ -r ~/.shrc ]; then
     . ~/.shrc
 fi
 
-debuglog "loading .bashrc\n"
-
 # add ESP-IDF Directory if it exists
 IDF_PATH=~/esp/esp-idf
 if [ -f "${IDF_PATH}/export.sh" ]; then

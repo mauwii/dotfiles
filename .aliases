@@ -4,9 +4,11 @@
 if echo "$-" | grep -q '^[i]*$'; then
     printf "%s must be sourced\n" "$0"
     return 1
+elif [ "${DOT_ALIASES}" = true ]; then
+    debuglog ".aliases has already been loaded\n"
+    return
 else
-    [ "${DEBUG}" = "true" ] \
-        && printf "loading .aliases\n"
+    debuglog "loading .aliases\n"
 fi
 
 # use exa as modern ls-replacement if available

@@ -3,7 +3,7 @@
 # small function to print log messages if $DEBUG is true
 # for info how to format check man printf
 debuglog() {
-    if [ "${DEBUG}" = "true" ]; then
+    if [ "${DEBUG}" = true ]; then
         printf -v _logmsg "$@"
         printf "%s: %s" "$(date "+%T")" "${_logmsg}"
     fi

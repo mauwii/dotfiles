@@ -1,7 +1,19 @@
 #!/usr/bin/env bash
 
+# check if this scritp was sourced
+if echo "$-" | grep -q '^[i]*$'; then
+    printf "%s must be sourced\n" "$0"
+    return 1
+# check it was not sourced before
+elif [ "${DOT_BASHRC}" = true ]; then
+    debuglog ".bashrc has already been loaded\n"
+    return
+else
+    debuglog "loading .bashrc\n"
+fi
+
 # load shared shell configuration if not loaded yet
-if [ "$DOT_SHRC" != "true" ] && [ -r ~/.shrc ]; then
+if [ "$DOT_SHRC" != true ] && [ -r ~/.shrc ]; then
     # shellcheck source=.shrc
     . ~/.shrc
 fi
@@ -65,4 +77,4 @@ if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
 fi
 
-export DOT_BASHRC="true"
+export DOT_BASHRC=true

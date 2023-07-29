@@ -1,12 +1,17 @@
-#!/bin/sh
-# shellcheck disable=SC3003
+# shellcheck shell=sh
 
-# ensure .profile is only loaded once
-if [ "${DOT_PROFILE}" = true ]; then
-    [ "${DEBUG}" = true ] && printf "already loaded .profile\n"
+DEBUG=true
+
+# check if this scritp was sourced
+if echo "$-" | grep -q '^[i]*$'; then
+    printf "%s must be sourced\n" "$0"
+    return 1
+# check it was not sourced before
+elif [ "${DOT_PROFILE}" = true ]; then
+    debuglog ".profile has already been loaded\n"
     return
 else
-    [ "${DEBUG}" = true ] && printf "loading .profile\n"
+    printf "loading .profile\n"
 fi
 
 # set locale
@@ -15,14 +20,16 @@ export LANGUAGE="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 # eval "$(locale)"
 
+# set timezone
+export TZ="CEST-1CEST,M3.5.0,M10.5.0/3"
+
 # set command mode
 export COMMAND_MODE="unix2003"
 
 # add shell functions
 if [ -r ~/.functions ]; then
     # shellcheck source=.functions
-    . ~/.functions \
-        && debuglog "loaded .functions\n"
+    . ~/.functions
 fi
 
 # OS variables
@@ -149,4 +156,4 @@ if [ "${LOAD_SHRC}" = true ] \
 fi
 unset LOAD_SHRC
 
-export DOT_PROFILE="true"
+export DOT_PROFILE=true

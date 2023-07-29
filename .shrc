@@ -1,9 +1,19 @@
 # shellcheck shell=sh
 
-debuglog "loading .shrc\n"
+# check if this scritp was sourced
+if echo "$-" | grep -q '^[i]*$'; then
+    printf "%s must be sourced\n" "$0"
+    return 1
+# ensure .shrc is only loaded once
+elif [ "${DOT_SHRC}" = true ]; then
+    debuglog "already loaded .shrc\n"
+    return
+else
+    debuglog "loading .shrc\n"
+fi
 
 # load aliases
-if [ -r ~/.aliases ] && [ "${DOT_ALIASES}" != "true" ]; then
+if [ -r ~/.aliases ] && [ "${DOT_ALIASES}" != true ]; then
     # shellcheck source=.aliases
     . ~/.aliases
 fi
@@ -34,4 +44,4 @@ fi
 
 export ARCHFLAGS='-arch arm64 -arch x86_64'
 
-export DOT_SHRC="true"
+export DOT_SHRC=true

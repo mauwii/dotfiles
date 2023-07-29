@@ -1,11 +1,11 @@
 #!/usr/bin/env zsh
 
+debuglog "loading .zshrc\n"
+
 # load ~/.zprofile if not loaded yet
-if [ "${DOT_ZPROFILE}" != "true" ] && [ -r ~/.zprofile ]; then
+if [ "${DOT_ZPROFILE}" != true ] && [ -r ~/.zprofile ]; then
     source ~/.zprofile
 fi
-
-debuglog "loading .zshrc\n"
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -29,7 +29,7 @@ export DEFAULT_USER="${USER}"
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
 # Uncomment the following line to use case-sensitive completion.
-CASE_SENSITIVE="true"
+CASE_SENSITIVE=true
 
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
@@ -110,7 +110,7 @@ function __add_plugin() {
     _plugin="${1}"
     _executable="${2}"
     if [ $# -gt 2 ]; then
-        echo "Usage: __add_plugin <plugin> [<executable>]"
+        printf "Usage: %s <plugin> [<executable>]" $0
         return 1
     fi
     if command -v "${_exectuable:-$_plugin}" >/dev/null 2>&1; then
@@ -144,7 +144,7 @@ source ${ZSH}/oh-my-zsh.sh
 # User configuration
 
 # load shared shell configuration if not loaded yet
-if [ "${DOT_SHRC}" != "true" ] && [ -r ~/.shrc ]; then
+if [ "${DOT_SHRC}" != true ] && [ -r ~/.shrc ]; then
     source ~/.shrc
 fi
 
@@ -209,4 +209,4 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
     fi
 fi
 
-export DOT_ZSHRC="true"
+export DOT_ZSHRC=true

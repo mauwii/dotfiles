@@ -1,13 +1,16 @@
 #!/usr/bin/env zsh
 
+# ensure .zprofile is only loaded once
+if [ "${DOT_ZPROFILE}" = true ]; then
+    [ "${DEBUG}" = true ] && printf "already loaded .zprofile\n"
+    return
+else
+    [ "${DEBUG}" = true ] && printf "loading .zprofile\n"
+fi
+
 # load cross-compatible profile
-if [ -r ~/.profile ] && [ "${DOT_PROFILE}" != "true!" ]; then
+if [ -r ~/.profile ] && [ "${DOT_PROFILE}" != true ]; then
     source ~/.profile
 fi
 
-# # load ~/.zshrc if not loaded yet
-# if [ "${DOT_ZSHRC}" != "true" ] && [ -r ~/.zshrc ]; then
-#     source ~/.zshrc
-# fi
-
-export DOT_ZPROFILE="true"
+export DOT_ZPROFILE=true

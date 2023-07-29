@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-[ "$DEBUG" = true ] && printf "loading .bash_profile\n"
+[ "$DEBUG" = true ] && printf "[%s] loading .bash_profile\n" "$(date "+%T")"
 
 # load cross-compatible profile if not loaded yet
 if [ -r ~/.profile ] && [ "$DOT_PROFILE" != true ]; then
@@ -14,4 +14,4 @@ if [ -r ~/.bashrc ] && [ "$DOT_BASHRC" != true ]; then
     . ~/.bashrc
 fi
 
-export DOT_BASHPROFILE=true
+DOT_BASHPROFILE=true

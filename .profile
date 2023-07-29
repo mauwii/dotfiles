@@ -1,17 +1,19 @@
 # shellcheck shell=sh
 
-DEBUG=true
+export DEBUG=true
+
+# add shell functions
+if [ -r ~/.functions ]; then
+    # shellcheck source=.functions
+    . ~/.functions
+fi
 
 # check if this scritp was sourced
 if echo "$-" | grep -q '^[i]*$'; then
     printf "%s must be sourced\n" "$0"
     return 1
-# check it was not sourced before
-elif [ "${DOT_PROFILE}" = true ]; then
-    debuglog ".profile has already been loaded\n"
-    return
 else
-    printf "loading .profile\n"
+    debuglog "loading .profile\n"
 fi
 
 # set locale
@@ -25,12 +27,6 @@ export TZ="CEST-1CEST,M3.5.0,M10.5.0/3"
 
 # set command mode
 export COMMAND_MODE="unix2003"
-
-# add shell functions
-if [ -r ~/.functions ]; then
-    # shellcheck source=.functions
-    . ~/.functions
-fi
 
 # OS variables
 [ "$(uname -s)" = "Darwin" ] && export MACOS=1 && export UNIX=1 \
@@ -137,14 +133,15 @@ case $- in
         SHELL_IS="interactive"
         ;;
     *)
-        debuglog "case to find out if INTERACTIVE_SHELL seems broken\n"
+        command -v debuglog >/dev/null 2>&1 \
+            && debuglog "case to find out if INTERACTIVE_SHELL seems broken\n"
         ;;
 esac
 
 if [ "${SHELL_IS:-unset}" != "unset" ]; then
-    export SHELL_IS \
-        && LOAD_SHRC=true \
-        && debuglog "identified %s shell\n" "${SHELL_IS}"
+    export SHELL_IS
+    LOAD_SHRC=true
+    debuglog "identified %s shell\n" "${SHELL_IS}"
 fi
 
 if [ "${LOAD_SHRC}" = true ] \
@@ -154,6 +151,4 @@ if [ "${LOAD_SHRC}" = true ] \
     # shellcheck source=.shrc
     . ~/.shrc
 fi
-unset LOAD_SHRC
-
-export DOT_PROFILE=true
+unset LOAD_SHRC SHELL_IS

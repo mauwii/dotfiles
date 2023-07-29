@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # I wanted to learn how to use case/shift, so I wrote this script which
 # makes debugging the dotfiles in different Distros a bit more comfy.
@@ -8,7 +8,7 @@
 debuglog() {
     if [ "${DEBUG}" = true ]; then
         printf -v _logmsg "$@"
-        printf "%s: %s" "$(date "+%T")" "${_logmsg}"
+        printf "[%s] %s" "$(date "+%T")" "${_logmsg}"
     fi
 }
 
@@ -165,17 +165,6 @@ case "${image}" in
         ;;
 esac
 
-# function to list all files from the bare repo
-getdotfiles() {
-    /usr/bin/git \
-        --git-dir="${HOME}"/.cfg \
-        --work-tree="${HOME}" \
-        ls-tree \
-        --full-tree -r \
-        --name-only HEAD
-}
-dotfiles+=($(getdotfiles))
-
 debuglog "dotfilesdir set to: %s\n" "${dotfilesdir}"
 [[ "${no_img}" != true ]] && debuglog "image is set to: %s\n" "${image}"
 
@@ -196,6 +185,20 @@ debuglog "container cmd set to: %s\n" "${container_cmd[*]}"
 export dockermountdir=${dockermountdir:-${dockerhome}/dotfiles}
 debuglog "dockermountdir is set to: %s\n" "${dockermountdir}"
 
+# function to list all files from the bare repo
+getdotfiles() {
+    /usr/bin/git \
+        --git-dir="${HOME}"/.cfg \
+        --work-tree="${HOME}" \
+        ls-tree \
+        --full-tree -r \
+        --name-only HEAD
+}
+
+# list dotfiles to array
+dotfiles+=($(getdotfiles))
+
+# create dockermount parameter for each dotfile
 for dotfile in "${dotfiles[@]}"; do
     _localfile="${dotfilesdir}/$dotfile"
     _dockerfile="${dockermountdir}/$dotfile"

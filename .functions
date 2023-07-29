@@ -6,11 +6,11 @@ debuglog() {
     if [ "${DEBUG}" = true ]; then
         # shellcheck disable=SC2059
         printf -v _logmsg "$@"
-        printf "%s: %s" "$(date "+%T")" "${_logmsg}"
+        printf "[%s] %s" "$(date "+%T")" "${_logmsg}"
     fi
 }
 
-debuglog "loading .functions\n"
+# debuglog "loading .functions\n"
 
 # prepend dir to fpath if dir exists
 prepend_fpath() {
@@ -21,8 +21,10 @@ prepend_fpath() {
         printf "%s Error:\n\t%s is not a directory" "$0" "$1"
         return 1
     elif [ -d "${1}" ] && echo "${SHELL}" | grep -q "zsh"; then
-        _escaped=$(echo "${1}" | sed 's#\/#\\/#g')
-        _cleaned=$(echo "$FPATH" | sed "s#:${_escaped}:#:#g")
+        _escaped=${1//\//\\\/}
+        # _escaped=$(echo "${1}" | sed 's#\/#\\/#g')
+        _cleaned=${FPATH//:${_escaped}:/:}
+        # _cleaned=$(echo "$FPATH" | sed "s#:${_escaped}:#:#g")
         export FPATH="${1}${_cleaned:+:$_cleaned}" \
             && debuglog "updated FPATH: %s\n" "$FPATH"
         unset _escaped _cleaned
@@ -38,8 +40,10 @@ prepend_path() {
         printf "%s Error:\n\t%s is not a directory" "$0" "$1"
         return 1
     else
-        _escaped=$(echo "${1}" | sed 's#\/#\\/#g')
-        _cleaned=$(echo "$PATH" | sed "s#:${_escaped}:#:#g")
+        _escaped=${1//\//\\\/}
+        # _escaped=$(echo "${1}" | sed 's#\/#\\/#g')
+        _cleaned=${PATH//:${_escaped}:/:}
+        # _cleaned=$(echo "$PATH" | sed "s#:${_escaped}:#:#g")
         export PATH="${1}${_cleaned:+:$_cleaned}" \
             && debuglog "updated PATH: %s\n" "$PATH"
         unset _escaped _cleaned
@@ -78,12 +82,12 @@ brew_init() {
 # view markdown files
 viewmd() {
     if [ $# -ne 1 ]; then
-        echo "Usage: $0 <path to md file>"
+        printf "Usage: %s <path to md file>" "$0"
         return 1
     elif ! command -v pandoc >/dev/null 2>&1; then
-        echo "Error: pandoc not found"
+        printf "Error: pandoc not found"
     elif ! command -v w3m >/dev/null 2>&1; then
-        echo "Error: w3m not found"
+        printf "Error: w3m not found"
     else
         pandoc -f markdown -t html "$1" | w3m -T text/html
     fi
@@ -92,15 +96,13 @@ viewmd() {
 # view git flavored markdown files
 viewgitmd() {
     if [ $# -ne 1 ]; then
-        echo "Usage: $0 <path to md file>"
+        printf "Usage: %s <path to md file>" "$0"
         return 1
     elif ! command -v pandoc >/dev/null 2>&1; then
-        echo "Error: pandoc not found"
+        printf "Error: pandoc not found"
     elif ! command -v w3m >/dev/null 2>&1; then
-        echo "Error: w3m not found"
+        printf "Error: w3m not found"
     else
         pandoc -f gfm -t html "$1" | w3m -T text/html -o display_image=true
     fi
 }
-
-export DOT_FUNCTIONS=true

@@ -13,7 +13,7 @@ else
 fi
 
 # load aliases
-if [ -r ~/.aliases ] && [ "${DOT_ALIASES}" != true ]; then
+if [ -r ~/.aliases ]; then
     # shellcheck source=.aliases
     . ~/.aliases
 fi
@@ -42,6 +42,6 @@ else
     export GIT_EDITOR="$EDITOR -w"
 fi
 
-export ARCHFLAGS='-arch arm64 -arch x86_64'
+# export ARCHFLAGS='-arch arm64 -arch x86_64'
 
-export DOT_SHRC=true
+DOT_SHRC=true

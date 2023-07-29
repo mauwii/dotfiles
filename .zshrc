@@ -1,7 +1,5 @@
 #!/usr/bin/env zsh
 
-debuglog "loading .zshrc\n"
-
 # load ~/.zprofile if not loaded yet
 if [ "${DOT_ZPROFILE}" != true ] && [ -r ~/.zprofile ]; then
     source ~/.zprofile
@@ -148,9 +146,9 @@ if [ "${DOT_SHRC}" != true ] && [ -r ~/.shrc ]; then
     source ~/.shrc
 fi
 
-if [ -r ~/.aliases ]; then
-    source ~/.aliases
-fi
+# if [ -r ~/.aliases ]; then
+#     source ~/.aliases
+# fi
 
 # Ignore duplicate commands and commands starting with space
 setopt HIST_IGNORE_ALL_DUPS
@@ -208,5 +206,3 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
         source $ZSH_AUTOSUGGEST
     fi
 fi
-
-export DOT_ZSHRC=true

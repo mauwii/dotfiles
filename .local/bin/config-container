@@ -1,7 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# I wanted to learn how to use case/shift, so I wrote this script which
+# makes debugging the dotfiles in different Distros a bit more comfy.
 
 # small function to print log messages if $DEBUG is true
-# for info how to format check man printf
+# find infos about how to format in the manpage of printf
 debuglog() {
     if [ "${DEBUG}" = true ]; then
         printf -v _logmsg "$@"
@@ -9,44 +12,65 @@ debuglog() {
     fi
 }
 
-# I wanted to learn how to use case/shift, so I wrote this script which
-# makes debugging the dotfiles in different Distros a bit more comfy.
-
 # initialize variables
-DEBUG=false
-workdir=/root
-shell=""
-installcmd=()
-pkgs=()
 
-# read arguments
+# enable output of debug messages
+DEBUG=${DEBUG:-false}
+# path to the dotfiles (bare)repo
+dotfilesdir="$HOME"
+# home directory in the container
+dockerhome="/root"
+# workdir in the container
+workdir="$dockerhome"
+# directory to mount the dotfiles in the container
+dockermountdir="${dockerhome}/dotfiles"
+# container image to use
+image="alpine:3.18"
+# default shell in the container
+shell=""
+# dotfiles to mount
+dotfiles=()
+# packages to install
+pkgs=()
+# command to install packages
+installcmd=()
+# commands to mount dotfiles
+dockermounts=()
+
+# read arguments which where passed to the script
 for arg in "$@"; do
     case "${arg[@]}" in
         -h | --help)
             printf "\nUsage:\t%s [Options]\n" "${0##*/}"
             printf "\nLittle helper to test and debug the dotfiles in different Distros\n"
             printf "\nOptions:\n\n"
-            printf "  -p, --dotfiles <path>\t\tPath to your dotfiles repo\t~/git/mauwii/dotfiles\n"
-            printf "  -i, --image <image:tag>\tContainer image to use\t\tdebian:bookworm\n"
+            printf "  -p, --dotfilesdir <path>\tPath to your dotfiles\t\t%s\n" "${dotfilesdir}"
+            printf "  -i, --image <image:tag>\tContainer image to use\t\t%s\n" "${image}"
             printf "  -0, --no-pkgs\t\t\tswitch to install without pkgs\n"
             printf "  -d, --debug\t\t\tswitch to enable debug messages\n"
             exit 0
             ;;
-        -p | --dotfiles*)
-            [ "${dotfiles:-unset}" != "unset" ] \
+        -p | --dotfilesdir*)
+            [ "${_dotfilesdir:-unset}" != "unset" ] \
                 && echo "error: dotfiles can only be set once" \
                 && exit 1
             if [[ "${arg}" != *"="* ]]; then
                 shift
-                dotfiles="$1"
+                _dotfilesdir="$1"
                 return
             else
-                dotfiles="${arg#*=}"
+                _dotfilesdir="${arg#*=}"
             fi
-            export dotfiles
+            if [ -d "$_dotfilesdir" ]; then
+                ## _dotfilesdir="$(realpath -e $_dotfilesdir)"
+                dotfilesdir="$_dotfilesdir"
+            else
+                printf "error: %s is not a directory" "${_dotfilesdir}"
+                exit 1
+            fi
             ;;
         -i | --image*)
-            [ "${image:-unset}" != "unset" ] \
+            [ "${_image:-unset}" != "unset" ] \
                 && echo "error: image can only be set once" \
                 && exit 1
             if [[ "${arg}" != *"="* ]]; then
@@ -96,11 +120,11 @@ for arg in "$@"; do
                 [ "${1: -1}" = "^" ] \
                     && echo "error: image can not end with a caret" \
                     && exit 1
-                image="$1"
+                _image="$1"
             else
-                image="${arg#*=}"
+                _image="${arg#*=}"
             fi
-            export image
+            export image="$_image"
             ;;
         -d | --debug)
             export DEBUG=true
@@ -117,13 +141,6 @@ for arg in "$@"; do
     esac
     shift
 done
-
-# set dotfiles to default if not set
-export dotfiles=${dotfiles:-$HOME/git/mauwii/dotfiles}
-debuglog "dotfiles set to: %s\n" "${dotfiles}"
-
-# set image to default if not set
-export image="${image:-alpine:3}"
 
 # set shell and installcmd based on image
 case "${image}" in
@@ -148,6 +165,18 @@ case "${image}" in
         ;;
 esac
 
+# function to list all files from the bare repo
+getdotfiles() {
+    /usr/bin/git \
+        --git-dir="${HOME}"/.cfg \
+        --work-tree="${HOME}" \
+        ls-tree \
+        --full-tree -r \
+        --name-only HEAD
+}
+dotfiles+=($(getdotfiles))
+
+debuglog "dotfilesdir set to: %s\n" "${dotfilesdir}"
 [[ "${no_img}" != true ]] && debuglog "image is set to: %s\n" "${image}"
 
 # unset installcmd and pkgs if no_pkgs is set
@@ -161,7 +190,19 @@ fi
 container_cmd=(
     "${installcmd[@]}" "${pkgs[@]}" ${pkgs:+&&} "${shell}" dotfiles/.dotfiles/setup_local.sh \&\& "${shell}" -l
 )
-debuglog "container cmd set to:\n%s\n" "${container_cmd[*]}"
+debuglog "container cmd set to: %s\n" "${container_cmd[*]}"
+
+# set dotfiles mountpoint to default if not set
+export dockermountdir=${dockermountdir:-${dockerhome}/dotfiles}
+debuglog "dockermountdir is set to: %s\n" "${dockermountdir}"
+
+for dotfile in "${dotfiles[@]}"; do
+    _localfile="${dotfilesdir}/$dotfile"
+    _dockerfile="${dockermountdir}/$dotfile"
+    if [[ -f "${_localfile}" ]]; then
+        dockermounts+=(-v "${_localfile}":"${_dockerfile}")
+    fi
+done
 
 # execute container interactive in pseudo tty
 debuglog "executing container\n"
@@ -170,7 +211,7 @@ docker run \
     --interactive \
     --tty \
     --workdir="${workdir}" \
-    -v "${dotfiles}:/root/dotfiles" \
+    "${dockermounts[@]}" \
     -e DEBIAN_FRONTEND=noninteractive \
     -e "DEBUG=$DEBUG" \
     --name dotfiles \

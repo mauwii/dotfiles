@@ -17,13 +17,13 @@ else
 fi
 
 # set locale
-export LANG="en_US.UTF-8"
-export LANGUAGE="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
+export LANG="en_US.UTF-8"
+# export LANGUAGE="en_US.UTF-8"
 # eval "$(locale)"
 
 # set timezone
-export TZ="CEST-1CEST,M3.5.0,M10.5.0/3"
+export TZ="Europe/Berlin"
 
 # set command mode
 export COMMAND_MODE="unix2003"
@@ -77,17 +77,20 @@ fi
 # initialize pyenv
 if command -v pyenv >/dev/null 2>&1; then
     eval "$(pyenv init --path)"
+    debuglog "initialized pyenv\n"
 fi
 
 # set kubeconfig
 if [ -r "${HOME}/.kube/config" ]; then
     export KUBECONFIG="${HOME}/.kube/config${KUBECONFIG:+:$KUBECONFIG}"
+    debuglog "set KUBECONFIG to %s\n" "$KUBECONFIG"
 fi
 
 # set dotnet root if dir exists
 DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
 if [ -d "${DOTNET_ROOT}" ] && command -v dotnet >/dev/null 2>&1; then
     export DOTNET_ROOT
+    debuglog "set DOTNET_ROOT to %s\n" "$DOTNET_ROOT"
 else
     unset DOTNET_ROOT
 fi
@@ -97,6 +100,7 @@ DOCKER_HOST="$HOME/.docker/run/docker.sock"
 if [ -S "$DOCKER_HOST" ] && [ ! -S /var/run/docker.socket ] \
     && [ "$(docker context show)" = "default" ]; then
     export DOCKER_HOST="unix://$DOCKER_HOST"
+    debuglog "set DOCKER_HOST to %s\n" "$DOCKER_HOST"
 else
     unset DOCKER_HOST
 fi

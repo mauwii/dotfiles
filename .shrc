@@ -32,7 +32,7 @@ export LESS_TERMEND=$'\E[0m'
 export LESS="--RAW-CONTROL-CHARS"
 
 # enable cli color
-export CLICOLOR=true
+export CLICOLOR="true"
 
 # Preferred editor for local and remote sessions
 if [ -n "${SSH_CONNECTION}" ]; then
@@ -44,4 +44,4 @@ fi
 
 # export ARCHFLAGS='-arch arm64 -arch x86_64'
 
-DOT_SHRC=true
+DOT_SHRC="true"

@@ -1,12 +1,13 @@
 #!/usr/bin/env zsh
 
-# load ~/.zprofile if not loaded yet
-if [ "${DOT_ZPROFILE}" != true ] && [ -r ~/.zprofile ]; then
-    source ~/.zprofile
-fi
+# # load ~/.zprofile if not loaded yet
+# if [ "${DOT_ZPROFILE}" != "true" ] && [ -r ~/.zprofile ]; then
+#     source ~/.zprofile
+# fi
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
+unset INFOPATH
 
 # Path to your oh-my-zsh installation.
 export ZSH=~/.oh-my-zsh
@@ -27,11 +28,11 @@ export DEFAULT_USER="${USER}"
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
 # Uncomment the following line to use case-sensitive completion.
-CASE_SENSITIVE=true
+CASE_SENSITIVE="true"
 
 # Uncomment the following line to use hyphen-insensitive completion.
 # Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+HYPHEN_INSENSITIVE="false"
 
 # Uncomment one of the following lines to change the auto-update behavior
 zstyle ':omz:update' mode disabled # disable automatic updates
@@ -88,10 +89,10 @@ ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
 # set History file
 HISTFILE=~/.zsh_history
 
-# source zstyles
-if [ -r ~/.zstyles ]; then
-    source ~/.zstyles
-fi
+# # source zstyles
+# if [ -r ~/.zstyles ]; then
+#     source ~/.zstyles
+# fi
 
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
@@ -142,7 +143,7 @@ source ${ZSH}/oh-my-zsh.sh
 # User configuration
 
 # load shared shell configuration if not loaded yet
-if [ "${DOT_SHRC}" != true ] && [ -r ~/.shrc ]; then
+if [ "${DOT_SHRC}" != "true" ] && [ -r ~/.shrc ]; then
     source ~/.shrc
 fi
 
@@ -200,7 +201,7 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
         # Disable autosuggestion for large buffers.
         ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
         # Enable aynchronous mode.
-        ZSH_AUTOSUGGEST_USE_ASYNC=true
+        ZSH_AUTOSUGGEST_USE_ASYNC="true"
         # set strategy
         ZSH_AUTOSUGGEST_STRATEGY=(history completion)
         source $ZSH_AUTOSUGGEST

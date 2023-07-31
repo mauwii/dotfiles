@@ -5,7 +5,7 @@ if echo "$-" | grep -q '^[i]*$'; then
     printf "%s must be sourced\n" "$0"
     return 1
 # check it was not sourced before
-elif [ "${DOT_BASHRC}" = true ]; then
+elif [ "${DOT_BASHRC}" = "true" ]; then
     debuglog ".bashrc has already been loaded\n"
     return
 else
@@ -13,9 +13,11 @@ else
 fi
 
 # load shared shell configuration if not loaded yet
-if [ "$DOT_SHRC" != true ] && [ -r ~/.shrc ]; then
+if [ "$DOT_SHRC" != "true" ] && [ -r ~/.shrc ]; then
     # shellcheck source=.shrc
     . ~/.shrc
+else
+    debuglog ".shrc has already been loaded\n"
 fi
 
 # add ESP-IDF Directory if it exists
@@ -75,4 +77,4 @@ if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
 fi
 
-DOT_BASHRC=true
+DOT_BASHRC="true"

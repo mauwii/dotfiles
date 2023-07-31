@@ -3,7 +3,7 @@
 # small function to print log messages if $DEBUG is true
 # for info how to format check out the manpage of printf
 debuglog() {
-    if [ "${DEBUG}" = true ]; then
+    if [ "${DEBUG}" = "true" ]; then
         # shellcheck disable=SC2059
         printf -v _logmsg "$@"
         printf "[%s] %s" "$(date "+%T")" "${_logmsg}"
@@ -103,6 +103,6 @@ viewgitmd() {
     elif ! command -v w3m >/dev/null 2>&1; then
         printf "Error: w3m not found"
     else
-        pandoc -f gfm -t html "$1" | w3m -T text/html -o display_image=true
+        pandoc -f gfm -t html "$1" | w3m -T text/html -o display_image="true"
     fi
 }

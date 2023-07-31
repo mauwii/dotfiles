@@ -8,7 +8,7 @@ fi
 
 # use exa as modern ls-replacement if available
 if command -v exa >/dev/null 2>&1; then
-    exa --git >/dev/null 2>&1 && exa_git=true
+    exa --git >/dev/null 2>&1 && exa_git="true"
     # shellcheck disable=SC2139
     alias ls="exa --icons --group-directories-first ${exa_git:+--git} --accessed --modified --created"
 elif [ "$(uname -s)" = "Darwin" ]; then
@@ -37,7 +37,7 @@ fi
 
 # dotfiles management
 if [[ -d "${HOME}/.cfg" ]] && command -v /usr/bin/git >/dev/null 2>&1; then
-    alias config="/usr/bin/git --git-dir=${HOME}/.cfg --work-tree=${HOME}"
+    alias config='git --bare --git-dir="${HOME}/.cfg/" --work-tree="${HOME}"'
     debuglog "dotfiles management enabled\n"
 fi
 if command -v config >/dev/null 2>&1; then
@@ -75,3 +75,8 @@ if [ -f "${HOMEBREW_BUNDLE_FILE}" ]; then
     alias install-brewfile='brew bundle --file="${HOMEBREW_BUNDLE_FILE}"'
     alias match-brewfile='brew bundle --force cleanup --file="${HOMEBREW_BUNDLE_FILE}"'
 fi
+
+# Recursively delete `.DS_Store` files
+alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
+# remove broken symlinks
+alias clsym="find -L . -name . -o -type d -prune -o -type l -exec rm {} +"

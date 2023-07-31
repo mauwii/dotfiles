@@ -1,7 +1,5 @@
 # shellcheck shell=sh
 
-export DEBUG=true
-
 # add shell functions
 if [ -r ~/.functions ]; then
     # shellcheck source=.functions
@@ -144,14 +142,14 @@ esac
 
 if [ "${SHELL_IS:-unset}" != "unset" ]; then
     export SHELL_IS
-    LOAD_SHRC=true
+    LOAD_SHRC="true"
     debuglog "identified %s shell\n" "${SHELL_IS}"
 fi
 
-if [ "${LOAD_SHRC}" = true ] \
+if [ "${LOAD_SHRC}" = "true" ] \
     && [ "${SHELL}" = /bin/sh ] \
     && [ -r ~/.shrc ] \
-    && [ "${DOT_SHRC}" != true ]; then
+    && [ "${DOT_SHRC}" != "true" ]; then
     # shellcheck source=.shrc
     . ~/.shrc
 fi

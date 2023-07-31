@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# shellcheck shell=bash
 
 # I wanted to learn how to use case/shift, so I wrote this script which
 # makes debugging the dotfiles in different Distros a bit more comfy.
@@ -6,7 +7,8 @@
 # small function to print log messages if $DEBUG is true
 # find infos about how to format in the manpage of printf
 debuglog() {
-    if [ "${DEBUG}" = true ]; then
+    if [ "${DEBUG}" = "true" ]; then
+        # shellcheck disable=SC2059
         printf -v _logmsg "$@"
         printf "[%s] %s" "$(date "+%T")" "${_logmsg}"
     fi
@@ -15,27 +17,27 @@ debuglog() {
 # initialize variables
 
 # enable output of debug messages
-DEBUG=${DEBUG:-false}
+export DEBUG=${DEBUG:-false}
 # path to the dotfiles (bare)repo
-dotfilesdir="$HOME"
+export dotfilesdir="$HOME"
 # home directory in the container
-dockerhome="/root"
+export dockerhome="/root"
 # workdir in the container
-workdir="$dockerhome"
+export workdir="$dockerhome"
 # directory to mount the dotfiles in the container
-dockermountdir="${dockerhome}/dotfiles"
+export dockermountdir="${dockerhome}/dotfiles"
 # container image to use
-image="alpine:3.18"
+export image="alpine:3.18"
 # default shell in the container
-shell=""
+export shell=""
 # dotfiles to mount
-dotfiles=()
+export dotfiles=()
 # packages to install
-pkgs=()
+export pkgs=()
 # command to install packages
-installcmd=()
+export installcmd=()
 # commands to mount dotfiles
-dockermounts=()
+export dockermounts=()
 
 # read arguments which where passed to the script
 for arg in "$@"; do
@@ -127,10 +129,10 @@ for arg in "$@"; do
             export image="$_image"
             ;;
         -d | --debug)
-            export DEBUG=true
+            export DEBUG="true"
             ;;
         -0 | --no-pkgs)
-            export no_pkgs=true
+            export no_pkgs="true"
             ;;
         *)
             shift
@@ -161,15 +163,15 @@ case "${image}" in
         ;;
     *)
         printf "couldn't detect distro, will try to install %s without packages\n" "${image}"
-        no_img=true
+        no_img="true"
         ;;
 esac
 
 debuglog "dotfilesdir set to: %s\n" "${dotfilesdir}"
-[[ "${no_img}" != true ]] && debuglog "image is set to: %s\n" "${image}"
+[[ "${no_img}" != "true" ]] && debuglog "image is set to: %s\n" "${image}"
 
 # unset installcmd and pkgs if no_pkgs is set
-if [ "$no_pkgs" == true ]; then
+if [ "$no_pkgs" == "true" ]; then
     pkgs=()
     installcmd=()
     debuglog "no packages will be installed\n"
@@ -181,7 +183,6 @@ container_cmd=(
 )
 debuglog "container cmd set to: %s\n" "${container_cmd[*]}"
 
-# set dotfiles mountpoint to default if not set
 export dockermountdir=${dockermountdir:-${dockerhome}/dotfiles}
 debuglog "dockermountdir is set to: %s\n" "${dockermountdir}"
 
@@ -195,7 +196,8 @@ getdotfiles() {
         --name-only HEAD
 }
 
-# list dotfiles to array
+# list of all dotfiles in the bare repo
+# shellcheck disable=SC2207
 dotfiles+=($(getdotfiles))
 
 # create dockermount parameter for each dotfile

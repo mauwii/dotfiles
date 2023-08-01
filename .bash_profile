@@ -5,7 +5,7 @@ if [ "${DEBUG:-false}" = "true" ]; then
 fi
 
 # load cross-compatible profile if not loaded yet
-if [ -r ~/.profile ] && [ "${DOT_PROFILE:-false}" = "false" ]; then
+if [ -r ~/.profile ] && [ "${DOT_PROFILE:-false}" != "true" ]; then
     # shellcheck source=.profile
     . ~/.profile
 fi

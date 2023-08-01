@@ -6,13 +6,7 @@ if [ -r ~/.functions ]; then
     . ~/.functions
 fi
 
-# check if this scritp was sourced
-if echo "$-" | grep -q '^[i]*$'; then
-    printf "%s must be sourced\n" "$0"
-    return 1
-else
-    debuglog "loading .profile\n"
-fi
+debuglog "loading .profile\n"
 
 # set locale
 export LC_ALL="en_US.UTF-8"

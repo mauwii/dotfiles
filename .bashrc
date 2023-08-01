@@ -1,11 +1,7 @@
 # shellcheck shell=bash
 
-# check if this scritp was sourced
-if echo "$-" | grep -q '^[i]*$'; then
-    printf "%s must be sourced\n" "$0"
-    return 1
 # check it was not sourced before
-elif [ "${DOT_BASHRC}" = "true" ]; then
+if [ "${DOT_BASHRC:-false}" = "true" ]; then
     debuglog ".bashrc has already been loaded\n"
     return
 else

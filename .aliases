@@ -1,11 +1,5 @@
 # shellcheck shell=sh
 
-# check if this scritp was sourced
-if echo "$-" | grep -q '^[i]*$'; then
-    printf "%s must be sourced\n" "$0"
-    return 1
-fi
-
 # use exa as modern ls-replacement if available
 if command -v exa >/dev/null 2>&1; then
     exa --git >/dev/null 2>&1 && exa_git="true"
@@ -74,6 +68,15 @@ fi
 if [ -f "${HOMEBREW_BUNDLE_FILE}" ]; then
     alias install-brewfile='brew bundle --file="${HOMEBREW_BUNDLE_FILE}"'
     alias match-brewfile='brew bundle --force cleanup --file="${HOMEBREW_BUNDLE_FILE}"'
+fi
+
+# add getidf alias if ~/esp/esp-idf exists
+IDF_PATH=~/esp/esp-idf
+if [ -f "${IDF_PATH}/export.sh" ]; then
+    export ESPIDF="${IDF_PATH}"
+    alias getidf='. ${ESPIDF}/export.sh'
+else
+    unset IDF_PATH
 fi
 
 # Recursively delete `.DS_Store` files

@@ -1,11 +1,7 @@
 # shellcheck shell=sh
 
-# check if this scritp was sourced
-if echo "$-" | grep -q '^[i]*$'; then
-    printf "%s must be sourced\n" "$0"
-    return 1
 # ensure .shrc is only loaded once
-elif [ "${DOT_SHRC}" = true ]; then
+if [ "${DOT_SHRC}" = "true" ]; then
     debuglog "already loaded .shrc\n"
     return
 else
@@ -40,15 +36,6 @@ if [ -n "${SSH_CONNECTION}" ]; then
 else
     export EDITOR="code"
     export GIT_EDITOR="${EDITOR} -w"
-fi
-
-# add getidf alias if ~/esp/esp-idf exists
-IDF_PATH=~/esp/esp-idf
-if [ -f "${IDF_PATH}/export.sh" ]; then
-    export ESPIDF="${IDF_PATH}"
-    alias getidf='. ${ESPIDF}/export.sh'
-else
-    unset IDF_PATH
 fi
 
 DOT_SHRC="true"

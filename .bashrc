@@ -54,7 +54,7 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
     if [ -r "${HOMEBREW_PREFIX}"/etc/profile.d/bash_completion.sh ]; then
         # shellcheck source=/dev/null
         . "${HOMEBREW_PREFIX}"/etc/profile.d/bash_completion.sh
-    else
+    elif [ -d "${HOMEBREW_PREFIX}/etc/bash_completion.d" ]; then
         find "${HOMEBREW_PREFIX}"/etc/bash_completion.d -type l \
             | while IFS= read -r completionscript; do
                 #shellcheck source=/dev/null

@@ -1,11 +1,11 @@
-# shellcheck shell=bash
+# shellcheck shell=bash disable=SC2034
 
 debuglog "loading .zshrc\n"
 
 # load ~/.zprofile if not loaded yet
-if [ "${DOT_ZPROFILE}" != "true" ] && [ -r ~/.zprofile ]; then
+if [ "${DOT_ZPROFILE}" != "true" ] && [ -r "${ZDOTDIR:-$HOME}/.zprofile" ]; then
     # shellcheck source=.zprofile
-    source ~/.zprofile
+    source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
 
 # If you come from bash you might have to change your $PATH.
@@ -17,21 +17,21 @@ ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)${ZSH_VERSION:+-$ZSH_VE
 export ZSH_COMPDUMP
 
 # set History file
-HISTFILE=~/.zsh_history
+HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history
 
 # if oh-my-zsh is installed
 if [ -d ~/.oh-my-zsh ]; then
     # Path to your oh-my-zsh installation.
-    export ZSH=~/.oh-my-zsh
+    ZSH=~/.oh-my-zsh
 
     # Set name of the theme to load --- if set to 'random', it will
     # load a random theme each time oh-my-zsh is loaded, in which case,
     # to know which specific one was loaded, run: echo $RANDOM_THEME
     # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-    export ZSH_THEME=agnoster
+    ZSH_THEME=agnoster
 
     # use DEFAULT_USER to disable "user@host" in agnoster-prompt when working locally
-    export DEFAULT_USER="${USER}"
+    DEFAULT_USER="${USER}"
 
     # Set list of themes to pick from when loading at random
     # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -75,7 +75,7 @@ if [ -d ~/.oh-my-zsh ]; then
     # Uncomment the following line if you want to disable marking untracked files
     # under VCS as dirty. This makes repository status check for large repositories
     # much, much faster.
-    DISABLE_UNTRACKED_FILES_DIRTY=${DISABLE_UNTRACKED_FILES_DIRTY:-"true"}
+    export DISABLE_UNTRACKED_FILES_DIRTY="true"
 
     # Uncomment the following line if you want to change the command execution time
     # stamp shown in the history command output.
@@ -144,10 +144,12 @@ fi
 zstyle ':omz:plugins:ssh-agent' quiet yes
 
 # add Identities from Keychain
-zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
+if [ "${MACOS}" -eq 1 ]; then
+    zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
+fi
 
 # load shared shell configuration if not loaded yet
-if [ "${DOT_SHRC}" != "true" ] && [ -r ~/.shrc ]; then
+if [ "${DOT_SHRC:-false}" = "false" ] && [ -r ~/.shrc ]; then
     # shellcheck source=.shrc
     source ~/.shrc
 fi
@@ -183,8 +185,8 @@ else
     unset ITERM2_SHELL_INTEGRATION
 fi
 
-if [ -d "${HOMEBREW_PREFIX:-false}" ]; then
-    # homebrew zsh-fast-syntax-highlighting
+if [ -d "${HOMEBREW_PREFIX}" ]; then
+    # homebrew zsh-fast-syntax-highlighting plugin
     ZSH_FAST_SYNTAX_HIGHLIGHTING="${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
     if [ -r "${ZSH_FAST_SYNTAX_HIGHLIGHTING}" ]; then
         # shellcheck source=/dev/null
@@ -208,5 +210,4 @@ if [ -d "${HOMEBREW_PREFIX:-false}" ]; then
     fi
 fi
 
-# shellcheck disable=SC2034
 DOT_ZSHRC="true"

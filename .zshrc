@@ -22,7 +22,7 @@ HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history
 # if oh-my-zsh is installed
 if [ -d ~/.oh-my-zsh ]; then
     # Path to your oh-my-zsh installation.
-    ZSH=~/.oh-my-zsh
+    export ZSH=~/.oh-my-zsh
 
     # Set name of the theme to load --- if set to 'random', it will
     # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -40,11 +40,11 @@ if [ -d ~/.oh-my-zsh ]; then
     # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
     # Uncomment the following line to use case-sensitive completion.
-    CASE_SENSITIVE=${CASE_SENSITIVE:-"true"}
+    CASE_SENSITIVE="true"
 
     # Uncomment the following line to use hyphen-insensitive completion.
     # Case-sensitive completion must be off. _ and - will be interchangeable.
-    HYPHEN_INSENSITIVE=${HYPHEN_INSENSITIVE:-"false"}
+    # HYPHEN_INSENSITIVE="true"
 
     # Uncomment one of the following lines to change the auto-update behavior
     zstyle ':omz:update' mode disabled # disable automatic updates
@@ -75,7 +75,7 @@ if [ -d ~/.oh-my-zsh ]; then
     # Uncomment the following line if you want to disable marking untracked files
     # under VCS as dirty. This makes repository status check for large repositories
     # much, much faster.
-    export DISABLE_UNTRACKED_FILES_DIRTY="true"
+    # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
     # Uncomment the following line if you want to change the command execution time
     # stamp shown in the history command output.
@@ -83,7 +83,7 @@ if [ -d ~/.oh-my-zsh ]; then
     # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
     # or set a custom format using the strftime function format specifications,
     # see 'man strftime' for details.
-    HIST_STAMPS=${HIST_STAMPS:-"dd.mm.yyyy"}
+    HIST_STAMPS="dd.mm.yyyy"
 
     # Would you like to use another custom folder than $ZSH/custom?
     # ZSH_CUSTOM=/path/to/new-custom-folder

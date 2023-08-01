@@ -4,7 +4,6 @@
 [core]
 	editor = code --wait
 	fileMode = false
-	attributesFile = ~/.config/git/gitattributes
 
 [pull]
 	rebase = true

@@ -4,6 +4,8 @@
 # I wanted to learn how to use case/shift, so I wrote this script which
 # makes debugging the dotfiles in different Distros a bit more comfy.
 
+# completion partially working: `compdef _gnu_generic config-container`
+
 # small function to print log messages if $DEBUG is true
 # find infos about how to format in the manpage of printf
 debuglog() {
@@ -31,7 +33,7 @@ dockermountdir="/mnt/dotfiles"
 # container image to use
 image="alpine:3.18"
 # default shell in the container
-shell="/bin/sh"
+shell="bash"
 # packages to install
 pkgs=()
 # command to install packages
@@ -39,15 +41,17 @@ installcmd=()
 
 # read arguments which where passed to the script
 for arg in "$@"; do
-    case "${arg[@]}" in
+    case "$arg" in
         -h | --help)
-            printf "\nUsage:\t%s [Options]\n" "${0##*/}"
+            printf "\nUsage:\t%s [options]\n" "${0##*/}"
             printf "\nLittle helper to test and debug the dotfiles in different Distros\n"
             printf "\nOptions:\n\n"
-            printf "  -p, --dotfilesdir <path>\tPath to your dotfiles\t\t%s\n" "${dotfilesdir}"
-            printf "  -i, --image <image:tag>\tContainer image to use\t\t%s\n" "${image}"
-            printf "  -0, --no-pkgs\t\t\tswitch to install without pkgs\n"
-            printf "  -d, --debug\t\t\tswitch to enable debug messages\n"
+            printf "  -h, --help \t\t\t Print this help message\n"
+            printf "  -p, --dotfilesdir <path> \t Path to your dotfiles \t\t%s\n" "${dotfilesdir}"
+            printf "  -i, --image <image:tag> \t Container image to use \t\t%s\n" "${image}"
+            printf "  -s, --shell <shell> \t\t Default shell in the container \t%s\n" "${shell}"
+            printf "  -0, --no-pkgs \t\t switch to install without pkgs\n"
+            printf "  -d, --debug \t\t\t switch to enable debug messages\n"
             exit 0
             ;;
         -p | --dotfilesdir*)
@@ -69,62 +73,78 @@ for arg in "$@"; do
                 exit 1
             fi
             ;;
+        -s | --shell*)
+            [ "${_shell:-unset}" != "unset" ] \
+                && echo "error: shell can only be set once" \
+                && exit 1
+            if [[ "${arg}" != *"="* ]]; then
+                shift
+                _shell="$1"
+                skip="true"
+            else
+                _shell="${arg#*=}"
+            fi
+            shell="$_shell"
+            continue
+            ;;
         -i | --image*)
             [ "${_image:-unset}" != "unset" ] \
                 && echo "error: image can only be set once" \
                 && exit 1
             if [[ "${arg}" != *"="* ]]; then
                 shift
-                [ -z "$1" ] \
-                    && echo "error: image can not be empty" \
-                    && exit 1
-                [ "${1:0:1}" = "-" ] \
-                    && echo "error: image can not start with a dash" \
-                    && exit 1
-                [ "${1:0:1}" = "/" ] \
-                    && echo "error: image can not start with a slash" \
-                    && exit 1
-                [ "${1:0:1}" = ":" ] \
-                    && echo "error: image can not start with a colon" \
-                    && exit 1
-                [ "${1: -1}" = ":" ] \
-                    && echo "error: image can not end with a colon" \
-                    && exit 1
-                [ "${1: -1}" = "/" ] \
-                    && echo "error: image can not end with a slash" \
-                    && exit 1
-                [ "${1: -1}" = "-" ] \
-                    && echo "error: image can not end with a dash" \
-                    && exit 1
-                [ "${1: -1}" = "." ] \
-                    && echo "error: image can not end with a dot" \
-                    && exit 1
-                [ "${1: -1}" = "_" ] \
-                    && echo "error: image can not end with an underscore" \
-                    && exit 1
-                [ "${1: -1}" = "@" ] \
-                    && echo "error: image can not end with an at sign" \
-                    && exit 1
-                [ "${1: -1}" = "!" ] \
-                    && echo "error: image can not end with an exclamation mark" \
-                    && exit 1
-                [ "${1: -1}" = "#" ] \
-                    && echo "error: image can not end with a hash" \
-                    && exit 1
-                [ "${1: -1}" = "$" ] \
-                    && echo "error: image can not end with a dollar sign" \
-                    && exit 1
-                [ "${1: -1}" = "%" ] \
-                    && echo "error: image can not end with a percent sign" \
-                    && exit 1
-                [ "${1: -1}" = "^" ] \
-                    && echo "error: image can not end with a caret" \
-                    && exit 1
                 _image="$1"
+                skip="true"
             else
                 _image="${arg#*=}"
             fi
+            [ -z "$_image" ] \
+                && echo "error: image can not be empty" \
+                && exit 1
+            [ "${_image:0:1}" = "-" ] \
+                && echo "error: image can not start with a dash" \
+                && exit 1
+            [ "${_image:0:1}" = "/" ] \
+                && echo "error: image can not start with a slash" \
+                && exit 1
+            [ "${_image:0:1}" = ":" ] \
+                && echo "error: image can not start with a colon" \
+                && exit 1
+            [ "${_image: -1}" = ":" ] \
+                && echo "error: image can not end with a colon" \
+                && exit 1
+            [ "${_image: -1}" = "/" ] \
+                && echo "error: image can not end with a slash" \
+                && exit 1
+            [ "${_image: -1}" = "-" ] \
+                && echo "error: image can not end with a dash" \
+                && exit 1
+            [ "${_image: -1}" = "." ] \
+                && echo "error: image can not end with a dot" \
+                && exit 1
+            [ "${_image: -1}" = "_" ] \
+                && echo "error: image can not end with an underscore" \
+                && exit 1
+            [ "${_image: -1}" = "@" ] \
+                && echo "error: image can not end with an at sign" \
+                && exit 1
+            [ "${_image: -1}" = "!" ] \
+                && echo "error: image can not end with an exclamation mark" \
+                && exit 1
+            [ "${_image: -1}" = "#" ] \
+                && echo "error: image can not end with a hash" \
+                && exit 1
+            [ "${_image: -1}" = "$" ] \
+                && echo "error: image can not end with a dollar sign" \
+                && exit 1
+            [ "${_image: -1}" = "%" ] \
+                && echo "error: image can not end with a percent sign" \
+                && exit 1
+            [ "${_image: -1}" = "^" ] \
+                && echo "error: image can not end with a caret" \
+                && exit 1
             image="$_image"
+            continue
             ;;
         -d | --debug)
             # enable debug messages
@@ -135,10 +155,12 @@ for arg in "$@"; do
             no_pkgs="true"
             ;;
         *)
-            shift
-            [[ "$arg" = "$1" ]] \
-                && printf "error: unknown argument: %s\n" "$arg" \
-                && exit 1
+            if [ "$skip" = "true" ]; then
+                unset skip
+            else
+                printf "error: unknown argument: %s\n" "$arg"
+                exit 1
+            fi
             ;;
     esac
     shift
@@ -147,22 +169,18 @@ done
 # set shell and installcmd based on image
 case "${image}" in
     */alpine:* | */alpine | alpine:* | alpine)
-        shell="bash"
         installcmd=(apk update \&\& apk add --no-cache)
         pkgs=(bat bash direnv exa nano pandoc starship w3m w3m-image)
         ;;
     */ubuntu:* | */ubuntu | ubuntu:* | ubuntu)
-        shell="bash"
         installcmd=(apt-get update \&\& apt-get install -y --no-install-recommends)
         pkgs=(bat direnv exa nano pandoc w3m w3m-img)
         ;;
     */debian:* | */debian | debian:* | debian)
-        shell="bash"
         installcmd=(apt-get update \&\& apt-get install -y --no-install-recommends)
         pkgs=(bat direnv exa nano pandoc w3m w3m-img)
         ;;
     */dotfiles:* | */dotfiles | dotfiles:* | dotfiles)
-        shell="zsh"
         no_pkgs="true"
         ;;
     *)
@@ -172,6 +190,7 @@ case "${image}" in
 esac
 
 debuglog "dotfilesdir set to: %s\n" "${dotfilesdir}"
+debuglog "shell set to: %s\n" "${shell}"
 
 if [[ "${no_img}" != "true" ]]; then
     debuglog "image is set to: %s\n" "${image}"

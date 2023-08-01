@@ -132,6 +132,14 @@ if [ -d ~/.oh-my-zsh ]; then
     # Add Plugins with different executable
     __add_plugin azure az
 
+    # silent SSH-Agent Start
+    zstyle ':omz:plugins:ssh-agent' quiet yes
+
+    # add Identities from Keychain
+    if [ "${MACOS}" -eq 1 ]; then
+        zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
+    fi
+
     if [ -r "${ZSH}/oh-my-zsh.sh" ]; then
         # shellcheck source=.oh-my-zsh/oh-my-zsh.sh disable=SC1094
         source "${ZSH}/oh-my-zsh.sh"
@@ -139,14 +147,6 @@ if [ -d ~/.oh-my-zsh ]; then
 fi
 
 # User configuration
-
-# silent SSH-Agent Start
-zstyle ':omz:plugins:ssh-agent' quiet yes
-
-# add Identities from Keychain
-if [ "${MACOS}" -eq 1 ]; then
-    zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
-fi
 
 # load shared shell configuration if not loaded yet
 if [ "${DOT_SHRC:-false}" = "false" ] && [ -r ~/.shrc ]; then

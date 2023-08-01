@@ -20,24 +20,24 @@ debuglog() {
 export DEBUG=${DEBUG:-false}
 # path to the dotfiles (bare)repo
 export dotfilesdir="$HOME"
+# dotfiles to mount
+export dotfiles=()
+# commands to mount dotfiles
+export dockermounts=()
 # home directory in the container
 export dockerhome="/root"
 # workdir in the container
 export workdir="$dockerhome"
 # directory to mount the dotfiles in the container
 export dockermountdir="${dockerhome}/dotfiles"
-# container image to use
+# default container image
 export image="alpine:3.18"
 # default shell in the container
-export shell=""
-# dotfiles to mount
-export dotfiles=()
+export shell="/bin/sh"
 # packages to install
 export pkgs=()
 # command to install packages
 export installcmd=()
-# commands to mount dotfiles
-export dockermounts=()
 
 # read arguments which where passed to the script
 for arg in "$@"; do
@@ -161,6 +161,10 @@ case "${image}" in
         installcmd=(apt-get update \&\& apt-get install -y --no-install-recommends)
         pkgs=(bat direnv exa nano pandoc w3m w3m-img)
         ;;
+    */dotfiles:* | */dotfiles | dotfiles:* | dotfiles)
+        shell="zsh"
+        unset installcmd pkgs
+        ;;
     *)
         printf "couldn't detect distro, will try to install %s without packages\n" "${image}"
         no_img="true"
@@ -172,18 +176,16 @@ debuglog "dotfilesdir set to: %s\n" "${dotfilesdir}"
 
 # unset installcmd and pkgs if no_pkgs is set
 if [ "$no_pkgs" == "true" ]; then
-    pkgs=()
-    installcmd=()
+    unset installcmd pkgs
     debuglog "no packages will be installed\n"
 fi
 
 # set container cmd
 container_cmd=(
-    "${installcmd[@]}" "${pkgs[@]}" ${pkgs:+&&} "${shell}" dotfiles/.dotfiles/setup_local.sh \&\& "${shell}" -l
+    "${installcmd[@]}" "${pkgs[@]}" ${pkgs:+&&} sh dotfiles/.dotfiles/setup_local.sh \&\& "${shell}" -l
 )
 debuglog "container cmd set to: %s\n" "${container_cmd[*]}"
 
-export dockermountdir=${dockermountdir:-${dockerhome}/dotfiles}
 debuglog "dockermountdir is set to: %s\n" "${dockermountdir}"
 
 # function to list all files from the bare repo

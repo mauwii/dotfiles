@@ -20,8 +20,6 @@ debuglog() {
 debug=${DEBUG:-false}
 # path to the dotfiles (bare)repo
 dotfilesdir="$HOME"
-# dotfiles to mount
-dotfiles=()
 # commands to mount dotfiles
 dockermounts=()
 # home directory in the container
@@ -203,11 +201,8 @@ getdotfiles() {
         --name-only HEAD
 }
 
-# list of all dotfiles in the bare repo
-dotfiles+=($(getdotfiles))
-
 # create dockermount parameter for each dotfile
-for dotfile in "${dotfiles[@]}"; do
+for dotfile in $(getdotfiles); do
     _localfile="${dotfilesdir}/$dotfile"
     _dockerfile="${dockermountdir}/$dotfile"
     if [[ -f "${_localfile}" ]]; then

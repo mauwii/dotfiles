@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck shell=bash
+# shellcheck shell=bash disable=SC2207
 
 # I wanted to learn how to use case/shift, so I wrote this script which
 # makes debugging the dotfiles in different Distros a bit more comfy.
@@ -17,27 +17,27 @@ debuglog() {
 # initialize variables
 
 # enable output of debug messages
-export DEBUG=${DEBUG:-false}
+DEBUG=${DEBUG:-false}
 # path to the dotfiles (bare)repo
-export dotfilesdir="$HOME"
+dotfilesdir="$HOME"
 # dotfiles to mount
-export dotfiles=()
+dotfiles=()
 # commands to mount dotfiles
-export dockermounts=()
+dockermounts=()
 # home directory in the container
-export dockerhome="/root"
+dockerhome="/root"
 # workdir in the container
-export workdir="$dockerhome"
+workdir="$dockerhome"
 # directory to mount the dotfiles in the container
-export dockermountdir="${dockerhome}/dotfiles"
-# default container image
-export image="alpine:3.18"
+dockermountdir="${dockerhome}/dotfiles"
+# container image to use
+image="alpine:3.18"
 # default shell in the container
-export shell="/bin/sh"
+shell="/bin/sh"
 # packages to install
-export pkgs=()
+pkgs=()
 # command to install packages
-export installcmd=()
+installcmd=()
 
 # read arguments which where passed to the script
 for arg in "$@"; do
@@ -126,13 +126,15 @@ for arg in "$@"; do
             else
                 _image="${arg#*=}"
             fi
-            export image="$_image"
+            image="$_image"
             ;;
         -d | --debug)
-            export DEBUG="true"
+            # enable debug messages
+            DEBUG="true"
             ;;
         -0 | --no-pkgs)
-            export no_pkgs="true"
+            # don't install packages
+            no_pkgs="true"
             ;;
         *)
             shift
@@ -163,7 +165,7 @@ case "${image}" in
         ;;
     */dotfiles:* | */dotfiles | dotfiles:* | dotfiles)
         shell="zsh"
-        unset installcmd pkgs
+        no_pkgs="true"
         ;;
     *)
         printf "couldn't detect distro, will try to install %s without packages\n" "${image}"
@@ -172,10 +174,13 @@ case "${image}" in
 esac
 
 debuglog "dotfilesdir set to: %s\n" "${dotfilesdir}"
-[[ "${no_img}" != "true" ]] && debuglog "image is set to: %s\n" "${image}"
+
+if [[ "${no_img}" != "true" ]]; then
+    debuglog "image is set to: %s\n" "${image}"
+fi
 
 # unset installcmd and pkgs if no_pkgs is set
-if [ "$no_pkgs" == "true" ]; then
+if [ "${no_pkgs}" == "true" ]; then
     unset installcmd pkgs
     debuglog "no packages will be installed\n"
 fi
@@ -199,7 +204,6 @@ getdotfiles() {
 }
 
 # list of all dotfiles in the bare repo
-# shellcheck disable=SC2207
 dotfiles+=($(getdotfiles))
 
 # create dockermount parameter for each dotfile
@@ -222,5 +226,6 @@ docker run \
     -e DEBIAN_FRONTEND=noninteractive \
     -e "DEBUG=$DEBUG" \
     --name dotfiles \
-    "${image:-debian:bookworm}" \
+    --hostname dotfiles \
+    "${image}" \
     sh -c "${container_cmd[*]}"

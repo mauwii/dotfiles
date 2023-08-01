@@ -1,5 +1,10 @@
+# syntax=docker/dockerfile:1
 FROM alpine:3.18
 
+LABEL author="mauwii@outlook.de"
+LABEL description="Docker image to verify my zsh related dotfiles"
+
+# hadolint ignore=DL3018
 RUN apk update \
     && apk add --no-cache \
         bat \

@@ -7,7 +7,7 @@
 # small function to print log messages if $DEBUG is true
 # find infos about how to format in the manpage of printf
 debuglog() {
-    if [ "${DEBUG}" = "true" ]; then
+    if [ "${debug}" = "true" ]; then
         # shellcheck disable=SC2059
         printf -v _logmsg "$@"
         printf "[%s] %s" "$(date "+%T")" "${_logmsg}"
@@ -17,7 +17,7 @@ debuglog() {
 # initialize variables
 
 # enable output of debug messages
-DEBUG=${DEBUG:-false}
+debug=${DEBUG:-false}
 # path to the dotfiles (bare)repo
 dotfilesdir="$HOME"
 # dotfiles to mount
@@ -29,7 +29,7 @@ dockerhome="/root"
 # workdir in the container
 workdir="$dockerhome"
 # directory to mount the dotfiles in the container
-dockermountdir="${dockerhome}/dotfiles"
+dockermountdir="/mnt/dotfiles"
 # container image to use
 image="alpine:3.18"
 # default shell in the container
@@ -130,7 +130,7 @@ for arg in "$@"; do
             ;;
         -d | --debug)
             # enable debug messages
-            DEBUG="true"
+            debug="true"
             ;;
         -0 | --no-pkgs)
             # don't install packages
@@ -187,7 +187,7 @@ fi
 
 # set container cmd
 container_cmd=(
-    "${installcmd[@]}" "${pkgs[@]}" ${pkgs:+&&} sh dotfiles/.dotfiles/setup_local.sh \&\& "${shell}" -l
+    "${installcmd[@]}" "${pkgs[@]}" ${pkgs:+&&} sh "${dockermountdir}/.dotfiles/setup_local.sh" \&\& "${shell}" -l
 )
 debuglog "container cmd set to: %s\n" "${container_cmd[*]}"
 
@@ -224,7 +224,7 @@ docker run \
     --workdir="${workdir}" \
     "${dockermounts[@]}" \
     -e DEBIAN_FRONTEND=noninteractive \
-    -e "DEBUG=$DEBUG" \
+    -e "DEBUG=$debug" \
     --name dotfiles \
     --hostname dotfiles \
     "${image}" \

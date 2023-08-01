@@ -33,7 +33,7 @@ pkg
 build
 
 # local gitconfig
-~/.config/.local.gitconfig
+~/.local/.gitconfig
 
 # jfrog
 .jfrog_vscode

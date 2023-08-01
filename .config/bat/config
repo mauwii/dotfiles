@@ -27,6 +27,7 @@
 
 --map-syntax="*.ino:C++"
 --map-syntax=".aliases:Bourne Again Shell (bash)"
+--map-syntax=".bash_env:Bourne Again Shell (bash)"
 --map-syntax="*/git/ignore:.gitignore"
 --map-syntax=".Brewfile:Ruby"
 --map-syntax="js:jsx"

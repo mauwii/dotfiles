@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+# shellcheck shell=bash
 
 # ensure .zprofile is only loaded once
 if [ "${DOT_ZPROFILE}" = "true" ]; then
@@ -10,6 +10,7 @@ fi
 
 # load cross-compatible profile
 if [ -r ~/.profile ] && [ "${DOT_PROFILE}" != "true" ]; then
+    # shellcheck source=.profile
     source ~/.profile
 fi
 

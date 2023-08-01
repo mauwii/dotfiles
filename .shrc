@@ -39,9 +39,16 @@ if [ -n "${SSH_CONNECTION}" ]; then
     export EDITOR="nano"
 else
     export EDITOR="code"
-    export GIT_EDITOR="$EDITOR -w"
+    export GIT_EDITOR="${EDITOR} -w"
 fi
 
-# export ARCHFLAGS='-arch arm64 -arch x86_64'
+# add getidf alias if ~/esp/esp-idf exists
+IDF_PATH=~/esp/esp-idf
+if [ -f "${IDF_PATH}/export.sh" ]; then
+    export ESPIDF="${IDF_PATH}"
+    alias getidf='. ${ESPIDF}/export.sh'
+else
+    unset IDF_PATH
+fi
 
 DOT_SHRC="true"

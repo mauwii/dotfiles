@@ -1,5 +1,13 @@
-# add shell functions
+# shellcheck shell=bash
 
-# shellcheck source=.functions source=.aliases
-[ -r ~/.functions ] && . ~/.functions
-[ -r ~/.aliases ] && . ~/.aliases
+# add shell functions
+if [ -r ~/.functions ]; then
+    # shellcheck source=.functions
+    . ~/.functions
+fi
+
+# add aliases
+if [ -r ~/.aliases ]; then
+    # shellcheck source=.aliases
+    . ~/.aliases
+fi

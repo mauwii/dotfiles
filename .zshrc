@@ -1,16 +1,19 @@
-# shellcheck shell=sh
+# shellcheck shell=bash
 
-# # load ~/.zprofile if not loaded yet
-# if [ "${DOT_ZPROFILE}" != "true" ] && [ -r ~/.zprofile ]; then
-#     source ~/.zprofile
-# fi
+debuglog "loading .zshrc\n"
+
+# load ~/.zprofile if not loaded yet
+if [ "${DOT_ZPROFILE}" != "true" ] && [ -r ~/.zprofile ]; then
+    # shellcheck source=.zprofile
+    source ~/.zprofile
+fi
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 # unset INFOPATH
 
 # set completion dump file
-ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)-${ZSH_VERSION}"
+ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)${ZSH_VERSION:+-$ZSH_VERSION}"
 export ZSH_COMPDUMP
 
 # set History file
@@ -63,12 +66,6 @@ if [ -d ~/.oh-my-zsh ]; then
     # Uncomment the following line to enable command auto-correction.
     # ENABLE_CORRECTION="true"
 
-    # silent SSH-Agent Start
-    zstyle ':omz:plugins:ssh-agent' quiet yes
-
-    # add Identities from Keychain
-    zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
-
     # Uncomment the following line to display red dots whilst waiting for completion.
     # You can also set it to another string to have that shown instead of the default red dots.
     # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
@@ -91,11 +88,6 @@ if [ -d ~/.oh-my-zsh ]; then
     # Would you like to use another custom folder than $ZSH/custom?
     # ZSH_CUSTOM=/path/to/new-custom-folder
 
-    # # source zstyles
-    # if [ -r ~/.zstyles ]; then
-    #     source ~/.zstyles
-    # fi
-
     # Which plugins would you like to load?
     # Standard plugins can be found in $ZSH/plugins/
     # Custom plugins may be added to $ZSH_CUSTOM/plugins/
@@ -111,7 +103,7 @@ if [ -d ~/.oh-my-zsh ]; then
         _plugin="${1}"
         _executable="${2}"
         if [ $# -gt 2 ]; then
-            printf "Usage: %s <plugin> [<executable>]" $0
+            printf "Usage: %s <plugin> [<executable>]" "$0"
             return 1
         fi
         if command -v "${_exectuable:-$_plugin}" >/dev/null 2>&1; then
@@ -141,22 +133,24 @@ if [ -d ~/.oh-my-zsh ]; then
     __add_plugin azure az
 
     if [ -r "${ZSH}/oh-my-zsh.sh" ]; then
-        # shellcheck source=/dev/null
+        # shellcheck source=.oh-my-zsh/oh-my-zsh.sh disable=SC1094
         source "${ZSH}/oh-my-zsh.sh"
     fi
 fi
 
 # User configuration
 
+# silent SSH-Agent Start
+zstyle ':omz:plugins:ssh-agent' quiet yes
+
+# add Identities from Keychain
+zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
+
 # load shared shell configuration if not loaded yet
 if [ "${DOT_SHRC}" != "true" ] && [ -r ~/.shrc ]; then
     # shellcheck source=.shrc
     source ~/.shrc
 fi
-
-# if [ -r ~/.aliases ]; then
-#     source ~/.aliases
-# fi
 
 # Ignore duplicate commands and commands starting with space
 setopt HIST_IGNORE_ALL_DUPS
@@ -174,15 +168,6 @@ setopt HIST_IGNORE_SPACE
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# add ESP-IDF Directory if it exists
-IDF_PATH=~/esp/esp-idf
-if [ -r "${IDF_PATH}/export.sh" ]; then
-    export ESPIDF="${IDF_PATH}"
-    alias getidf='source ${ESPIDF}/export.sh'
-else
-    unset IDF_PATH
-fi
-
 # pipx completion
 if command -v pipx >/dev/null 2>&1; then
     eval "$(register-python-argcomplete pipx)"
@@ -190,19 +175,22 @@ fi
 
 # iTerm 2 Shell Integration
 ITERM2_SHELL_INTEGRATION=~/.iterm2_shell_integration.zsh
-if [ -r "$ITERM2_SHELL_INTEGRATION" ] && [ "$TERM_PROGRAM" = "iTerm.app" ]; then
+if [ -r "${ITERM2_SHELL_INTEGRATION}" ] \
+    && [ "${TERM_PROGRAM:+$TERM_PROGRAM}" = "iTerm.app" ]; then
     # shellcheck source=/dev/null
-    source $ITERM2_SHELL_INTEGRATION
+    source "${ITERM2_SHELL_INTEGRATION}"
 else
     unset ITERM2_SHELL_INTEGRATION
 fi
 
-if [ -d "${HOMEBREW_PREFIX}" ]; then
+if [ -d "${HOMEBREW_PREFIX:-false}" ]; then
     # homebrew zsh-fast-syntax-highlighting
     ZSH_FAST_SYNTAX_HIGHLIGHTING="${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
     if [ -r "${ZSH_FAST_SYNTAX_HIGHLIGHTING}" ]; then
         # shellcheck source=/dev/null
         source "${ZSH_FAST_SYNTAX_HIGHLIGHTING}"
+    else
+        unset ZSH_FAST_SYNTAX_HIGHLIGHTING
     fi
     # homebrew zsh-autosuggestions plugin
     ZSH_AUTOSUGGEST="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
@@ -215,5 +203,10 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
         export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
         # shellcheck source=/dev/null
         source "${ZSH_AUTOSUGGEST}"
+    else
+        unset ZSH_AUTOSUGGEST
     fi
 fi
+
+# shellcheck disable=SC2034
+DOT_ZSHRC="true"

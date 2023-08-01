@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+# shellcheck shell=bash
 
 # check if this scritp was sourced
 if echo "$-" | grep -q '^[i]*$'; then
@@ -18,15 +18,6 @@ if [ "$DOT_SHRC" != "true" ] && [ -r ~/.shrc ]; then
     . ~/.shrc
 else
     debuglog ".shrc has already been loaded\n"
-fi
-
-# add ESP-IDF Directory if it exists
-IDF_PATH=~/esp/esp-idf
-if [ -f "${IDF_PATH}/export.sh" ]; then
-    export ESPIDF="${IDF_PATH}"
-    alias getidf='. ${ESPIDF}/export.sh'
-else
-    unset IDF_PATH
 fi
 
 # direnv hook to automatically load/unload .envrc files

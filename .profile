@@ -128,29 +128,21 @@ fi
 
 # source .shrc if interactive or login shell and not yet loaded
 case $- in
-    *"l"*)
-        SHELL_IS="login"
-        ;;
-    *"i"*)
-        SHELL_IS="interactive"
-        ;;
-    *)
-        command -v debuglog >/dev/null 2>&1 \
-            && debuglog "case to find out if INTERACTIVE_SHELL seems broken\n"
-        ;;
+    *"l"*) SHELL_IS="login" ;;
+    *"i"*) SHELL_IS="interactive" ;;
 esac
-
 if [ "${SHELL_IS:-unset}" != "unset" ]; then
-    export SHELL_IS
     LOAD_SHRC="true"
     debuglog "identified %s shell\n" "${SHELL_IS}"
 fi
-
-if [ "${LOAD_SHRC}" = "true" ] \
+if [ "${LOAD_SHRC:-false}" = "true" ] \
     && [ "${SHELL}" = /bin/sh ] \
     && [ -r ~/.shrc ] \
-    && [ "${DOT_SHRC}" != "true" ]; then
+    && [ "${DOT_SHRC:-false}" != "true" ]; then
     # shellcheck source=.shrc
     . ~/.shrc
 fi
 unset LOAD_SHRC SHELL_IS
+
+# shellcheck disable=SC2034
+DOT_PROFILE="true"

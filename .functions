@@ -22,9 +22,7 @@ prepend_fpath() {
         return 1
     elif [ -d "${1}" ] && echo "${SHELL}" | grep -q "zsh"; then
         _escaped=${1//\//\\\/}
-        # _escaped=$(echo "${1}" | sed 's#\/#\\/#g')
         _cleaned=${FPATH//:${_escaped}:/:}
-        # _cleaned=$(echo "$FPATH" | sed "s#:${_escaped}:#:#g")
         export FPATH="${1}${_cleaned:+:$_cleaned}" \
             && debuglog "updated FPATH: %s\n" "$FPATH"
         unset _escaped _cleaned
@@ -41,9 +39,7 @@ prepend_path() {
         return 1
     else
         _escaped=${1//\//\\\/}
-        # _escaped=$(echo "${1}" | sed 's#\/#\\/#g')
         _cleaned=${PATH//:${_escaped}:/:}
-        # _cleaned=$(echo "$PATH" | sed "s#:${_escaped}:#:#g")
         export PATH="${1}${_cleaned:+:$_cleaned}" \
             && debuglog "updated PATH: %s\n" "$PATH"
         unset _escaped _cleaned

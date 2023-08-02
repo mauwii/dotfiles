@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash disable=SC2207
 
-# I wanted to learn how to use case/shift, so I wrote this script which
-# makes debugging the dotfiles in different Distros a bit more comfy.
+# completion partially working with: `compdef _gnu_generic config-container`
 
-# completion partially working: `compdef _gnu_generic config-container`
-
-# initialize variables
+## initialize variables and set defaults
 
 # enable output of debug messages
 debug=${DEBUG:-false}
@@ -39,28 +36,31 @@ debuglog() {
     fi
 }
 
-# format help message lines:
-#   $1: long option
-#   $2: short option
-#   $3: description
-#   $4: current value
-printhelp() {
-    printf "  %-13s %3s  %-35s %-10s\n" "${1}" "${2}" "${3}" "${4:-}"
+helpmsg() {
+    # format help message lines:
+    #   $1: long option
+    #   $2: short option
+    #   $3: description
+    #   $4: current value (optional)
+    printhelp() {
+        printf "  %-13s %3s  %-35s %-10s\n" "${1}" "${2}" "${3}" "${4:-}"
+    }
+    printf "\nUsage:\t%s [options]\n" "${0##*/}"
+    printf "\nOptions:\n\n"
+    printhelp "--dotfilesdir" "-p" "Path to your dotfiles" "${dotfilesdir}"
+    printhelp "--image" "-i" "Container image to use" "${image}"
+    printhelp "--shell" "-s" "Shell to use in the container" "${shell}"
+    printhelp "--no-pkgs" "-0" "Switch to install without pkgs"
+    printhelp "--debug" "-d" "Switch to enable debug messages"
+    printhelp "--help" "-h" "Print this help message"
 }
 
 # read arguments which where passed to the script
 for arg in "$@"; do
     case "$arg" in
         -h | --help)
-            printf "\nUsage:\t%s [options]\n" "${0##*/}"
             printf "\nLittle helper to test and debug the dotfiles in different Distros\n"
-            printf "\nOptions:\n\n"
-            printhelp "--dotfilesdir" "-p" "Path to your dotfiles" "${dotfilesdir}"
-            printhelp "--image" "-i" "Container image to use" "${image}"
-            printhelp "--shell" "-s" "Shell to use in the container" "${shell}"
-            printhelp "--no-pkgs" "-0" "Switch to install without pkgs"
-            printhelp "--debug" "-d" "Switch to enable debug messages"
-            printhelp "--help" "-h" "Print this help message"
+            helpmsg
             exit 0
             ;;
         -p | --dotfilesdir*)
@@ -168,6 +168,7 @@ for arg in "$@"; do
                 unset skip
             else
                 printf "error: unknown argument: %s\n" "$arg"
+                helpmsg
                 exit 1
             fi
             ;;
@@ -181,11 +182,7 @@ case "${image}" in
         installcmd=(apk update \&\& apk add --no-cache)
         pkgs=(bat bash direnv exa nano pandoc starship w3m w3m-image)
         ;;
-    */ubuntu:* | */ubuntu | ubuntu:* | ubuntu)
-        installcmd=(apt-get update \&\& apt-get install -y --no-install-recommends)
-        pkgs=(bat direnv exa nano pandoc w3m w3m-img)
-        ;;
-    */debian:* | */debian | debian:* | debian)
+    */debian:* | */debian | debian:* | debian | */ubuntu:* | */ubuntu | ubuntu:* | ubuntu)
         installcmd=(apt-get update \&\& apt-get install -y --no-install-recommends)
         pkgs=(bat direnv exa nano pandoc w3m w3m-img)
         ;;
@@ -200,13 +197,14 @@ debuglog "shell set to: %s\n" "${shell}"
 debuglog "image is set to: %s\n" "${image}"
 # unset installcmd and pkgs if no_pkgs is set
 if [ "${no_pkgs}" == "true" ]; then
-    unset installcmd pkgs
+    unset pkgs
     debuglog "no packages will be installed\n"
 fi
 
 # set container cmd
+inst=("${pkgs:+${installcmd[@]} ${pkgs[@]} &&}")
 container_cmd=(
-    "${installcmd[@]}" "${pkgs[@]}" ${pkgs:+&&} sh "${dockermountdir}/.dotfiles/setup_local.sh" \&\& "${shell}" -l
+    "${inst[@]}" sh "${dockermountdir}/.dotfiles/setup_local.sh" \&\& "${shell}" -l
 )
 debuglog "container cmd set to: %s\n" "${container_cmd[*]}"
 

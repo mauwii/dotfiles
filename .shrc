@@ -2,10 +2,10 @@
 
 # ensure .shrc is only loaded once
 if [ "${DOT_SHRC}" = "true" ]; then
-    debuglog "already loaded .shrc\n"
+    debuglog "already loaded .shrc"
     return
 else
-    debuglog "loading .shrc\n"
+    debuglog "loading .shrc"
 fi
 
 # load aliases

@@ -1,6 +1,6 @@
 # shellcheck shell=bash disable=SC2034
 
-debuglog "loading .zshrc\n"
+debuglog "loading .zshrc"
 
 # load ~/.zprofile if not loaded yet
 if [ "${DOT_ZPROFILE}" != "true" ] && [ -r "${ZDOTDIR:-$HOME}/.zprofile" ]; then

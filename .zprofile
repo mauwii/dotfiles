@@ -2,10 +2,10 @@
 
 # ensure .zprofile is only loaded once
 if [ "${DOT_ZPROFILE}" = "true" ]; then
-    debuglog "already loaded .zprofile\n"
+    debuglog "already loaded .zprofile"
     return
 else
-    debuglog "loading .zprofile\n"
+    debuglog "loading .zprofile"
 fi
 
 # load cross-compatible profile

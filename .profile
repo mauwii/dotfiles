@@ -1,12 +1,13 @@
 # shellcheck shell=sh
 
+DEBUG="true"
 # add shell functions
 if [ -r ~/.functions ]; then
     # shellcheck source=.functions
     . ~/.functions
 fi
 
-debuglog "loading .profile\n"
+debuglog "loading .profile"
 
 # set locale
 export LC_ALL="en_US.UTF-8"
@@ -22,13 +23,13 @@ export COMMAND_MODE="unix2003"
 
 # OS variables
 [ "$(uname -s)" = "Darwin" ] && export MACOS=1 && export UNIX=1 \
-    && debuglog "identified MACOS\n"
+    && debuglog "identified MACOS"
 [ "$(uname -s)" = "Linux" ] && export LINUX=1 && export UNIX=1 \
-    && debuglog "identified LINUX\n"
+    && debuglog "identified LINUX"
 uname -s | grep -q "_NT-" && export WINDOWS=1 \
-    && debuglog "identified WINDOWS\n"
+    && debuglog "identified WINDOWS"
 grep -q "Microsoft" /proc/version 2>/dev/null && export UBUNTU_ON_WINDOWS=1 \
-    && debuglog "identified UBUNTU_ON_WINDOWS\n"
+    && debuglog "identified UBUNTU_ON_WINDOWS"
 
 # add brew to env
 if [ -d "/opt/homebrew" ]; then
@@ -69,20 +70,20 @@ fi
 # initialize pyenv
 if command -v pyenv >/dev/null 2>&1; then
     eval "$(pyenv init --path)"
-    debuglog "initialized pyenv\n"
+    debuglog "initialized pyenv"
 fi
 
 # set kubeconfig
 if [ -r "${HOME}/.kube/config" ]; then
     export KUBECONFIG="${HOME}/.kube/config${KUBECONFIG:+:$KUBECONFIG}"
-    debuglog "set KUBECONFIG to %s\n" "$KUBECONFIG"
+    debuglog "set KUBECONFIG to %s" "$KUBECONFIG"
 fi
 
 # set dotnet root if dir exists
 DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
 if [ -d "${DOTNET_ROOT}" ] && command -v dotnet >/dev/null 2>&1; then
     export DOTNET_ROOT
-    debuglog "set DOTNET_ROOT to %s\n" "$DOTNET_ROOT"
+    debuglog "set DOTNET_ROOT to %s" "$DOTNET_ROOT"
 else
     unset DOTNET_ROOT
 fi
@@ -92,7 +93,7 @@ DOCKER_HOST="$HOME/.docker/run/docker.sock"
 if [ -S "$DOCKER_HOST" ] && [ ! -S /var/run/docker.socket ] \
     && [ "$(docker context show)" = "default" ]; then
     export DOCKER_HOST="unix://$DOCKER_HOST"
-    debuglog "set DOCKER_HOST to %s\n" "$DOCKER_HOST"
+    debuglog "set DOCKER_HOST to %s" "$DOCKER_HOST"
 else
     unset DOCKER_HOST
 fi
@@ -127,7 +128,7 @@ case $- in
 esac
 if [ "${SHELL_IS:-unset}" != "unset" ]; then
     LOAD_SHRC="true"
-    debuglog "identified %s shell\n" "${SHELL_IS}"
+    debuglog "identified %s shell" "${SHELL_IS}"
 fi
 if [ "${LOAD_SHRC:-false}" = "true" ] \
     && [ "${SHELL}" = /bin/sh ] \

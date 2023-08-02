@@ -5,12 +5,12 @@
 debuglog() {
     if [ "${DEBUG}" = "true" ]; then
         # shellcheck disable=SC2059
-        printf -v _logmsg "$@"
-        printf "[%s] %s" "$(date "+%T")" "${_logmsg}"
+        _logmsg=$(printf "$@")
+        printf "[%s] %s\n" "$(date "+%T")" "${_logmsg}"
     fi
 }
 
-# debuglog "loading .functions\n"
+# debuglog "loading .functions"
 
 # prepend dir to fpath if dir exists
 prepend_fpath() {
@@ -24,7 +24,7 @@ prepend_fpath() {
         _escaped=${1//\//\\\/}
         _cleaned=${FPATH//:${_escaped}:/:}
         export FPATH="${1}${_cleaned:+:$_cleaned}" \
-            && debuglog "updated FPATH: %s\n" "$FPATH"
+            && debuglog "updated FPATH: %s" "$FPATH"
         unset _escaped _cleaned
     fi
 }
@@ -41,7 +41,7 @@ prepend_path() {
         _escaped=${1//\//\\\/}
         _cleaned=${PATH//:${_escaped}:/:}
         export PATH="${1}${_cleaned:+:$_cleaned}" \
-            && debuglog "updated PATH: %s\n" "$PATH"
+            && debuglog "updated PATH: %s" "$PATH"
         unset _escaped _cleaned
     fi
 }
@@ -56,7 +56,7 @@ brew_init() {
     elif [ -x "${1}/bin/brew" ]; then
         # add brew to shell environment
         eval "$("${1}/bin/brew" shellenv)" \
-            && debuglog "brew initialized\n"
+            && debuglog "brew initialized"
         # set brew bundle file
         export HOMEBREW_BUNDLE_FILE=~/.Brewfile
         # enable autoremove

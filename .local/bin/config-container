@@ -31,8 +31,8 @@ installcmd=()
 debuglog() {
     if [ "${debug}" = "true" ]; then
         # shellcheck disable=SC2059
-        printf -v _logmsg "$@"
-        printf "[%s] %s" "$(date "+%T")" "${_logmsg}"
+        _logmsg=$(printf "$@")
+        printf "[%s] %s\n" "$(date "+%T")" "${_logmsg}"
     fi
 }
 
@@ -186,19 +186,12 @@ case "${image}" in
         installcmd=(apt-get update \&\& apt-get install -y --no-install-recommends)
         pkgs=(bat direnv exa nano pandoc w3m w3m-img)
         ;;
-    */dotfiles:* | */dotfiles | dotfiles:* | dotfiles)
-        no_pkgs="true"
-        ;;
 esac
 
-# debug output
-debuglog "dotfilesdir set to: %s\n" "${dotfilesdir}"
-debuglog "shell set to: %s\n" "${shell}"
-debuglog "image is set to: %s\n" "${image}"
 # unset installcmd and pkgs if no_pkgs is set
 if [ "${no_pkgs}" == "true" ]; then
     unset pkgs
-    debuglog "no packages will be installed\n"
+    debuglog "no packages will be installed"
 fi
 
 # set container cmd
@@ -206,9 +199,13 @@ inst=("${pkgs:+${installcmd[@]} ${pkgs[@]} &&}")
 container_cmd=(
     "${inst[@]}" sh "${dockermountdir}/.dotfiles/setup_local.sh" \&\& "${shell}" -l
 )
-debuglog "container cmd set to: %s\n" "${container_cmd[*]}"
 
-debuglog "dockermountdir is set to: %s\n" "${dockermountdir}"
+# debug output
+debuglog "dotfilesdir set to: %s" "${dotfilesdir}"
+debuglog "shell set to: %s" "${shell}"
+debuglog "image is set to: %s" "${image}"
+debuglog "container cmd set to: %s" "${container_cmd[*]}"
+debuglog "dockermountdir is set to: %s" "${dockermountdir}"
 
 # function to list all files from the bare repo
 getdotfiles() {
@@ -230,7 +227,7 @@ for dotfile in $(getdotfiles); do
 done
 
 # execute container interactive in pseudo tty
-debuglog "executing container\n"
+debuglog "executing container"
 docker run \
     --rm \
     --interactive \

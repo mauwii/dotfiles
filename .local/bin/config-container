@@ -6,16 +6,6 @@
 
 # completion partially working: `compdef _gnu_generic config-container`
 
-# small function to print log messages if $DEBUG is true
-# find infos about how to format in the manpage of printf
-debuglog() {
-    if [ "${debug}" = "true" ]; then
-        # shellcheck disable=SC2059
-        printf -v _logmsg "$@"
-        printf "[%s] %s" "$(date "+%T")" "${_logmsg}"
-    fi
-}
-
 # initialize variables
 
 # enable output of debug messages
@@ -39,6 +29,25 @@ pkgs=()
 # command to install packages
 installcmd=()
 
+# small function to print log messages if $DEBUG is true
+# find infos about how to format in the manpage of printf
+debuglog() {
+    if [ "${debug}" = "true" ]; then
+        # shellcheck disable=SC2059
+        printf -v _logmsg "$@"
+        printf "[%s] %s" "$(date "+%T")" "${_logmsg}"
+    fi
+}
+
+# format help message lines:
+#   $1: long option
+#   $2: short option
+#   $3: description
+#   $4: current value
+printhelp() {
+    printf "  %-13s %3s  %-35s %-10s\n" "${1}" "${2}" "${3}" "${4:-}"
+}
+
 # read arguments which where passed to the script
 for arg in "$@"; do
     case "$arg" in
@@ -46,12 +55,12 @@ for arg in "$@"; do
             printf "\nUsage:\t%s [options]\n" "${0##*/}"
             printf "\nLittle helper to test and debug the dotfiles in different Distros\n"
             printf "\nOptions:\n\n"
-            printf "  -h, --help \t\t\t Print this help message\n"
-            printf "  -p, --dotfilesdir <path> \t Path to your dotfiles \t\t%s\n" "${dotfilesdir}"
-            printf "  -i, --image <image:tag> \t Container image to use \t\t%s\n" "${image}"
-            printf "  -s, --shell <shell> \t\t Default shell in the container \t%s\n" "${shell}"
-            printf "  -0, --no-pkgs \t\t switch to install without pkgs\n"
-            printf "  -d, --debug \t\t\t switch to enable debug messages\n"
+            printhelp "--dotfilesdir" "-p" "Path to your dotfiles" "${dotfilesdir}"
+            printhelp "--image" "-i" "Container image to use" "${image}"
+            printhelp "--shell" "-s" "Shell to use in the container" "${shell}"
+            printhelp "--no-pkgs" "-0" "Switch to install without pkgs"
+            printhelp "--debug" "-d" "Switch to enable debug messages"
+            printhelp "--help" "-h" "Print this help message"
             exit 0
             ;;
         -p | --dotfilesdir*)
@@ -183,19 +192,12 @@ case "${image}" in
     */dotfiles:* | */dotfiles | dotfiles:* | dotfiles)
         no_pkgs="true"
         ;;
-    *)
-        printf "couldn't detect distro, will try to install %s without packages\n" "${image}"
-        no_img="true"
-        ;;
 esac
 
+# debug output
 debuglog "dotfilesdir set to: %s\n" "${dotfilesdir}"
 debuglog "shell set to: %s\n" "${shell}"
-
-if [[ "${no_img}" != "true" ]]; then
-    debuglog "image is set to: %s\n" "${image}"
-fi
-
+debuglog "image is set to: %s\n" "${image}"
 # unset installcmd and pkgs if no_pkgs is set
 if [ "${no_pkgs}" == "true" ]; then
     unset installcmd pkgs

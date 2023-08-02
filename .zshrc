@@ -141,8 +141,18 @@ if [ -d ~/.oh-my-zsh ]; then
     fi
 
     if [ -r "${ZSH}/oh-my-zsh.sh" ]; then
+        debuglog "%s: Loading oh-my-zsh" "${0##*/}"
         # shellcheck source=.oh-my-zsh/oh-my-zsh.sh disable=SC1094
         source "${ZSH}/oh-my-zsh.sh"
+    fi
+else
+    # try to load starship prompt
+    if command -v starship >/dev/null 2>&1; then
+        debuglog "%s: Loading starship" "${0##*/}"
+        eval "$(starship init zsh)"
+    else
+        debuglog "%s: Loading default prompt" "${0##*/}"
+        PROMPT='%n@%m %1~ %# '
     fi
 fi
 

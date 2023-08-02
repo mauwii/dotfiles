@@ -1,5 +1,11 @@
 # shellcheck shell=bash
 
+# add shell functions
+if [ -r ~/.functions ]; then
+    # shellcheck source=.functions
+    . ~/.functions
+fi
+
 # check it was not sourced before
 if [ "${DOT_BASHRC:-false}" = "true" ]; then
     debuglog ".bashrc has already been loaded"
@@ -24,7 +30,7 @@ fi
 # Initialize pyenv
 if [ -d ~/.pyenv ] && [ -z "${PYENV_ROOT}" ]; then
     export PYENV_ROOT=~/.pyenv
-    debuglog "setting PYENV_ROOT to %s" "$PYENV_ROOT"
+    debuglog "%s: setting PYENV_ROOT to %s" "${0##*/}" "$PYENV_ROOT"
 fi
 if [ -n "$PYENV_ROOT" ] && [ -d "${PYENV_ROOT}/bin" ]; then
     if echo "${PATH}" | grep -q "$PYENV_ROOT/bin"; then

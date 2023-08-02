@@ -1,5 +1,11 @@
 # shellcheck shell=sh
 
+# add shell functions
+if [ -r ~/.functions ]; then
+    # shellcheck source=.functions
+    . ~/.functions
+fi
+
 # ensure .shrc is only loaded once
 if [ "${DOT_SHRC}" = "true" ]; then
     debuglog "already loaded .shrc"

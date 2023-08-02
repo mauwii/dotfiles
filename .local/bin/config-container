@@ -179,8 +179,8 @@ done
 # set shell and installcmd based on image
 case "${image}" in
     */alpine:* | */alpine | alpine:* | alpine)
-        installcmd=(apk update \&\& apk add --no-cache)
-        pkgs=(bat bash direnv exa nano pandoc starship w3m w3m-image)
+        installcmd=(apk --no-cache add)
+        pkgs=(bat bash direnv exa nano pandoc starship w3m w3m-image zsh)
         ;;
     */debian:* | */debian | debian:* | debian | */ubuntu:* | */ubuntu | ubuntu:* | ubuntu)
         installcmd=(apt-get update \&\& apt-get install -y --no-install-recommends)

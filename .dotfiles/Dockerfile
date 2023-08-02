@@ -5,23 +5,21 @@ LABEL author="mauwii@outlook.de"
 LABEL description="Docker image to verify my zsh related dotfiles"
 
 # hadolint ignore=DL3018
-RUN apk update \
-    && apk add --no-cache \
-        bat \
-        curl \
-        direnv \
-        exa \
-        git \
-        jq \
-        nano \
-        openssh-client-common \
-        openssh-keygen \
-        pandoc \
-        starship \
-        w3m \
-        w3m-image \
-        zsh \
-    && rm -rf /var/cache/apk/*
+RUN apk --no-cache add \
+    bat \
+    curl \
+    direnv \
+    exa \
+    git \
+    jq \
+    nano \
+    openssh-client-common \
+    openssh-keygen \
+    pandoc \
+    starship \
+    w3m \
+    w3m-image \
+    zsh
 
 # Install Oh My Zsh
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"

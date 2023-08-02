@@ -20,7 +20,7 @@ dockermountdir="/mnt/dotfiles"
 # container image to use
 image="alpine:3.18"
 # default shell in the container
-shell="bash"
+shell="/bin/bash"
 # packages to install
 pkgs=()
 # command to install packages
@@ -181,6 +181,7 @@ case "${image}" in
     */alpine:* | */alpine | alpine:* | alpine)
         installcmd=(apk --no-cache add)
         pkgs=(bat bash direnv exa nano pandoc starship w3m w3m-image zsh)
+        initshell="${initshell:-/bin/sh}"
         ;;
     */debian:* | */debian | debian:* | debian | */ubuntu:* | */ubuntu | ubuntu:* | ubuntu)
         installcmd=(apt-get update \&\& apt-get install -y --no-install-recommends)
@@ -197,7 +198,7 @@ fi
 # set container cmd
 inst=("${pkgs:+${installcmd[@]} ${pkgs[@]} &&}")
 container_cmd=(
-    "${inst[@]}" sh "${dockermountdir}/.dotfiles/setup_local.sh" \&\& "${shell}" -l
+    "${inst[@]}" "${dockermountdir}/.dotfiles/setup_local.sh" "&&" "${shell}" -l
 )
 
 # debug output
@@ -239,4 +240,4 @@ docker run \
     --name dotfiles \
     --hostname dotfiles \
     "${image}" \
-    sh -c "${container_cmd[*]}"
+    "${initshell:-$shell}" -c "${container_cmd[*]}"

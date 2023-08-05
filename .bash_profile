@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 # add shell functions
-if [ -r ~/.functions ]; then
+if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS}" != "true" ]; then
     # shellcheck source=.functions
     . ~/.functions
 fi
@@ -17,7 +17,7 @@ if [ -r ~/.profile ] && [ "${DOT_PROFILE:-false}" != "true" ]; then
 fi
 
 # load bashrc if interactive and not loaded yet
-if [ -r ~/.bashrc ] && [ "${DOT_BASHRC:-false}" = "false" ]; then
+if [ -r ~/.bashrc ] && [ "${DOT_BASHRC:-false}" != "true" ]; then
     # shellcheck source=.bashrc
     . ~/.bashrc
 fi

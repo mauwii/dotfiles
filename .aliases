@@ -1,7 +1,7 @@
 # shellcheck shell=sh source=.functions
 
 # add shell functions
-if [ -r ~/.functions ]; then
+if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS}" != "true" ]; then
     # shellcheck source=.functions
     . ~/.functions
 fi
@@ -9,7 +9,7 @@ fi
 debuglog "loading .aliases"
 
 # use exa as modern ls-replacement if available
-if command -v exa >/dev/null 2>&1; then
+if validate_command exa; then
     exa --git >/dev/null 2>&1 && exa_git="true"
     # shellcheck disable=SC2139
     alias ls="exa --icons --group-directories-first ${exa_git:+--git} --accessed --modified --created"
@@ -27,24 +27,24 @@ alias lr='ls -R'
 alias llr='lr -l'
 
 # replace cat with bat, but disable paging to make it behave like cat
-if command -v batcat >/dev/null 2>&1 && [ ! -f ~/.local/bin/bat ]; then
+if validate_command batcat && [ ! -f ~/.local/bin/bat ]; then
     batbin=$(which batcat)
     # ln -s "${batbin}" ~/.local/bin/bat
     # shellcheck disable=SC2139
     alias bat="$batbin --paging=never"
-    debuglog "%s: batcat linked to bat" "${0##*/}"
+    debuglog ".aliases: batcat linked to bat"
 fi
-if command -v bat >/dev/null 2>&1; then
+if validate_command bat; then
     alias cat="bat --paging=never"
-    debuglog "%s: cat aliased to bat" "${0##*/}"
+    debuglog ".aliases: cat aliased to bat"
 fi
 
 # dotfiles management
 if [[ -d "${HOME}/.cfg" ]] && command -v /usr/bin/git >/dev/null 2>&1; then
     alias config='git --bare --git-dir="${HOME}/.cfg/" --work-tree="${HOME}"'
-    debuglog "%s: dotfiles management enabled" "${0##*/}"
+    debuglog ".aliases: dotfiles management enabled"
 fi
-if command -v config >/dev/null 2>&1; then
+if validate_command config; then
     # link all files to ~/.dotfiles to open in code
     function link_dotfiles() {
         cd "${HOME}" || return 1
@@ -59,13 +59,13 @@ if command -v config >/dev/null 2>&1; then
         done
     }
     # open ~/.dotfiles in code
-    if command -v code >/dev/null 2>&1; then
+    if validate_command code; then
         alias dotfiles='link_dotfiles && code ~/.dotfiles'
     fi
 fi
 
 # Copy public SSH Key
-if command -v pbcopy >/dev/null 2>&1; then
+if validate_command pbcopy; then
     alias pubkey='pbcopy < ${HOME}/.ssh/id_ed25519.pub'
 fi
 

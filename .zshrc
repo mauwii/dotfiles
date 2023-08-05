@@ -2,10 +2,10 @@
 
 debuglog "loading .zshrc"
 
-# load ~/.zprofile if not loaded yet
-if [ "${DOT_ZPROFILE}" != "true" ] && [ -r "${ZDOTDIR:-$HOME}/.zprofile" ]; then
-    # shellcheck source=.zprofile
-    source "${ZDOTDIR:-$HOME}/.zprofile"
+# load ~/.profile if not loaded yet
+if [ "${DOT_PROFILE}" != "true" ] && [ -r "${HOME}/.profile" ]; then
+    # shellcheck source=.profile
+    source "${HOME}/.profile"
 fi
 
 # If you come from bash you might have to change your $PATH.
@@ -141,17 +141,17 @@ if [ -d ~/.oh-my-zsh ]; then
     fi
 
     if [ -r "${ZSH}/oh-my-zsh.sh" ]; then
-        debuglog "%s: Loading oh-my-zsh" "${0##*/}"
+        debuglog ".zshrc: Loading oh-my-zsh"
         # shellcheck source=.oh-my-zsh/oh-my-zsh.sh disable=SC1094
         source "${ZSH}/oh-my-zsh.sh"
     fi
 else
     # try to load starship prompt
-    if command -v starship >/dev/null 2>&1; then
-        debuglog "%s: Loading starship" "${0##*/}"
+    if validate_command starship; then
+        debuglog ".zshrc: Loading starship"
         eval "$(starship init zsh)"
     else
-        debuglog "%s: Loading default prompt" "${0##*/}"
+        debuglog ".zshrc: Loading default prompt"
         PROMPT='%n@%m %1~ %# '
     fi
 fi
@@ -181,7 +181,7 @@ setopt HIST_IGNORE_SPACE
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # pipx completion
-if command -v pipx >/dev/null 2>&1; then
+if validate_command pipx; then
     eval "$(register-python-argcomplete pipx)"
 fi
 
@@ -218,6 +218,11 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
     else
         unset ZSH_AUTOSUGGEST
     fi
+fi
+
+if [ -r ~/.zstyles ]; then
+    # shellcheck disable=SC1090
+    source ~/.zstyles
 fi
 
 DOT_ZSHRC="true"

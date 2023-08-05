@@ -1,7 +1,7 @@
 # shellcheck shell=sh
 
 # add shell functions
-if [ -r ~/.functions ]; then
+if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS}" != "true" ]; then
     # shellcheck source=.functions
     . ~/.functions
 fi
@@ -37,8 +37,12 @@ elif [ -d "/usr/local" ]; then
     brew_init "/usr/local"
 fi
 
+# add private bins to path
+mkdir -p ~/.local/bin
+prepend_path "$HOME/.local/bin"
+
 # Add Ruby gems to PATH.
-if command -v ruby >/dev/null 2>&1 && command -v gem >/dev/null 2>&1; then
+if validate_command ruby && validate_command gem; then
     prepend_path "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
 fi
 
@@ -52,22 +56,18 @@ if [ -d "$HOME/.docker/cli-plugins" ]; then
     prepend_path "$HOME/.docker/cli-plugins"
 fi
 
-# personal bins
-mkdir -p ~/.local/bin
-prepend_path "$HOME/.local/bin"
-
 # set PYENV_ROOT if dir exists and not set
 if [ -d ~/.pyenv ] && [ -z "${PYENV_ROOT}" ]; then
     export PYENV_ROOT=~/.pyenv
 fi
 
 # add pyenv bins to path if dir exists
-if [ -d "${PYENV_ROOT}/bin" ]; then
+if [ -n "${PYENV_ROOT}" ] && [ -d "${PYENV_ROOT}/bin" ]; then
     prepend_path "${PYENV_ROOT}/bin"
 fi
 
 # initialize pyenv
-if command -v pyenv >/dev/null 2>&1; then
+if validate_command pyenv; then
     eval "$(pyenv init --path)"
     debuglog "%s: initialized pyenv" "${0##*/}"
 fi
@@ -75,14 +75,14 @@ fi
 # set kubeconfig
 if [ -r "${HOME}/.kube/config" ]; then
     export KUBECONFIG="${HOME}/.kube/config${KUBECONFIG:+:$KUBECONFIG}"
-    debuglog "%s: set KUBECONFIG to %s" "${0##*/}" "$KUBECONFIG"
+    debuglog ".profile: set KUBECONFIG to %s" "$KUBECONFIG"
 fi
 
 # set dotnet root if dir exists
 DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
 if [ -d "${DOTNET_ROOT}" ] && command -v dotnet >/dev/null 2>&1; then
     export DOTNET_ROOT
-    debuglog "%s: set DOTNET_ROOT to %s" "${0##*/}" "$DOTNET_ROOT"
+    debuglog ".profile: set DOTNET_ROOT to %s" "$DOTNET_ROOT"
 else
     unset DOTNET_ROOT
 fi
@@ -92,7 +92,7 @@ DOCKER_HOST="$HOME/.docker/run/docker.sock"
 if [ -S "$DOCKER_HOST" ] && [ ! -S /var/run/docker.socket ] \
     && [ "$(docker context show)" = "default" ]; then
     export DOCKER_HOST="unix://$DOCKER_HOST"
-    debuglog "%s: set DOCKER_HOST to %s" "${0##*/}" "$DOCKER_HOST"
+    debuglog ".profile: set DOCKER_HOST to %s" "$DOCKER_HOST"
 else
     unset DOCKER_HOST
 fi
@@ -111,12 +111,12 @@ if [ "${CPUCOUNT}" -gt 1 ]; then
 fi
 
 # clean manpath
-if command -v manpath >/dev/null 2>&1; then
+if validate_command manpath; then
     MANPATH="$(manpath)"
     if [ "$(uname -s)" = "Darwin" ]; then
         # remove read-only path "/usr/share/man" from MANPATH
         MANPATH="${MANPATH//:\/usr\/share\/man:/}"
-        debuglog "%s: removed /usr/share/man from MANPATH" "${0##*/}"
+        debuglog ".profile: removed /usr/share/man from MANPATH"
         # MANPATH="$(echo "$MANPATH" | sed -e 's#:\/usr\/share\/man:#:#g')"
     fi
     export MANPATH
@@ -126,16 +126,17 @@ fi
 case $- in
     *"l"*)
         SHELL_IS="login"
-        return
         ;;
-    *"i"*) SHELL_IS="interactive" ;;
+    *"i"*)
+        SHELL_IS="interactive"
+        ;;
 esac
 if [ "${SHELL_IS:-unset}" != "unset" ]; then
     LOAD_SHRC="true"
-    debuglog "%s: identified %s shell" "${0##*/}" "${SHELL_IS}"
+    debuglog "identified %s shell" "${SHELL_IS}"
 fi
-if [ "${LOAD_SHRC:-false}" = "true" ] \
-    && [ "${SHELL:-$0}" = /bin/sh ] \
+if [ "${SHELL:-$0}" = /bin/sh ] || [ "${SHELL:-$0}" = /bin/ash ] \
+    && [ "${LOAD_SHRC}" = "true" ] \
     && [ -r ~/.shrc ] \
     && [ "${DOT_SHRC:-false}" != "true" ]; then
     # shellcheck source=.shrc

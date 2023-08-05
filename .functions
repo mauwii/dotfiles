@@ -10,7 +10,7 @@ debuglog() {
     fi
 }
 
-# debuglog "loading .functions"
+debuglog "loading .functions"
 
 # prepend dir to fpath if dir exists
 prepend_fpath() {
@@ -24,7 +24,7 @@ prepend_fpath() {
         _escaped=${1//\//\\\/}
         _cleaned=${FPATH//:${_escaped}:/:}
         export FPATH="${1}${_cleaned:+:$_cleaned}" \
-            && debuglog "%s: %s" "$0" "$1"
+            && debuglog "prepend_fpath: %s" "$1"
         unset _escaped _cleaned
     fi
 }
@@ -41,7 +41,7 @@ prepend_path() {
         _escaped=${1//\//\\\/}
         _cleaned=${PATH//:${_escaped}:/:}
         export PATH="${1}${_cleaned:+:$_cleaned}" \
-            && debuglog "%s: %s" "$0" "$1"
+            && debuglog "prepend_path: %s" "$1"
         unset _escaped _cleaned
     fi
 }
@@ -56,7 +56,7 @@ brew_init() {
     elif [ -x "${1}/bin/brew" ]; then
         # add brew to shell environment
         eval "$("${1}/bin/brew" shellenv)" \
-            && debuglog "%s: %s" "$0" "brew initialized"
+            && debuglog "brew_init: %s" "$0" "brew initialized"
         # set brew bundle file
         export HOMEBREW_BUNDLE_FILE=~/.Brewfile
         # enable autoremove
@@ -102,3 +102,18 @@ viewgitmd() {
         pandoc -f gfm -t html "$1" | w3m -T text/html -o display_image="true"
     fi
 }
+
+# validate command exists
+validate_command() {
+    if [ $# -ne 1 ]; then
+        printf "Usage: %s <command>" "$0"
+        return 1
+    elif ! command -v "$1" >/dev/null 2>&1; then
+        debuglog "%s: %s not found\n" "$0" "$1"
+        return 1
+    else
+        return 0
+    fi
+}
+
+DOT_FUNCTIONS=true

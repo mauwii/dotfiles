@@ -18,9 +18,9 @@ workdir="$dockerhome"
 # directory to mount the dotfiles in the container
 dockermountdir="/mnt/dotfiles"
 # container image to use
-image="alpine:3.18"
+image="local/dotfiles"
 # default shell in the container
-shell="/bin/bash"
+shell="/bin/zsh"
 # packages to install
 pkgs=()
 # command to install packages
@@ -52,6 +52,7 @@ helpmsg() {
     printhelp "--shell" "-s" "Shell to use in the container" "${shell}"
     printhelp "--no-pkgs" "-0" "Switch to install without pkgs"
     printhelp "--debug" "-d" "Switch to enable debug messages"
+    printhelp "--build" "" "Build the container image"
     printhelp "--help" "-h" "Print this help message"
 }
 
@@ -163,6 +164,10 @@ for arg in "$@"; do
             # don't install packages
             no_pkgs="true"
             ;;
+        --build)
+            # build the image
+            build="true"
+            ;;
         *)
             if [ "$skip" = "true" ]; then
                 unset skip
@@ -175,6 +180,22 @@ for arg in "$@"; do
     esac
     shift
 done
+
+if ! docker image ls --format "{{.Repository}}:{{.Tag}}" | grep -q "${image}"; then
+    debuglog "error: image %s not found\n" "${image}"
+    if [ "$image" = "local/dotfiles" ]; then
+        build="true"
+    fi
+fi
+
+if [ "${build}" = "true" ]; then
+    debuglog "building dotfiles image\n"
+    debuglog "%15s %s" "Dockerfile:" "${dotfilesdir}/.dotfiles/Dockerfile"
+    debuglog "%15s %s" "image:" "${image}"
+    docker build \
+        --tag="${image}" \
+        --file="${dotfilesdir}/.dotfiles/Dockerfile" .
+fi
 
 # set shell and installcmd based on image
 case "${image}" in
@@ -196,9 +217,9 @@ if [ "${no_pkgs}" == "true" ]; then
 fi
 
 # set container cmd
-inst=("${pkgs:+${installcmd[@]} ${pkgs[@]} &&}")
+precmd=("${pkgs:+${installcmd[@]} ${pkgs[@]} &&}")
 container_cmd=(
-    "${inst[@]}" "${dockermountdir}/.dotfiles/setup_local.sh" "&&" "${shell}" -l
+    "${precmd[@]}" "${dockermountdir}/.dotfiles/setup_local.sh" \&\& exec "${shell}" -l
 )
 
 # debug output

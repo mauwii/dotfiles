@@ -168,6 +168,10 @@ for arg in "$@"; do
             # build the image
             build="true"
             ;;
+        --build-only)
+            # build the image
+            build_only="true"
+            ;;
         *)
             if [ "$skip" = "true" ]; then
                 unset skip
@@ -188,13 +192,16 @@ if ! docker image ls --format "{{.Repository}}:{{.Tag}}" | grep -q "${image}"; t
     fi
 fi
 
-if [ "${build}" = "true" ]; then
+if [ "${build}" = "true" ] || [ "${build_only}" = "true" ]; then
     debuglog "building dotfiles image\n"
     debuglog "%15s %s" "Dockerfile:" "${dotfilesdir}/.dotfiles/Dockerfile"
     debuglog "%15s %s" "image:" "${image}"
     docker build \
         --tag="${image}" \
         --file="${dotfilesdir}/.dotfiles/Dockerfile" .
+    if [ "${build_only}" = "true" ]; then
+        exit 0
+    fi
 fi
 
 # set shell and installcmd based on image

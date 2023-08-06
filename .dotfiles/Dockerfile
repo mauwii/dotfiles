@@ -11,31 +11,26 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Install dependencies
 # hadolint ignore=DL3008
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bat \
-        ca-certificates \
-        curl \
+        curl ca-certificates \
         direnv \
         exa \
-        gcc \
+        gcc libc6-dev \
         git \
         jq \
-        libc6-dev \
         locales \
         nano \
-        neovim \
         openssh-client \
-        pandoc \
         pipx \
-        w3m \
-        w3m-img \
+        pandoc w3m w3m-img \
         zsh \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the locale
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-    locale-gen
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen \
+    && locale-gen
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
@@ -52,13 +47,9 @@ RUN eval "$(ssh-agent -s)" \
 # Install Starship
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
-# Set zsh as default shell
-ENV SHELL=/bin/zsh
-RUN chsh -s /bin/zsh
-
-# Install Oh My Zsh
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
 # # Install Pyenv
-# RUN curl https://pyenv.run | zsh
 RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+
+# Set zsh as default shell and install Oh My Zsh
+RUN chsh -s /bin/zsh \
+    && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"

@@ -11,8 +11,7 @@ debuglog "loading .profile"
 # set locale
 export LC_ALL="en_US.UTF-8"
 export LANG="en_US.UTF-8"
-# export LANGUAGE="en_US.UTF-8"
-# eval "$(locale)"
+export LANGUAGE="en_US:en"
 
 # set timezone
 export TZ="Europe/Berlin"
@@ -128,24 +127,24 @@ fi
 # source .shrc if interactive or login shell and not yet loaded
 case $- in
     *"l"*)
-        SHELL_IS="login"
+        shell_is="login"
         ;;
     *"i"*)
-        SHELL_IS="interactive"
+        shell_is="interactive"
         ;;
 esac
-if [ "${SHELL_IS:-unset}" != "unset" ]; then
-    LOAD_SHRC="true"
-    debuglog "identified %s shell" "${SHELL_IS}"
+if [ "${shell_is:-unset}" != "unset" ]; then
+    load_shrc="true"
+    debuglog "identified %s shell" "${shell_is}"
 fi
 if [ "${SHELL:-$0}" = /bin/sh ] || [ "${SHELL:-$0}" = /bin/ash ] \
-    && [ "${LOAD_SHRC}" = "true" ] \
+    && [ "${load_shrc}" = "true" ] \
     && [ -r ~/.shrc ] \
     && [ "${DOT_SHRC:-false}" != "true" ]; then
     # shellcheck source=.shrc
     . ~/.shrc
 fi
-unset LOAD_SHRC SHELL_IS
+unset load_shrc shell_is
 
 # shellcheck disable=SC2034
 DOT_PROFILE="true"

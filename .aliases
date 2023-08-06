@@ -93,3 +93,8 @@ fi
 alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
 # remove broken symlinks
 alias clsym="find -L . -name . -o -type d -prune -o -type l -exec rm {} +"
+
+# register-python-argcomplete
+if validate_command register-python-argcomplete3; then
+    alias register-python-argcomplete='register-python-argcomplete3'
+fi

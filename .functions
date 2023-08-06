@@ -116,4 +116,5 @@ validate_command() {
     fi
 }
 
+# shellcheck disable=SC2034
 DOT_FUNCTIONS=true

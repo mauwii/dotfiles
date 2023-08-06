@@ -8,6 +8,11 @@ fi
 
 debuglog "loading .aliases"
 
+# Recursively delete `.DS_Store` files
+alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
+# remove broken symlinks
+alias clsym="find -L . -name . -o -type d -prune -o -type l -exec rm {} +"
+
 # use exa as modern ls-replacement if available
 if validate_command exa; then
     exa --git >/dev/null 2>&1 && exa_git="true"
@@ -54,7 +59,15 @@ if validate_command config; then
                 continue
             fi
             local _path="${HOME}/.dotfiles/${file}"
-            mkdir -p "${_path%/*}"
+            # clean broken symlinks
+            if [ -d "${file%/*}" ]; then
+                if [ -d "${_path%/*}" ]; then
+                    (cd "${_path%/*}" && clsym)
+                else
+                    mkdir -p "${_path%/*}"
+                fi
+            fi
+            # create symlink
             ln -sf "${HOME}/${file}" "${_path}"
         done
     }
@@ -88,11 +101,6 @@ if [ -f "${IDF_PATH}/export.sh" ]; then
 else
     unset IDF_PATH
 fi
-
-# Recursively delete `.DS_Store` files
-alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
-# remove broken symlinks
-alias clsym="find -L . -name . -o -type d -prune -o -type l -exec rm {} +"
 
 # register-python-argcomplete
 if validate_command register-python-argcomplete3; then

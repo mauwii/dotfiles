@@ -23,6 +23,7 @@ RUN apt-get update \
         libc6-dev \
         locales \
         nano \
+        neovim \
         openssh-client \
         pandoc \
         pipx \

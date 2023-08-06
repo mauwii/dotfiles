@@ -43,3 +43,7 @@ build
 
 # files I only want on my mac
 *.mac.local.*
+
+# neovim
+nvim/plugin/packer_compiled.lua
+.luarc.json

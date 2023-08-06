@@ -38,11 +38,17 @@ export CLICOLOR="true"
 
 # Preferred editor for local and remote sessions
 if [ -n "${SSH_CONNECTION}" ]; then
-    export EDITOR="nano"
+    if validate_command nvim; then
+        export EDITOR="nvim"
+    else
+        export EDITOR="nano"
+    fi
 else
     if validate_command code; then
         export EDITOR="code"
         export GIT_EDITOR="${EDITOR} -w"
+    elif validate_command nvim; then
+        export EDITOR="nvim"
     else
         export EDITOR="nano"
     fi

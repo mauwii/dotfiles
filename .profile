@@ -43,7 +43,10 @@ prepend_path "$HOME/.local/bin"
 
 # Add Ruby gems to PATH.
 if validate_command ruby && validate_command gem; then
-    prepend_path "$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+    gems_path="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+    if [ -d "${gems_path}" ]; then
+        prepend_path "${gems_path}"
+    fi
 fi
 
 # docker bins

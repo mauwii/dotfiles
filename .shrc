@@ -40,8 +40,12 @@ export CLICOLOR="true"
 if [ -n "${SSH_CONNECTION}" ]; then
     export EDITOR="nano"
 else
-    export EDITOR="code"
-    export GIT_EDITOR="${EDITOR} -w"
+    if validate_command code; then
+        export EDITOR="code"
+        export GIT_EDITOR="${EDITOR} -w"
+    else
+        export EDITOR="nano"
+    fi
 fi
 
 DOT_SHRC="true"

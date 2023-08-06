@@ -53,6 +53,7 @@ helpmsg() {
     printhelp "--no-pkgs" "-0" "Switch to install without pkgs"
     printhelp "--debug" "-d" "Switch to enable debug messages"
     printhelp "--build" "" "Build the container image"
+    printhelp "--build-only" "" "Build but don't run the container image"
     printhelp "--help" "-h" "Print this help message"
 }
 
@@ -263,8 +264,9 @@ docker run \
     --tty \
     --workdir="${workdir}" \
     "${dockermounts[@]}" \
-    -e DEBIAN_FRONTEND=noninteractive \
-    -e "DEBUG=$debug" \
+    -e "TZ=${TZ:-UTC}" \
+    -e "SHELL=${shell}" \
+    -e "DEBUG=${debug}" \
     --name dotfiles \
     --hostname dotfiles \
     "${image}" \

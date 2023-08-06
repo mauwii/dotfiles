@@ -3,9 +3,9 @@
 debuglog "loading .zshrc"
 
 # load ~/.profile if not loaded yet
-if [ "${DOT_PROFILE}" != "true" ] && [ -r "${HOME}/.profile" ]; then
+if [ "${DOT_PROFILE:-false}" != "true" ] && [ -r ~/.profile ]; then
     # shellcheck source=.profile
-    source "${HOME}/.profile"
+    source ~/.profile
 fi
 
 # If you come from bash you might have to change your $PATH.

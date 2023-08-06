@@ -1,14 +1,12 @@
 # shellcheck shell=bash
 
 # add shell functions
-if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS}" != "true" ]; then
+if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
     # shellcheck source=.functions
     . ~/.functions
 fi
 
-if [ "${DEBUG:-false}" = "true" ]; then
-    printf "[%s] loading .bash_profile\n" "$(date "+%T")"
-fi
+debuglog "loading .bash_profile"
 
 # load cross-compatible profile if not loaded yet
 if [ -r ~/.profile ] && [ "${DOT_PROFILE:-false}" != "true" ]; then
@@ -17,7 +15,9 @@ if [ -r ~/.profile ] && [ "${DOT_PROFILE:-false}" != "true" ]; then
 fi
 
 # load bashrc if interactive and not loaded yet
-if [ -r ~/.bashrc ] && [ "${DOT_BASHRC:-false}" != "true" ]; then
+if [ -r ~/.bashrc ] \
+    && [ "${DOT_BASHRC:-false}" != "true" ] \
+    && [ "${BASH-no}" != "no" ]; then
     # shellcheck source=.bashrc
     . ~/.bashrc
 fi

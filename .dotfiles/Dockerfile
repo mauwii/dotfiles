@@ -13,10 +13,10 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bat \
+        build-essential \
         curl ca-certificates \
         direnv \
         exa \
-        gcc libc6-dev \
         git \
         jq \
         locales tzdata \

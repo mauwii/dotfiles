@@ -37,16 +37,16 @@ if validate_command batcat && [ ! -f ~/.local/bin/bat ]; then
     batbin=$(which batcat)
     # ln -s "${batbin}" ~/.local/bin/bat
     # shellcheck disable=SC2139
-    alias bat="$batbin --paging=never"
-    debuglog ".aliases: batcat linked to bat"
+    alias bat="$batbin"
+    debuglog ".aliases: batcat aliased to bat"
 fi
 if validate_command bat; then
     alias cat="bat --paging=never"
-    debuglog ".aliases: cat aliased to bat"
+    debuglog ".aliases: cat aliased to bat without pager"
 fi
 
 # dotfiles management
-if [ -d "${HOME}/.cfg" ] && command -v /usr/bin/git >/dev/null 2>&1; then
+if [ -d "${HOME}/.cfg" ] && validate_command git; then
     alias config='git --bare --git-dir="${HOME}/.cfg/" --work-tree="${HOME}"'
     debuglog ".aliases: dotfiles management enabled"
 fi
@@ -79,18 +79,18 @@ if validate_command config; then
 fi
 
 # Copy public SSH Key
-if validate_command pbcopy; then
+if validate_command pbcopy && [ -r "${HOME}/.ssh/id_ed25519.pub" ]; then
     alias pubkey='pbcopy < ${HOME}/.ssh/id_ed25519.pub'
 fi
 
 # dump Brewfile
 if [ -n "${HOMEBREW_BUNDLE_FILE}" ]; then
-    alias dump-brewfile='brew bundle dump --file="${HOMEBREW_BUNDLE_FILE}" --force'
+    alias dump-brewfile='brew bundle dump --file="${HOMEBREW_BUNDLE_FILE}" --force --formula --casks --vscode --taps'
 fi
 
 # install or match Brewfile (match removes everything whats not in the Brewfile)
 if [ -f "${HOMEBREW_BUNDLE_FILE}" ]; then
-    alias install-brewfile='brew bundle --file="${HOMEBREW_BUNDLE_FILE}"'
+    alias install-brewfile='brew bundle install --file="${HOMEBREW_BUNDLE_FILE}"'
     alias match-brewfile='brew bundle --force cleanup --file="${HOMEBREW_BUNDLE_FILE}"'
 fi
 

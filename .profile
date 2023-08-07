@@ -1,7 +1,8 @@
+#!/bin/sh
 # shellcheck shell=sh
 
 # add shell functions
-if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS}" != "true" ]; then
+if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
     # shellcheck source=.functions
     . ~/.functions
 fi
@@ -38,7 +39,7 @@ fi
 
 # add private bins to path
 mkdir -p ~/.local/bin
-prepend_path "$HOME/.local/bin"
+prepend_path ~/.local/bin
 
 # Add Ruby gems to PATH.
 if validate_command ruby && validate_command gem; then
@@ -46,16 +47,17 @@ if validate_command ruby && validate_command gem; then
     if [ -d "${gems_path}" ]; then
         prepend_path "${gems_path}"
     fi
+    unset gems_path
 fi
 
 # docker bins
-if [ -d "$HOME/.docker/bin" ]; then
-    prepend_path "$HOME/.docker/bin"
+if [ -d ~/.docker/bin ]; then
+    prepend_path ~/.docker/bin
 fi
 
 # docker cli-plugins
-if [ -d "$HOME/.docker/cli-plugins" ]; then
-    prepend_path "$HOME/.docker/cli-plugins"
+if [ -d ~/.docker/cli-plugins ]; then
+    prepend_path ~/.docker/cli-plugins
 fi
 
 # set PYENV_ROOT if dir exists and not set
@@ -100,9 +102,9 @@ else
 fi
 
 # Count CPUs for Make jobs
-if [ "${MACOS}" ]; then
+if [ "${MACOS}" = "1" ]; then
     CPUCOUNT="$(sysctl -n hw.ncpu)"
-elif [ "${LINUX}" ]; then
+elif [ "${LINUX}" = "1" ]; then
     CPUCOUNT="$(getconf _NPROCESSORS_ONLN)"
 else
     CPUCOUNT=1
@@ -117,34 +119,35 @@ if validate_command manpath; then
     MANPATH="$(manpath)"
     if [ "$(uname -s)" = "Darwin" ]; then
         # remove read-only path "/usr/share/man" from MANPATH
-        MANPATH="${MANPATH//:\/usr\/share\/man:/}"
+        MANPATH=$(echo "${MANPATH}" | sed 's/:\/usr\/share\/man:/:/g')
         debuglog ".profile: removed /usr/share/man from MANPATH"
-        # MANPATH="$(echo "$MANPATH" | sed -e 's#:\/usr\/share\/man:#:#g')"
     fi
     export MANPATH
 fi
 
-# source .shrc if interactive or login shell and not yet loaded
-case $- in
-    *"l"*)
-        shell_is="login"
-        ;;
-    *"i"*)
-        shell_is="interactive"
-        ;;
-esac
-if [ "${shell_is:-unset}" != "unset" ]; then
-    load_shrc="true"
-    debuglog "identified %s shell" "${shell_is}"
-fi
-if [ "${SHELL:-$0}" = /bin/sh ] || [ "${SHELL:-$0}" = /bin/ash ] \
-    && [ "${load_shrc}" = "true" ] \
-    && [ -r ~/.shrc ] \
-    && [ "${DOT_SHRC:-false}" != "true" ]; then
-    # shellcheck source=.shrc
-    . ~/.shrc
-fi
-unset load_shrc shell_is
+# # source .shrc if interactive or login shell and not yet loaded
+# case $- in
+#     *"l"*)
+#         shell_is="login"
+#         ;;
+#     *"i"*)
+#         shell_is="interactive"
+#         ;;
+# esac
+# if [ "${shell_is:-unset}" != "unset" ]; then
+#     load_shrc="true"
+#     debuglog "identified %s shell" "${shell_is}"
+# fi
+# if [ "${SHELL:-$0}" = /bin/sh -o "${SHELL:-$0}" = /bin/ash ] \
+#     && [ "${load_shrc}" = "true" ] \
+#     && [ -r ~/.shrc ] \
+#     && [ "${DOT_SHRC:-false}" != "true" ]; then
+#     # shellcheck source=.shrc
+#     . ~/.shrc
+# fi
+# unset load_shrc shell_is
+
+ENV=$HOME/.shrc
 
 # shellcheck disable=SC2034
 DOT_PROFILE="true"

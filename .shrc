@@ -1,7 +1,8 @@
+#!/bin/sh
 # shellcheck shell=sh
 
 # add shell functions
-if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS}" != "true" ]; then
+if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
     # shellcheck source=.functions
     . ~/.functions
 fi

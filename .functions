@@ -1,3 +1,4 @@
+#!/bin/sh
 # shellcheck shell=sh
 
 # small function to print log messages if $DEBUG is true
@@ -21,8 +22,8 @@ prepend_fpath() {
         printf "%s Error:\n\t%s is not a directory" "$0" "$1"
         return 1
     elif [ -d "${1}" ] && echo "${SHELL}" | grep -q "zsh"; then
-        _escaped=${1//\//\\\/}
-        _cleaned=${FPATH//:${_escaped}:/:}
+        _escaped=$(echo "$1" | sed 's/\//\\\//g')
+        _cleaned=$(echo "$FPATH" | sed 's/:${_escaped}:/:/g')
         export FPATH="${1}${_cleaned:+:$_cleaned}" \
             && debuglog "prepend_fpath: %s" "$1"
         unset _escaped _cleaned
@@ -38,8 +39,8 @@ prepend_path() {
         printf "%s Error:\n\t%s is not a directory" "$0" "$1"
         return 1
     else
-        _escaped=${1//\//\\\/}
-        _cleaned=${PATH//:${_escaped}:/:}
+        _escaped=$(echo "$1" | sed 's/\//\\\//g')
+        _cleaned=$(echo "$PATH" | sed 's/:${_escaped}:/:/g')
         export PATH="${1}${_cleaned:+:$_cleaned}" \
             && debuglog "prepend_path: %s" "$1"
         unset _escaped _cleaned

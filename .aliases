@@ -1,3 +1,4 @@
+#!/bin/sh
 # shellcheck shell=sh source=.functions
 
 # add shell functions
@@ -45,20 +46,20 @@ if validate_command bat; then
 fi
 
 # dotfiles management
-if [[ -d "${HOME}/.cfg" ]] && command -v /usr/bin/git >/dev/null 2>&1; then
+if [ -d "${HOME}/.cfg" ] && command -v /usr/bin/git >/dev/null 2>&1; then
     alias config='git --bare --git-dir="${HOME}/.cfg/" --work-tree="${HOME}"'
     debuglog ".aliases: dotfiles management enabled"
 fi
 if validate_command config; then
     # link all files to ~/.dotfiles to open in code
-    function link_dotfiles() {
+    link_dotfiles() {
         cd "${HOME}" || return 1
         for file in $(config ls-tree --full-tree -r --name-only HEAD); do
             # skip .dotfiles folder
-            if [[ "${file}" =~ .dotfiles ]]; then
+            if echo "${file}" | grep -q ".dotfiles"; then
                 continue
             fi
-            local _path="${HOME}/.dotfiles/${file}"
+            _path="${HOME}/.dotfiles/${file}"
             # clean broken symlinks
             if [ -d "${file%/*}" ]; then
                 if [ -d "${_path%/*}" ]; then

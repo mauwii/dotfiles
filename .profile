@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # shellcheck shell=sh
 
 # add shell functions
-if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
+if [ -r "${HOME}/.functions" ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
     # shellcheck source=.functions
-    . ~/.functions
+    . "${HOME}/.functions"
 fi
 
 debuglog "loading .profile"
@@ -38,8 +38,8 @@ elif [ -d "/usr/local" ]; then
 fi
 
 # add private bins to path
-mkdir -p ~/.local/bin
-prepend_path ~/.local/bin
+mkdir -p "${HOME}/.local/bin"
+prepend_path "${HOME}/.local/bin"
 
 # Add Ruby gems to PATH.
 if validate_command ruby && validate_command gem; then
@@ -51,18 +51,18 @@ if validate_command ruby && validate_command gem; then
 fi
 
 # docker bins
-if [ -d ~/.docker/bin ]; then
-    prepend_path ~/.docker/bin
+if [ -d "${HOME}/.docker/bin" ]; then
+    prepend_path "${HOME}/.docker/bin"
 fi
 
 # docker cli-plugins
-if [ -d ~/.docker/cli-plugins ]; then
-    prepend_path ~/.docker/cli-plugins
+if [ -d "${HOME}/.docker/cli-plugins" ]; then
+    prepend_path "${HOME}/.docker/cli-plugins"
 fi
 
 # set PYENV_ROOT if dir exists and not set
-if [ -d ~/.pyenv ] && [ -z "${PYENV_ROOT}" ]; then
-    export PYENV_ROOT=~/.pyenv
+if [ -d "${HOME}/.pyenv" ] && [ -z "${PYENV_ROOT}" ]; then
+    export PYENV_ROOT"=${HOME}/.pyenv"
 fi
 
 # add pyenv bins to path if dir exists
@@ -125,29 +125,7 @@ if validate_command manpath; then
     export MANPATH
 fi
 
-# # source .shrc if interactive or login shell and not yet loaded
-# case $- in
-#     *"l"*)
-#         shell_is="login"
-#         ;;
-#     *"i"*)
-#         shell_is="interactive"
-#         ;;
-# esac
-# if [ "${shell_is:-unset}" != "unset" ]; then
-#     load_shrc="true"
-#     debuglog "identified %s shell" "${shell_is}"
-# fi
-# if [ "${SHELL:-$0}" = /bin/sh -o "${SHELL:-$0}" = /bin/ash ] \
-#     && [ "${load_shrc}" = "true" ] \
-#     && [ -r ~/.shrc ] \
-#     && [ "${DOT_SHRC:-false}" != "true" ]; then
-#     # shellcheck source=.shrc
-#     . ~/.shrc
-# fi
-# unset load_shrc shell_is
-
-ENV=$HOME/.shrc
+ENV="${HOME}/.shrc"
 
 # shellcheck disable=SC2034
 DOT_PROFILE="true"

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # shellcheck shell=sh
 
 # small function to print log messages if $DEBUG is true
@@ -59,7 +59,7 @@ brew_init() {
         eval "$("${1}/bin/brew" shellenv)" \
             && debuglog "brew_init: %s" "$0" "brew initialized"
         # set brew bundle file
-        export HOMEBREW_BUNDLE_FILE=~/.Brewfile
+        export HOMEBREW_BUNDLE_FILE="${HOME}/.Brewfile"
         # enable autoremove
         export HOMEBREW_AUTOREMOVE=1
         # enable bat

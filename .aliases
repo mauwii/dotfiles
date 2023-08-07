@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # shellcheck shell=sh source=.functions
 
 # add shell functions
-if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS}" != "true" ]; then
+if [ -r "${HOME}/.functions" ] && [ "${DOT_FUNCTIONS}" != "true" ]; then
     # shellcheck source=.functions
-    . ~/.functions
+    . "${HOME}/.functions"
 fi
 
 debuglog "loading .aliases"
@@ -33,11 +33,8 @@ alias lr='ls -R'
 alias llr='lr -l'
 
 # replace cat with bat, but disable paging to make it behave like cat
-if validate_command batcat && [ ! -f ~/.local/bin/bat ]; then
-    batbin=$(which batcat)
-    # ln -s "${batbin}" ~/.local/bin/bat
-    # shellcheck disable=SC2139
-    alias bat="$batbin"
+if validate_command batcat && ! validate_command bat; then
+    alias bat='$(which batcat)'
     debuglog ".aliases: batcat aliased to bat"
 fi
 if validate_command bat; then
@@ -72,15 +69,15 @@ if validate_command config; then
             ln -sf "${HOME}/${file}" "${_path}"
         done
     }
-    # open ~/.dotfiles in code
+    # link dotfiles to ~/.dotfiles and open in code
     if validate_command code; then
-        alias dotfiles='link_dotfiles && code ~/.dotfiles'
+        alias dotfiles='link_dotfiles && code "${HOME}/.dotfiles"'
     fi
 fi
 
 # Copy public SSH Key
 if validate_command pbcopy && [ -r "${HOME}/.ssh/id_ed25519.pub" ]; then
-    alias pubkey='pbcopy < ${HOME}/.ssh/id_ed25519.pub'
+    alias pubkey='pbcopy < "${HOME}/.ssh/id_ed25519.pub"'
 fi
 
 # dump Brewfile
@@ -95,7 +92,7 @@ if [ -f "${HOMEBREW_BUNDLE_FILE}" ]; then
 fi
 
 # add getidf alias if ~/esp/esp-idf exists
-IDF_PATH=~/esp/esp-idf
+IDF_PATH="${HOME}/esp/esp-idf"
 if [ -f "${IDF_PATH}/export.sh" ]; then
     export ESPIDF="${IDF_PATH}"
     alias getidf='. ${ESPIDF}/export.sh'

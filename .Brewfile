@@ -1,15 +1,6 @@
-tap "azure/bicep"
-tap "hashicorp/tap"
-tap "homebrew/aliases"
-tap "homebrew/autoupdate"
-tap "homebrew/bundle"
-tap "homebrew/cask-fonts"
-tap "homebrew/command-not-found"
-tap "homebrew/services"
-tap "homebrew/test-bot"
-tap "ubuntu/microk8s"
 brew "argocd"
 brew "argocd-vault-plugin"
+brew "python@3.10"
 brew "azure-cli"
 brew "bat"
 brew "bettercap"
@@ -62,31 +53,11 @@ cask "font-inconsolata-nerd-font"
 cask "font-meslo-lg-nerd-font"
 cask "github"
 cask "gpg-suite-no-mail"
+cask "iterm2"
 cask "multipass"
 cask "powershell"
 cask "tor-browser"
 cask "visual-studio-code"
-mas "AdGuard for Safari", id: 1440147259
-mas "Amphetamine", id: 937984704
-mas "BetterJSON", id: 1511935951
-mas "Canary Mail", id: 1236045954
-mas "Dark Reader for Safari", id: 1438243180
-mas "Diffusers", id: 1666309574
-mas "GarageBand", id: 682658836
-mas "He3 (Helium 3)", id: 1509135075
-mas "iMovie", id: 408981434
-mas "iStat Menus", id: 1319778037
-mas "Keynote", id: 409183694
-mas "Logic Pro", id: 634148309
-mas "Magnet", id: 441258766
-mas "Microsoft OneNote", id: 784801555
-mas "MindNode", id: 1289197285
-mas "Numbers", id: 409203825
-mas "Pages", id: 409201541
-mas "Strongbox", id: 897283731
-mas "Telegram", id: 747648890
-mas "The Unarchiver", id: 425424353
-mas "WireGuard", id: 1451685025
 vscode "bierner.github-markdown-preview"
 vscode "bierner.markdown-checkbox"
 vscode "bierner.markdown-emoji"

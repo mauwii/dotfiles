@@ -106,7 +106,7 @@ if [ -d ~/.oh-my-zsh ]; then
             printf "Usage: %s <plugin> [<executable>]" "$0"
             return 1
         fi
-        if command -v "${_exectuable:-$_plugin}" >/dev/null 2>&1; then
+        if validate_command "${_executable:-$_plugin}"; then
             plugins+=("${_plugin}")
         fi
     }

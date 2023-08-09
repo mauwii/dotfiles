@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# shellcheck shell=sh
+# shellcheck disable=SC3028
 
 # small function to print log messages if $DEBUG is true
 # for info how to format check out the manpage of printf
@@ -16,10 +16,10 @@ debuglog "loading .functions"
 # prepend dir to fpath if dir exists
 prepend_fpath() {
     if [ $# -ne 1 ]; then
-        printf "Usage: %s <path>" "$0"
+        printf "Usage: %s <path>" "${BASH_SOURCE:-$0}"
         return 1
     elif [ ! -d "$1" ]; then
-        printf "%s Error:\n\t%s is not a directory" "$0" "$1"
+        printf "%s Error:\n\t%s is not a directory" "${BASH_SOURCE:-$0}" "$1"
         return 1
     elif [ -d "${1}" ] && echo "${SHELL}" | grep -q "zsh"; then
         _escaped=$(echo "$1" | sed 's/\//\\\//g')
@@ -36,7 +36,7 @@ prepend_path() {
         echo "Usage: $0 <path>"
         return 1
     elif [ ! -d "$1" ]; then
-        printf "%s Error:\n\t%s is not a directory" "$0" "$1"
+        printf "%s Error:\n\t%s is not a directory" "${BASH_SOURCE:-$0}" "$1"
         return 1
     else
         _escaped=$(echo "$1" | sed 's/\//\\\//g')
@@ -51,13 +51,13 @@ prepend_path() {
 brew_init() {
     # fail if no or to many arguments are provided
     if [ $# -ne 1 ]; then
-        printf "Usage: %s <brew_prefix>\n" "$0"
+        printf "Usage: %s <brew_prefix>\n" "${BASH_SOURCE:-$0}"
         return 1
     # check if brew is available and initialize
     elif [ -x "${1}/bin/brew" ]; then
         # add brew to shell environment
         eval "$("${1}/bin/brew" shellenv)" \
-            && debuglog "brew_init: %s" "$0" "brew initialized"
+            && debuglog "brew_init: %s" "${BASH_SOURCE:-$0}" "brew initialized"
         # set brew bundle file
         export HOMEBREW_BUNDLE_FILE="${HOME}/.Brewfile"
         # enable autoremove
@@ -79,12 +79,12 @@ brew_init() {
 # view markdown files
 viewmd() {
     if [ $# -ne 1 ]; then
-        printf "Usage: %s <path to md file>" "$0"
+        printf "Usage: %s <path to md file>" "${BASH_SOURCE:-$0}"
         return 1
     elif ! command -v pandoc >/dev/null 2>&1; then
-        printf "%s: Error: pandoc not found" "$0"
+        printf "%s: Error: pandoc not found" "${BASH_SOURCE:-$0}"
     elif ! command -v w3m >/dev/null 2>&1; then
-        printf "%s: Error: w3m not found" "$0"
+        printf "%s: Error: w3m not found" "${BASH_SOURCE:-$0}"
     else
         pandoc -f markdown -t html "$1" | w3m -T text/html
     fi
@@ -93,7 +93,7 @@ viewmd() {
 # view git flavored markdown files
 viewgitmd() {
     if [ $# -ne 1 ]; then
-        printf "Usage: %s <path to md file>" "$0"
+        printf "Usage: %s <path to md file>" "${BASH_SOURCE:-$0}"
         return 1
     elif ! command -v pandoc >/dev/null 2>&1; then
         printf "Error: pandoc not found"
@@ -107,10 +107,10 @@ viewgitmd() {
 # validate command exists
 validate_command() {
     if [ $# -ne 1 ]; then
-        printf "Usage: %s <command>" "$0"
+        printf "Usage: %s <command>" "${BASH_SOURCE:-$0}"
         return 1
     elif ! command -v "$1" >/dev/null 2>&1; then
-        debuglog "%s: %s not found\n" "$0" "$1"
+        debuglog "%s: %s not found\n" "${BASH_SOURCE:-$0}" "$1"
         return 1
     else
         return 0

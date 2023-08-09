@@ -44,7 +44,7 @@ fi
 
 # dotfiles management
 if [ -d "${HOME}/.cfg" ] && validate_command git; then
-    alias config='git --bare --git-dir="${HOME}/.cfg/" --work-tree="${HOME}"'
+    alias config='git --git-dir="${HOME}/.cfg" --work-tree="${HOME}"'
     debuglog ".aliases: dotfiles management enabled"
 fi
 if validate_command config; then

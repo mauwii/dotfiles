@@ -59,13 +59,16 @@ if validate_command config; then
             _path="${HOME}/.dotfiles/${file}"
             # clean broken symlinks
             if [ -d "${file%/*}" ]; then
-                if [ -d "${_path%/*}" ]; then
+                if [ -d "${_path%/*}" ] && [ "${_path%/*}" != "${justcleaned}" ]; then
+                    debuglog "cleaning broken symlink in ${_path%/*}"
                     (cd "${_path%/*}" && clsym)
+                    justcleaned="${_path%/*}"
                 else
                     mkdir -p "${_path%/*}"
                 fi
             fi
             # create symlink
+            debuglog "linking ${HOME}/${file} to ${_path}"
             ln -sf "${HOME}/${file}" "${_path}"
         done
     }

@@ -10,12 +10,12 @@ fi
 debuglog "loading .profile"
 
 # set locale
-export LC_ALL="en_US.UTF-8"
-export LANG="en_US.UTF-8"
-export LANGUAGE="en_US:en"
+export LC_ALL="${LC_ALL:-en_US.UTF-8}"
+export LANG="${LANG:-en_US.UTF-8}"
+export LANGUAGE="${LANGUAGE:-en_US:en}"
 
 # set timezone
-export TZ="Europe/Berlin"
+export TZ="${TZ:-Europe/Berlin}"
 
 # set command mode
 export COMMAND_MODE="unix2003"

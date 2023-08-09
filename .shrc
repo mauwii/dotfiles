@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck shell=sh
+# shellcheck disable=SC3003
 
 # add shell functions
 if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then

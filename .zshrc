@@ -195,6 +195,12 @@ else
     unset ITERM2_SHELL_INTEGRATION
 fi
 
+if [ -r ~/.zstyles ]; then
+    # shellcheck disable=SC1090
+    source ~/.zstyles
+fi
+
+# These AddOns should be sourced last
 if [ -d "${HOMEBREW_PREFIX}" ]; then
     # homebrew zsh-fast-syntax-highlighting plugin
     ZSH_FAST_SYNTAX_HIGHLIGHTING="${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
@@ -218,11 +224,6 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
     else
         unset ZSH_AUTOSUGGEST
     fi
-fi
-
-if [ -r ~/.zstyles ]; then
-    # shellcheck disable=SC1090
-    source ~/.zstyles
 fi
 
 DOT_ZSHRC="true"

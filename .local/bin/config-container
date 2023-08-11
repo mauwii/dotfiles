@@ -14,13 +14,17 @@ dockermounts=()
 # home directory in the container
 dockerhome="/root"
 # workdir in the container
-workdir="$dockerhome"
+workdir="${dockerhome}"
 # directory to mount the dotfiles in the container
 dockermountdir="/mnt/dotfiles"
-# container image to use
-image="local/dotfiles"
 # default shell in the container
 shell="/bin/zsh"
+# target architecture
+arch="$(uname -m)"
+# target platform
+platform="linux/${arch}"
+# container image to use
+image="mauwii/dotfiles:${arch}"
 # packages to install
 pkgs=()
 # command to install packages
@@ -43,17 +47,19 @@ helpmsg() {
     #   $3: description
     #   $4: current value (optional)
     printhelp() {
-        printf "  %-13s %3s  %-35s %-10s\n" "${1}" "${2}" "${3}" "${4:-}"
+        printf "  %-13s %3s  %-35s %21s\n" "${1}" "${2}" "${3}" "${4:-}"
     }
     printf "\nUsage:\t%s [options]\n" "${0##*/}"
     printf "\nOptions:\n\n"
     printhelp "--dotfilesdir" "-p" "Path to your dotfiles" "${dotfilesdir}"
     printhelp "--image" "-i" "Container image to use" "${image}"
     printhelp "--shell" "-s" "Shell to use in the container" "${shell}"
+    printhelp "--arch" "" "Container target arch" "${arch}"
+    printhelp "--platform" "" "Container target platform" "${platform}"
     printhelp "--no-pkgs" "-0" "Switch to install without pkgs"
     printhelp "--debug" "-d" "Switch to enable debug messages"
     printhelp "--build" "" "Build the container image"
-    printhelp "--build-only" "" "Build but don't run the container image"
+    printhelp "--build-only" "" "Build but don't run the container"
     printhelp "--help" "-h" "Print this help message"
 }
 
@@ -173,6 +179,38 @@ for arg in "$@"; do
             # build the image
             build_only="true"
             ;;
+        --arch*)
+            [ "${_arch:-unset}" != "unset" ] \
+                && echo "error: arch can only be set once" \
+                && exit 1
+            # target arch for the image
+            if [[ "${arg}" != *"="* ]]; then
+                shift
+                _arch="$1"
+                skip="true"
+            else
+                _arch="${arg#*=}"
+            fi
+            arch="$_arch"
+            ;;
+        --platform*)
+            [ "${_platform:-unset}" != "unset" ] \
+                && echo "error: platform can only be set once" \
+                && exit 1
+            # target arch for the image
+            if [[ "${arg}" != *"="* ]]; then
+                shift
+                _platform="$1"
+                skip="true"
+            else
+                _platform="${arg#*=}"
+            fi
+            arch="$_platform"
+            ;;
+        --skip-brew)
+            # skip "brew bundle install"
+            skip_brew="true"
+            ;;
         *)
             if [ "$skip" = "true" ]; then
                 unset skip
@@ -197,10 +235,16 @@ if [ "${build}" = "true" ] || [ "${build_only}" = "true" ]; then
     debuglog "building dotfiles image\n"
     debuglog "%15s %s" "Dockerfile:" "${dotfilesdir}/.dotfiles/Dockerfile"
     debuglog "%15s %s" "image:" "${image}"
-    docker build \
+    debuglog "%15s %s" "arch:" "${arch}"
+    docker buildx build \
+        --platform="${platform}" \
         --tag="${image}" \
         --file="${dotfilesdir}/.dotfiles/Dockerfile" .
-    if [ "${build_only}" = "true" ]; then
+    # -o=type=image,name="${image}",push=true \
+    if [ $? -ne 0 ]; then
+        debuglog "error: failed to build image\n"
+        exit 1
+    elif [ "${build_only}" = "true" ]; then
         exit 0
     fi
 fi
@@ -259,15 +303,17 @@ done
 # execute container interactive in pseudo tty
 debuglog "executing container"
 docker run \
+    --platform "linux/${arch}" \
     --rm \
     --interactive \
     --tty \
     --workdir="${workdir}" \
-    "${dockermounts[@]}" \
+    --name dotfiles \
+    --hostname dotfiles \
     -e "TZ=${TZ:-UTC}" \
     -e "SHELL=${shell}" \
     -e "DEBUG=${debug}" \
-    --name dotfiles \
-    --hostname dotfiles \
+    "${dockermounts[@]}" \
+    ${skip_brew:+-e "SKIP_BREW_BUNDLE=${skip_brew}"} \
     "${image}" \
     "${initshell:-$shell}" -c "${container_cmd[*]}"

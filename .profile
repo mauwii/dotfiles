@@ -33,7 +33,9 @@ grep -q "Microsoft" /proc/version 2>/dev/null && export UBUNTU_ON_WINDOWS=1 \
 # add brew to env
 if [ -d "/opt/homebrew" ]; then
     brew_init "/opt/homebrew"
-elif [ -d "/usr/local" ]; then
+elif [ -d "/home/linuxbrew/.linuxbrew" ]; then
+    brew_init "/home/linuxbrew/.linuxbrew"
+elif [ -x "/usr/local/bin/brew" ]; then
     brew_init "/usr/local"
 fi
 

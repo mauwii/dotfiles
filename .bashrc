@@ -51,18 +51,24 @@ if command -v pipx >/dev/null 2>&1; then
     eval "$(register-python-argcomplete pipx)"
 fi
 
-# brew completion
-if [ -d "${HOMEBREW_PREFIX}" ]; then
-    if [ -r "${HOMEBREW_PREFIX}"/etc/profile.d/bash_completion.sh ]; then
-        # shellcheck source=/dev/null
-        . "${HOMEBREW_PREFIX}"/etc/profile.d/bash_completion.sh
-    elif [ -d "${HOMEBREW_PREFIX}/etc/bash_completion.d" ]; then
-        find "${HOMEBREW_PREFIX}"/etc/bash_completion.d -type l \
-            | while IFS= read -r completionscript; do
-                #shellcheck source=/dev/null
-                [ -r "${completionscript}" ] && . "${completionscript}"
-            done
-    fi
+# load bash completion if available
+if [ -r "${HOMEBREW_PREFIX:-unset}/etc/profile.d/bash_completion.sh" ]; then
+    __bash_completion="${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+elif [ -r /usr/share/bash-completion/bash_completion ]; then
+    __bash_completion=/usr/share/bash-completion/bash_completion
+elif [ -d "${HOMEBREW_PREFIX:-unset}/etc/bash_completion.d" ]; then
+    debuglog "%s: sourcing completion scripts in %s" ".bashrc" "${HOMEBREW_PREFIX}/etc/bash_completion.d"
+    find "${HOMEBREW_PREFIX}/etc/bash_completion.d" -type l \
+        | while IFS= read -r completionscript; do
+            #shellcheck source=/dev/null
+            [ -r "${completionscript}" ] && . "${completionscript}"
+        done
+fi
+if [[ -f "${__bash_completion}" ]]; then
+    # shellcheck source=/dev/null
+    . "${__bash_completion}"
+    debuglog "%s: found bash_completion at %s" ".bashrc" "${__bash_completion}"
+    unset __bash_completion
 fi
 
 # initialize starship prompt if available

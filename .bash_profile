@@ -14,21 +14,10 @@ if [[ -r ~/.profile && "${DOT_PROFILE:-false}" != "true" ]]; then
     . ~/.profile
 fi
 
-# load bash completion if available
-if [[ -f /opt/homebrew/etc/profile.d/bash_completion.sh ]]; then
-    bash_completion=/opt/homebrew/etc/profile.d/bash_completion.sh
-elif [[ -f /usr/share/bash-completion/bash_completion ]]; then
-    bash_completion=/usr/share/bash-completion/bash_completion
-fi
-if [[ $PS1 && -r "${bash_completion}" ]]; then
-    # shellcheck source=/dev/null
-    . "${bash_completion}"
-fi
-
 # load bashrc if interactive and not loaded yet
-if [[ $PS1 && -r ~/.bashrc && "${DOT_BASHRC:-false}" != "true" ]]; then
+if [[ "x${PS1}" != "x" && "${DOT_BASHRC:-false}" != "true" ]]; then
     # shellcheck source=.bashrc
-    . ~/.bashrc
+    [ -r "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
 fi
 
 # shellcheck disable=SC2034

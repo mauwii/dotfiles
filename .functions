@@ -19,13 +19,12 @@ prepend_fpath() {
         printf "Usage: %s <path>" "${BASH_SOURCE:-$0}"
         return 1
     elif [ ! -d "$1" ]; then
-        printf "%s Error:\n\t%s is not a directory" "${BASH_SOURCE:-$0}" "$1"
+        printf "%s Error:\n\t%s is not a directory" "${BASH_SOURCE:-$0}" "${1}"
         return 1
     elif [ -d "${1}" ] && echo "${SHELL}" | grep -q "zsh"; then
-        _escaped=$(echo "$1" | sed 's/\//\\\//g')
-        _cleaned=$(echo "$FPATH" | sed 's/:${_escaped}:/:/g')
+        _cleaned=$(echo "$FPATH" | sed "s#:${1}:#:#g")
         export FPATH="${1}${_cleaned:+:$_cleaned}" \
-            && debuglog "prepend_fpath: %s" "$1"
+            && debuglog "prepend_fpath: %s" "${1}"
         unset _escaped _cleaned
     fi
 }
@@ -33,16 +32,15 @@ prepend_fpath() {
 # prepend dir to path if dir exists
 prepend_path() {
     if [ $# -ne 1 ]; then
-        echo "Usage: $0 <path>"
+        echo "Usage: ${0} <path>"
         return 1
-    elif [ ! -d "$1" ]; then
-        printf "%s Error:\n\t%s is not a directory" "${BASH_SOURCE:-$0}" "$1"
+    elif [ ! -d "${1}" ]; then
+        printf "%s Error:\n\t%s is not a directory" "${BASH_SOURCE:-$0}" "${1}"
         return 1
     else
-        _escaped=$(echo "$1" | sed 's/\//\\\//g')
-        _cleaned=$(echo "$PATH" | sed 's/:${_escaped}:/:/g')
+        _cleaned=$(echo "$PATH" | sed "s#:${1}:#:#g")
         export PATH="${1}${_cleaned:+:$_cleaned}" \
-            && debuglog "prepend_path: %s" "$1"
+            && debuglog "prepend_path: %s" "${1}"
         unset _escaped _cleaned
     fi
 }
@@ -57,9 +55,9 @@ brew_init() {
     elif [ -x "${1}/bin/brew" ]; then
         # add brew to shell environment
         eval "$("${1}/bin/brew" shellenv)" \
-            && debuglog "brew_init: %s" "${BASH_SOURCE:-$0}" "brew initialized"
+            && debuglog "brew_init: brew initialized"
         # set brew bundle file
-        export HOMEBREW_BUNDLE_FILE="${HOME}/.Brewfile"
+        export HOMEBREW_BUNDLE_FILE="${HOME}/.local/Brewfile"
         # enable autoremove
         export HOMEBREW_AUTOREMOVE=1
         # enable bat
@@ -76,44 +74,46 @@ brew_init() {
     fi
 }
 
+# validate command exists
+validate_command() {
+    if [ $# -ne 1 ]; then
+        printf "Usage: validate_command <command>\n"
+        return 1
+    elif ! command -v "$1" >/dev/null 2>&1; then
+        debuglog "validate_command: %s not found" "$1"
+        return 1
+    else
+        return 0
+    fi
+}
+
 # view markdown files
 viewmd() {
     if [ $# -ne 1 ]; then
-        printf "Usage: %s <path to md file>" "${BASH_SOURCE:-$0}"
+        printf "Usage: viewmd <path to md file>"
         return 1
     elif ! command -v pandoc >/dev/null 2>&1; then
-        printf "%s: Error: pandoc not found" "${BASH_SOURCE:-$0}"
+        printf "viewmd: Error: pandoc not found"
     elif ! command -v w3m >/dev/null 2>&1; then
-        printf "%s: Error: w3m not found" "${BASH_SOURCE:-$0}"
+        printf "viewmd: Error: w3m not found"
     else
-        pandoc -f markdown -t html "$1" | w3m -T text/html
+        pandoc -f markdown -t html "$1" \
+            | w3m -T text/html
     fi
 }
 
 # view git flavored markdown files
 viewgitmd() {
     if [ $# -ne 1 ]; then
-        printf "Usage: %s <path to md file>" "${BASH_SOURCE:-$0}"
+        printf "Usage: viewgitmd <path to md file>"
         return 1
-    elif ! command -v pandoc >/dev/null 2>&1; then
+    elif ! validate_command pandoc; then
         printf "Error: pandoc not found"
-    elif ! command -v w3m >/dev/null 2>&1; then
+    elif validate_command w3m; then
         printf "Error: w3m not found"
     else
-        pandoc -f gfm -t html "$1" | w3m -T text/html -o display_image="true"
-    fi
-}
-
-# validate command exists
-validate_command() {
-    if [ $# -ne 1 ]; then
-        printf "Usage: %s <command>" "${BASH_SOURCE:-$0}"
-        return 1
-    elif ! command -v "$1" >/dev/null 2>&1; then
-        debuglog "%s: %s not found\n" "${BASH_SOURCE:-$0}" "$1"
-        return 1
-    else
-        return 0
+        pandoc -f gfm -t html "$1" \
+            | w3m -T text/html -o display_image="true"
     fi
 }
 

@@ -1,24 +1,32 @@
 #!/bin/sh
-# shellcheck disable=SC3003
+# shellcheck disable=SC3003,SC3028
 
 # add shell functions
-if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
+if [ -r "${HOME}/.functions" ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
     # shellcheck source=.functions
-    . ~/.functions
+    . "${HOME}/.functions"
 fi
 
 # ensure .shrc is only loaded once
 if [ "${DOT_SHRC}" = "true" ]; then
-    debuglog "already loaded .shrc"
+    debuglog "already loaded %s" "${BASH_SOURCE:-${0}}"
     return
 else
-    debuglog "loading .shrc"
+    debuglog "loading %s" "${BASH_SOURCE:-${0}}"
 fi
 
 # load aliases
-if [ -r ~/.aliases ]; then
+if [ -r "${HOME}/.aliases" ]; then
     # shellcheck source=.aliases
-    . ~/.aliases
+    . "${HOME}/.aliases"
+fi
+
+# install global brewfile
+if validate_command brew \
+    && [ -r "${HOME}/.Brewfile" ] \
+    && [ ! -f "${HOME}/.Brewfile.lock.json" ] \
+    && [ "${SKIP_BREW_BUNDLE:-false}" = "false" ]; then
+    brew bundle install --file "${HOME}/.Brewfile"
 fi
 
 # Colourful manpages
@@ -41,7 +49,7 @@ export CLICOLOR="true"
 if [ -n "${SSH_CONNECTION}" ]; then
     if validate_command nvim; then
         export EDITOR="nvim"
-    else
+    elif validate_command nano; then
         export EDITOR="nano"
     fi
 else
@@ -50,7 +58,7 @@ else
         export GIT_EDITOR="${EDITOR} -w"
     elif validate_command nvim; then
         export EDITOR="nvim"
-    else
+    elif validate_command nano; then
         export EDITOR="nano"
     fi
 fi

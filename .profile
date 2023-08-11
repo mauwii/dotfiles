@@ -115,7 +115,7 @@ else
     CPUCOUNT=1
 fi
 if [ "${CPUCOUNT}" -gt 1 ]; then
-    export MAKEFLAGS="${MAKEFLAGS:+$MAKEFLAGS }-j${CPUCOUNT}"
+    export MAKEFLAGS="-j${CPUCOUNT}"
     export BUNDLE_JOBS="${CPUCOUNT}"
 fi
 

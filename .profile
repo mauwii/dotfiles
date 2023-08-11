@@ -21,10 +21,13 @@ export TZ="${TZ:-Europe/Berlin}"
 export COMMAND_MODE="unix2003"
 
 # OS variables
-[ "$(uname -s)" = "Darwin" ] && export MACOS=1 && export UNIX=1 \
-    && debuglog "%s: identified MACOS" "${0##*/}"
-[ "$(uname -s)" = "Linux" ] && export LINUX=1 && export UNIX=1 \
-    && debuglog "%s: identified LINUX" "${0##*/}"
+if [ "$(uname -s)" = "Darwin" ]; then
+    export MACOS=1 UNIX=1
+    debuglog "%s: identified MACOS" "${0##*/}"
+elif [ "$(uname -s)" = "Linux" ]; then
+    export LINUX=1 UNIX=1
+    debuglog "%s: identified LINUX" "${0##*/}"
+fi
 uname -s | grep -q "_NT-" && export WINDOWS=1 \
     && debuglog "%s: identified WINDOWS" "${0##*/}"
 grep -q "Microsoft" /proc/version 2>/dev/null && export UBUNTU_ON_WINDOWS=1 \
@@ -116,14 +119,10 @@ if [ "${CPUCOUNT}" -gt 1 ]; then
     export BUNDLE_JOBS="${CPUCOUNT}"
 fi
 
-# clean manpath
-if validate_command manpath; then
-    MANPATH="$(manpath)"
-    if [ "$(uname -s)" = "Darwin" ]; then
-        # remove read-only path "/usr/share/man" from MANPATH
-        MANPATH=$(echo "${MANPATH}" | sed 's/:\/usr\/share\/man:/:/g')
-        debuglog ".profile: removed /usr/share/man from MANPATH"
-    fi
+# remove read-only path "/usr/share/man" from MANPATH on MacOS
+if validate_command manpath && [ "${MACOS}" -eq 1 ]; then
+    MANPATH=$(manpath | sed 's#:\/usr\/share\/man:#:#g')
+    debuglog ".profile: removed /usr/share/man from MANPATH"
     export MANPATH
 fi
 

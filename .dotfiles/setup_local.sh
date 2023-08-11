@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # cd to the directory of this script
-SCRIPTDIR="$(dirname "$0")"
+SCRIPTDIR="$(dirname "${0}")"
 cd "${SCRIPTDIR}/.." || exit 1
 
 # copy files to home directory
@@ -18,12 +18,6 @@ for file in .??*; do
         && continue
     [ "$file" = ".gitmodules" ] \
         && echo "skipped .gitmodules" \
-        && continue
-    [ "$file" = ".editorconfig" ] \
-        && echo "skipped .editorconfig" \
-        && continue
-    [ "$file" = ".local" ] \
-        && echo "skipped .local" \
         && continue
     [ "$file" = ".dotfiles" ] \
         && echo "skipped .dotfiles" \

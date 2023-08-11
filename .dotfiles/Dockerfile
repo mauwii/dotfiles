@@ -47,10 +47,16 @@ RUN eval "$(ssh-agent -s)" \
 # Install Starship
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
-# # Install Pyenv
+# Install Pyenv
 RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv
 
 # Set zsh as default shell and install Oh My Zsh
 ENV SHELL=/bin/zsh
 RUN chsh -s /bin/zsh \
     && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# install brew if amd64
+RUN if [ "$(uname -m)" = "x86_64" ]; then \
+        echo "" > /.dockerenv; \
+        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; \
+    fi

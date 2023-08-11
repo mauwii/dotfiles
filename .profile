@@ -120,7 +120,7 @@ if [ "${CPUCOUNT}" -gt 1 ]; then
 fi
 
 # remove read-only path "/usr/share/man" from MANPATH on MacOS
-if validate_command manpath && [ "${MACOS}" -eq 1 ]; then
+if validate_command manpath && [ "${MACOS}" = "1" ]; then
     MANPATH=$(manpath | sed 's#:\/usr\/share\/man:#:#g')
     debuglog ".profile: removed /usr/share/man from MANPATH"
     export MANPATH

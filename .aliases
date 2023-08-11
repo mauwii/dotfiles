@@ -85,7 +85,7 @@ fi
 
 # dump Brewfile
 if [ -n "${HOMEBREW_BUNDLE_FILE}" ]; then
-    alias dump-brewfile='brew bundle dump --file="${HOMEBREW_BUNDLE_FILE}" --force --formula --casks --vscode --taps'
+    alias dump-brewfile='brew bundle dump --file="${HOMEBREW_BUNDLE_FILE}" --force'
 fi
 
 # install or match Brewfile (match removes everything whats not in the Brewfile)

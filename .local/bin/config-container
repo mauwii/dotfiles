@@ -24,7 +24,7 @@ arch="$(uname -m)"
 # target platform
 platform="linux/${arch}"
 # container image to use
-image="mauwii/dotfiles:${arch}"
+image="mauwii/dotfiles"
 # packages to install
 pkgs=()
 # command to install packages
@@ -52,10 +52,10 @@ helpmsg() {
     printf "\nUsage:\t%s [options]\n" "${0##*/}"
     printf "\nOptions:\n\n"
     printhelp "--dotfilesdir" "-p" "Path to your dotfiles" "${dotfilesdir}"
-    printhelp "--image" "-i" "Container image to use" "${image}"
-    printhelp "--shell" "-s" "Shell to use in the container" "${shell}"
-    printhelp "--arch" "" "Container target arch" "${arch}"
-    printhelp "--platform" "" "Container target platform" "${platform}"
+    printhelp "--image" "-i" "Container image to use" "${_image:-$image}"
+    printhelp "--shell" "-s" "Shell to use in the container" "${_shell:-$shell}"
+    printhelp "--arch" "" "Container target arch" "${_arch:-$arch}"
+    printhelp "--platform" "" "Container target platform" "${_platform:-$platform}"
     printhelp "--no-pkgs" "-0" "Switch to install without pkgs"
     printhelp "--debug" "-d" "Switch to enable debug messages"
     printhelp "--build" "" "Build the container image"
@@ -67,9 +67,7 @@ helpmsg() {
 for arg in "$@"; do
     case "$arg" in
         -h | --help)
-            printf "\nLittle helper to test and debug the dotfiles in different Distros\n"
-            helpmsg
-            exit 0
+            printhelp="true"
             ;;
         -p | --dotfilesdir*)
             [ "${_dotfilesdir:-unset}" != "unset" ] \
@@ -101,7 +99,7 @@ for arg in "$@"; do
             else
                 _shell="${arg#*=}"
             fi
-            shell="$_shell"
+            # shell="$_shell"
             continue
             ;;
         -i | --image*)
@@ -160,7 +158,6 @@ for arg in "$@"; do
             [ "${_image: -1}" = "^" ] \
                 && echo "error: image can not end with a caret" \
                 && exit 1
-            image="$_image"
             continue
             ;;
         -d | --debug)
@@ -191,13 +188,12 @@ for arg in "$@"; do
             else
                 _arch="${arg#*=}"
             fi
-            arch="$_arch"
             ;;
         --platform*)
             [ "${_platform:-unset}" != "unset" ] \
                 && echo "error: platform can only be set once" \
                 && exit 1
-            # target arch for the image
+            # target platform(s) for the image
             if [[ "${arg}" != *"="* ]]; then
                 shift
                 _platform="$1"
@@ -205,7 +201,6 @@ for arg in "$@"; do
             else
                 _platform="${arg#*=}"
             fi
-            arch="$_platform"
             ;;
         --skip-brew)
             # skip "brew bundle install"
@@ -224,21 +219,27 @@ for arg in "$@"; do
     shift
 done
 
-if ! docker image ls --format "{{.Repository}}:{{.Tag}}" | grep -q "${image}"; then
-    debuglog "error: image %s not found\n" "${image}"
-    if [ "$image" = "local/dotfiles" ]; then
+if [[ "${printhelp}" = "true" ]]; then
+    printf "\nLittle helper to test and debug the dotfiles in different Distros\n"
+    helpmsg
+    exit 0
+fi
+
+if ! docker image ls --format "{{.Repository}}:{{.Tag}}" | grep -q "${_image:-$image}:${_arch:-$arch}"; then
+    debuglog "info: image %s not found locally" "${_image:-$image}:${_arch:-$arch}"
+    if [[ "${_image:-$image}" = "${image}" ]]; then
         build="true"
     fi
 fi
 
 if [ "${build}" = "true" ] || [ "${build_only}" = "true" ]; then
-    debuglog "building dotfiles image\n"
+    debuglog "info: building dotfiles image"
     debuglog "%15s %s" "Dockerfile:" "${dotfilesdir}/.dotfiles/Dockerfile"
-    debuglog "%15s %s" "image:" "${image}"
-    debuglog "%15s %s" "arch:" "${arch}"
+    debuglog "%15s %s" "image:" "${_image:-$image}:${_arch:-$arch}"
+    debuglog "%15s %s" "platform:" "${_platform:-$platform}"
     docker buildx build \
-        --platform="${platform}" \
-        --tag="${image}" \
+        --platform="${_platform:-linux/${_arch:-$arch}}" \
+        --tag="${_image:-$image}":"${_arch:-$arch}" \
         --file="${dotfilesdir}/.dotfiles/Dockerfile" .
     # -o=type=image,name="${image}",push=true \
     if [ $? -ne 0 ]; then
@@ -250,7 +251,7 @@ if [ "${build}" = "true" ] || [ "${build_only}" = "true" ]; then
 fi
 
 # set shell and installcmd based on image
-case "${image}" in
+case "${_image}" in
     */alpine:* | */alpine | alpine:* | alpine)
         installcmd=(apk --no-cache add)
         pkgs=(bat bash direnv exa nano pandoc starship w3m w3m-image zsh)
@@ -271,13 +272,13 @@ fi
 # set container cmd
 precmd=("${pkgs:+${installcmd[@]} ${pkgs[@]} &&}")
 container_cmd=(
-    "${precmd[@]}" "${dockermountdir}/.dotfiles/setup_local.sh" \&\& exec "${shell}" -l
+    "${precmd[@]}" "${dockermountdir}/.dotfiles/setup_local.sh" \&\& exec "${_shell:-$shell}" -l
 )
 
 # debug output
 debuglog "dotfilesdir set to: %s" "${dotfilesdir}"
-debuglog "shell set to: %s" "${shell}"
-debuglog "image is set to: %s" "${image}"
+debuglog "shell set to: %s" "${_shell:-$shell}"
+debuglog "image is set to: %s" "${_image:-$image}"
 debuglog "container cmd set to: %s" "${container_cmd[*]}"
 debuglog "dockermountdir is set to: %s" "${dockermountdir}"
 
@@ -303,7 +304,7 @@ done
 # execute container interactive in pseudo tty
 debuglog "executing container"
 docker run \
-    --platform "linux/${arch}" \
+    --platform "linux/${_arch:-$arch}" \
     --rm \
     --interactive \
     --tty \
@@ -311,9 +312,9 @@ docker run \
     --name dotfiles \
     --hostname dotfiles \
     -e "TZ=${TZ:-UTC}" \
-    -e "SHELL=${shell}" \
+    -e "SHELL=${_shell:-${shell}}" \
     -e "DEBUG=${debug}" \
     "${dockermounts[@]}" \
     ${skip_brew:+-e "SKIP_BREW_BUNDLE=${skip_brew}"} \
-    "${image}" \
-    "${initshell:-$shell}" -c "${container_cmd[*]}"
+    "${_image:-$image}":"${_arch:-$arch}" \
+    "${initshell:-${_shell:-${shell}}}" -c "${container_cmd[*]}"

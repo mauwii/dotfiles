@@ -125,6 +125,9 @@ for arg in "$@"; do
             [ "${_image:0:1}" = ":" ] \
                 && echo "error: image can not start with a colon" \
                 && exit 1
+            [[ "${_image}" = *":"* ]] \
+                && echo "error: image can not contain a colon" \
+                && exit 1
             [ "${_image: -1}" = ":" ] \
                 && echo "error: image can not end with a colon" \
                 && exit 1
@@ -219,14 +222,19 @@ for arg in "$@"; do
     shift
 done
 
+# container image and tag
+fulltag="${_image:-$image}:${_arch:-$arch}"
+# target platform
+platform="${_platform:-linux/${_arch:-$arch}}"
+
 if [[ "${printhelp}" = "true" ]]; then
     printf "\nLittle helper to test and debug the dotfiles in different Distros\n"
     helpmsg
     exit 0
 fi
 
-if ! docker image ls --format "{{.Repository}}:{{.Tag}}" | grep -q "${_image:-$image}:${_arch:-$arch}"; then
-    debuglog "info: image %s not found locally" "${_image:-$image}:${_arch:-$arch}"
+if ! docker image ls --format "{{.Repository}}:{{.Tag}}" | grep -q "${fulltag}"; then
+    debuglog "info: image %s not found locally" "${fulltag}"
     if [[ "${_image:-$image}" = "${image}" ]]; then
         build="true"
     fi
@@ -235,11 +243,11 @@ fi
 if [ "${build}" = "true" ] || [ "${build_only}" = "true" ]; then
     debuglog "info: building dotfiles image"
     debuglog "%15s %s" "Dockerfile:" "${dotfilesdir}/.dotfiles/Dockerfile"
-    debuglog "%15s %s" "image:" "${_image:-$image}:${_arch:-$arch}"
-    debuglog "%15s %s" "platform:" "${_platform:-$platform}"
+    debuglog "%15s %s" "image:" "${fulltag}"
+    debuglog "%15s %s" "platform:" "${platform}"
     docker buildx build \
-        --platform="${_platform:-linux/${_arch:-$arch}}" \
-        --tag="${_image:-$image}":"${_arch:-$arch}" \
+        --platform="${platform}" \
+        --tag="${fulltag}" \
         --file="${dotfilesdir}/.dotfiles/Dockerfile" .
     # -o=type=image,name="${image}",push=true \
     if [ $? -ne 0 ]; then
@@ -294,10 +302,10 @@ getdotfiles() {
 
 # create dockermount parameter for each dotfile
 for dotfile in $(getdotfiles); do
-    _localfile="${dotfilesdir}/$dotfile"
-    _dockerfile="${dockermountdir}/$dotfile"
-    if [[ -f "${_localfile}" ]]; then
-        dockermounts+=(-v "${_localfile}":"${_dockerfile}")
+    __localfile="${dotfilesdir}/$dotfile"
+    __dockerfile="${dockermountdir}/$dotfile"
+    if [[ -f "${__localfile}" ]]; then
+        dockermounts+=(-v "${__localfile}":"${__dockerfile}")
     fi
 done
 
@@ -314,7 +322,8 @@ docker run \
     -e "TZ=${TZ:-UTC}" \
     -e "SHELL=${_shell:-${shell}}" \
     -e "DEBUG=${debug}" \
+    ${LC_TERMINAL:+-e "LC_TERMINAL=${LC_TERMINAL}"} \
     "${dockermounts[@]}" \
     ${skip_brew:+-e "SKIP_BREW_BUNDLE=${skip_brew}"} \
-    "${_image:-$image}":"${_arch:-$arch}" \
+    "${fulltag}" \
     "${initshell:-${_shell:-${shell}}}" -c "${container_cmd[*]}"

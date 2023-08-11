@@ -92,13 +92,13 @@ viewmd() {
     if [ $# -ne 1 ]; then
         printf "Usage: viewmd <path to md file>"
         return 1
-    elif ! command -v pandoc >/dev/null 2>&1; then
+    elif ! validate_command pandoc; then
         printf "viewmd: Error: pandoc not found"
-    elif ! command -v w3m >/dev/null 2>&1; then
+    elif ! validate_command w3m; then
         printf "viewmd: Error: w3m not found"
     else
         pandoc -f markdown -t html "$1" \
-            | w3m -T text/html
+            | w3m -T text/html -o display_image=true
     fi
 }
 
@@ -109,11 +109,11 @@ viewgitmd() {
         return 1
     elif ! validate_command pandoc; then
         printf "Error: pandoc not found"
-    elif validate_command w3m; then
+    elif ! validate_command w3m; then
         printf "Error: w3m not found"
     else
         pandoc -f gfm -t html "$1" \
-            | w3m -T text/html -o display_image="true"
+            | w3m -T text/html -o display_image=true
     fi
 }
 

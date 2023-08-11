@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 # add shell functions
-if [ -r ~/.functions ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
+if [[ -r ~/.functions && "${DOT_FUNCTIONS}" != "true" ]]; then
     # shellcheck source=.functions
     . ~/.functions
 fi
@@ -9,15 +9,15 @@ fi
 debuglog "loading .bash_profile"
 
 # load cross-compatible profile if not loaded yet
-if [[ -r ~/.profile && "${DOT_PROFILE:-false}" != "true" ]]; then
+if [[ -r ~/.profile && "${DOT_PROFILE}" != "true" ]]; then
     # shellcheck source=.profile
     . ~/.profile
 fi
 
 # load bashrc if interactive and not loaded yet
-if [[ "x${PS1}" != "x" && "${DOT_BASHRC:-false}" != "true" ]]; then
+if [[ "${PS1:-x}" != "x" && "${DOT_BASHRC}" != "true" && -r "${HOME}/.bashrc" ]]; then
     # shellcheck source=.bashrc
-    [ -r "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
+    . "${HOME}/.bashrc"
 fi
 
 # shellcheck disable=SC2034

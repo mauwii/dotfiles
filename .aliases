@@ -26,8 +26,8 @@ else
 fi
 
 # ls aliases
-alias l='ls -a -h'
-alias ll='l -l -g'
+alias l='ls -ah'
+alias ll='l -lgG'
 alias lll='ll -@'
 alias lr='ls -R'
 alias llr='lr -l'

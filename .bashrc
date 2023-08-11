@@ -76,4 +76,11 @@ if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
 fi
 
+# source iTerm2 shell integration if available
+if [[ -r "${HOME}/.iterm2_shell_integration.bash" && ${LC_TERMINAL} == "iTerm2" ]]; then
+    # shellcheck source=/dev/null
+    . "${HOME}/.iterm2_shell_integration.bash"
+    debuglog "%s: sourced iTerm2 shell integration" ".bashrc"
+fi
+
 DOT_BASHRC="true"

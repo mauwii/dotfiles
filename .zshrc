@@ -185,16 +185,6 @@ if validate_command pipx; then
     eval "$(register-python-argcomplete pipx)"
 fi
 
-# iTerm 2 Shell Integration
-ITERM2_SHELL_INTEGRATION=~/.iterm2_shell_integration.zsh
-if [ -r "${ITERM2_SHELL_INTEGRATION}" ] \
-    && [ "${TERM_PROGRAM:+$TERM_PROGRAM}" = "iTerm.app" ]; then
-    # shellcheck source=/dev/null
-    source "${ITERM2_SHELL_INTEGRATION}"
-else
-    unset ITERM2_SHELL_INTEGRATION
-fi
-
 if [ -r ~/.zstyles ]; then
     # shellcheck disable=SC1090
     source ~/.zstyles
@@ -224,6 +214,16 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
     else
         unset ZSH_AUTOSUGGEST
     fi
+fi
+
+# iTerm 2 Shell Integration
+ITERM2_SHELL_INTEGRATION=~/.iterm2_shell_integration.zsh
+if [ -r "${ITERM2_SHELL_INTEGRATION}" ] \
+    && [ "${LC_TERMINAL}" = "iTerm2" ]; then
+    # shellcheck source=.iterm2_shell_integration.zsh
+    source "${ITERM2_SHELL_INTEGRATION}"
+else
+    unset ITERM2_SHELL_INTEGRATION
 fi
 
 DOT_ZSHRC="true"

@@ -8,9 +8,15 @@ LABEL \
 # Enable pipefail
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+# Enable apt cache
+RUN rm -f /etc/apt/apt.conf.d/docker-clean \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' >/etc/apt/apt.conf.d/keep-cache
+
 # Install dependencies
 # hadolint ignore=DL3008
-RUN apt-get update \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bash-completion \
         bat \
@@ -51,13 +57,17 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 # Install Pyenv
 RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv
 
-# Set zsh as default shell and install Oh My Zsh
-ENV SHELL=/bin/zsh
-RUN chsh -s /bin/zsh \
-    && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# download iTerm2 shell integration
+RUN curl -L https://iterm2.com/shell_integration/zsh -o ~/.iterm2_shell_integration.zsh \
+    && curl -L https://iterm2.com/shell_integration/bash -o ~/.iterm2_shell_integration.bash
 
-# install brew if amd64
-RUN if [ "$(uname -m)" = "x86_64" ]; then \
-        echo "" > /.dockerenv; \
-        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; \
-    fi
+# Set zsh as default shell and install Oh My Zsh
+RUN chsh -s /bin/zsh \
+    && SHELL="/bin/zsh" sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# install brew if amd64/x86_64
+RUN <<EOT
+if [[ "$(uname -m)" = "x86_64" ]]; then
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+EOT

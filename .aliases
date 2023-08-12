@@ -19,7 +19,7 @@ if validate_command exa; then
     exa --git >/dev/null 2>&1 && exa_git="true"
     # shellcheck disable=SC2139
     alias ls="exa --icons --group-directories-first ${exa_git:+--git} --accessed --modified --created"
-elif [ "$(uname -s)" = "Darwin" ]; then
+elif [ "$(uname -s || true)" = "Darwin" ]; then
     alias ls='ls -G'
 else
     alias ls='ls --color=auto --group-directories-first'

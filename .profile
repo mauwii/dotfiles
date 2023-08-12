@@ -21,10 +21,10 @@ export TZ="${TZ:-Europe/Berlin}"
 export COMMAND_MODE="unix2003"
 
 # OS variables
-if [ "$(uname -s)" = "Darwin" ]; then
+if [ "$(uname -s || true)" = "Darwin" ]; then
     export MACOS=1 UNIX=1
     debuglog "%s: identified MACOS" "${0##*/}"
-elif [ "$(uname -s)" = "Linux" ]; then
+elif [ "$(uname -s || true)" = "Linux" ]; then
     export LINUX=1 UNIX=1
     debuglog "%s: identified LINUX" "${0##*/}"
 fi
@@ -77,6 +77,7 @@ fi
 
 # initialize pyenv
 if validate_command pyenv; then
+    # shellcheck disable=SC2312
     eval "$(pyenv init --path)"
     debuglog "%s: initialized pyenv" "${0##*/}"
 fi
@@ -99,9 +100,9 @@ fi
 # change docker socket
 DOCKER_HOST="$HOME/.docker/run/docker.sock"
 if [ -S "$DOCKER_HOST" ] && [ ! -S /var/run/docker.socket ] \
-    && [ "$(docker context show)" = "default" ]; then
-    export DOCKER_HOST="unix://$DOCKER_HOST"
-    debuglog ".profile: set DOCKER_HOST to %s" "$DOCKER_HOST"
+    && [ "$(docker context show || true)" = "default" ]; then
+    export DOCKER_HOST="unix://${DOCKER_HOST}"
+    debuglog ".profile: set DOCKER_HOST to %s" "${DOCKER_HOST}"
 else
     unset DOCKER_HOST
 fi

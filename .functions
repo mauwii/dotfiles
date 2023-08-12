@@ -1,17 +1,23 @@
-#!/usr/bin/env sh
-# shellcheck disable=SC3028
+#!/usr/bin/env bash
+# shellcheck shell=sh disable=SC2312,SC2015
 
 # small function to print log messages if $DEBUG is true
 # for info how to format check out the manpage of printf
 debuglog() {
-    if [ "${DEBUG}" = "true" ]; then
+    if [ -n "${BASH_VERSION}" ]; then
+        __source="${BASH_SOURCE[1]:-${BASH_SOURCE[0]:-${0}}}"
+    elif [ -n "${ZSH_VERSION}" ]; then
+        __source="${funcstack:+${funcstack[2]}}"
+    else
+        __source="${FUNCNAME:-${0}}"
+    fi
+    if [ "${DEBUG:+${DEBUG}}" = "true" ]; then
         # shellcheck disable=SC2059
-        _logmsg="$(printf "$@")"
-        printf "[%s] %s\n" "$(date "+%T")" "${_logmsg}"
+        __logmsg="$(printf "$@")"
+        __date=$(date "+%T")
+        printf "[%s][%s] %s\n" "${__date}" "${__source##*/}" "${__logmsg}"
     fi
 }
-
-debuglog "loading .functions"
 
 # prepend dir to fpath if dir exists
 prepend_fpath() {
@@ -55,7 +61,8 @@ brew_init() {
     elif [ -x "${1}/bin/brew" ]; then
         # add brew to shell environment
         eval "$("${1}/bin/brew" shellenv)" \
-            && debuglog "brew_init: brew initialized"
+            && debuglog "brew_init: brew initialized" \
+            || true
         # set brew bundle file
         export HOMEBREW_BUNDLE_FILE="${HOME}/.local/Brewfile"
         # enable autoremove
@@ -80,7 +87,7 @@ validate_command() {
         printf "Usage: validate_command <command>\n"
         return 1
     elif ! command -v "$1" >/dev/null 2>&1; then
-        debuglog "validate_command: %s not found" "$1"
+        debuglog "%s not found" "$1"
         return 1
     else
         return 0
@@ -97,8 +104,7 @@ viewmd() {
     elif ! validate_command w3m; then
         printf "viewmd: Error: w3m not found"
     else
-        pandoc -f markdown -t html "$1" \
-            | w3m -T text/html -o display_image=true
+        pandoc -f markdown -t html "$1" | w3m -T text/html -o display_image=true
     fi
 }
 
@@ -112,8 +118,7 @@ viewgitmd() {
     elif ! validate_command w3m; then
         printf "Error: w3m not found"
     else
-        pandoc -f gfm -t html "$1" \
-            | w3m -T text/html -o display_image=true
+        pandoc -f gfm -t html "$1" | w3m -T text/html -o display_image=true
     fi
 }
 

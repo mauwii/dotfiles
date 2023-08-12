@@ -3,7 +3,7 @@
 debuglog "loading .zshrc"
 
 # load ~/.profile if not loaded yet
-if [ "${DOT_PROFILE:-false}" != "true" ] && [ -r ~/.profile ]; then
+if [[ "${DOT_PROFILE:-false}" != "true" && -r ~/.profile ]]; then
     # shellcheck source=.profile
     source ~/.profile
 fi
@@ -13,14 +13,14 @@ fi
 # unset INFOPATH
 
 # set completion dump file
-ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-$(hostname -s)${ZSH_VERSION:+-$ZSH_VERSION}"
+ZSH_COMPDUMP="${ZDOTDIR:-${HOME}}/.zcompdump-$(hostname -s)${ZSH_VERSION:+-${ZSH_VERSION}}"
 export ZSH_COMPDUMP
 
 # set History file
-HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history
+HISTFILE=${ZDOTDIR:-${HOME}}/.zsh_history
 
 # if oh-my-zsh is installed
-if [ -d ~/.oh-my-zsh ]; then
+if [[ -d ~/.oh-my-zsh ]]; then
     # Path to your oh-my-zsh installation.
     export ZSH=~/.oh-my-zsh
 
@@ -106,7 +106,7 @@ if [ -d ~/.oh-my-zsh ]; then
             printf "Usage: %s <plugin> [<executable>]" "$0"
             return 1
         fi
-        if validate_command "${_executable:-$_plugin}"; then
+        if validate_command "${_executable:-${_plugin}}"; then
             plugins+=("${_plugin}")
         fi
     }
@@ -136,11 +136,11 @@ if [ -d ~/.oh-my-zsh ]; then
     zstyle ':omz:plugins:ssh-agent' quiet yes
 
     # add Identities from Keychain
-    if [ "${MACOS}" -eq 1 ]; then
+    if [[ "${MACOS}" -eq 1 ]]; then
         zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
     fi
 
-    if [ -r "${ZSH}/oh-my-zsh.sh" ]; then
+    if [[ -r "${ZSH}/oh-my-zsh.sh" ]]; then
         debuglog ".zshrc: Loading oh-my-zsh"
         # shellcheck source=.oh-my-zsh/oh-my-zsh.sh disable=SC1094
         source "${ZSH}/oh-my-zsh.sh"
@@ -149,7 +149,7 @@ else
     # try to load starship prompt
     if validate_command starship; then
         debuglog ".zshrc: Loading starship"
-        eval "$(starship init zsh)"
+        eval "$(starship init zsh || true)"
     else
         debuglog ".zshrc: Loading default prompt"
         PROMPT='%n@%m %1~ %# '
@@ -159,7 +159,7 @@ fi
 # User configuration
 
 # load shared shell configuration if not loaded yet
-if [ "${DOT_SHRC:-false}" = "false" ] && [ -r ~/.shrc ]; then
+if [[ "${DOT_SHRC:-false}" = "false" && -r ~/.shrc ]]; then
     # shellcheck source=.shrc
     source ~/.shrc
 fi
@@ -182,19 +182,20 @@ setopt HIST_IGNORE_SPACE
 
 # pipx completion
 if validate_command pipx; then
-    eval "$(register-python-argcomplete pipx)"
+    eval "$(register-python-argcomplete pipx || true)"
 fi
 
-if [ -r ~/.zstyles ]; then
+if [[ -r ~/.zstyles ]]; then
     # shellcheck disable=SC1090
     source ~/.zstyles
 fi
 
 # These AddOns should be sourced last
-if [ -d "${HOMEBREW_PREFIX}" ]; then
+# shellcheck disable=SC2154
+if [[ -d "${HOMEBREW_PREFIX}" ]]; then
     # homebrew zsh-fast-syntax-highlighting plugin
     ZSH_FAST_SYNTAX_HIGHLIGHTING="${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-    if [ -r "${ZSH_FAST_SYNTAX_HIGHLIGHTING}" ]; then
+    if [[ -r "${ZSH_FAST_SYNTAX_HIGHLIGHTING}" ]]; then
         # shellcheck source=/dev/null
         source "${ZSH_FAST_SYNTAX_HIGHLIGHTING}"
     else
@@ -202,7 +203,7 @@ if [ -d "${HOMEBREW_PREFIX}" ]; then
     fi
     # homebrew zsh-autosuggestions plugin
     ZSH_AUTOSUGGEST="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-    if [ -r "${ZSH_AUTOSUGGEST}" ]; then
+    if [[ -r "${ZSH_AUTOSUGGEST}" ]]; then
         # Disable autosuggestion for large buffers.
         export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
         # Enable aynchronous mode.
@@ -218,8 +219,9 @@ fi
 
 # iTerm 2 Shell Integration
 ITERM2_SHELL_INTEGRATION=~/.iterm2_shell_integration.zsh
-if [ -r "${ITERM2_SHELL_INTEGRATION}" ] \
-    && [ "${LC_TERMINAL}" = "iTerm2" ]; then
+# shellcheck disable=SC2154
+if [[ -r "${ITERM2_SHELL_INTEGRATION}" ]] \
+    && [[ "${LC_TERMINAL}" = "iTerm2" ]]; then
     # shellcheck source=.iterm2_shell_integration.zsh
     source "${ITERM2_SHELL_INTEGRATION}"
 else

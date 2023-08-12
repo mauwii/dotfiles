@@ -15,10 +15,15 @@ if [[ -r ~/.profile && "${DOT_PROFILE}" != "true" ]]; then
 fi
 
 # load bashrc if interactive and not loaded yet
-if [[ "${PS1:-x}" != "x" && "${DOT_BASHRC}" != "true" && -r "${HOME}/.bashrc" ]]; then
-    # shellcheck source=.bashrc
-    . "${HOME}/.bashrc"
-fi
+case $- in
+    *i*)
+        if [[ "${DOT_BASHRC}" != "true" && -r "${HOME}/.bashrc" ]]; then
+            # shellcheck source=.bashrc
+            . "${HOME}/.bashrc"
+        fi
+        ;;
+    *) return ;;
+esac
 
 # shellcheck disable=SC2034
 DOT_BASHPROFILE="true"

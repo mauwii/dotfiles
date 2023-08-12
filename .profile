@@ -23,10 +23,10 @@ export COMMAND_MODE="unix2003"
 # OS variables
 if [ "$(uname -s || true)" = "Darwin" ]; then
     export MACOS=1 UNIX=1
-    debuglog "%s: identified MACOS" "${0##*/}"
+    debuglog "identified MACOS"
 elif [ "$(uname -s || true)" = "Linux" ]; then
     export LINUX=1 UNIX=1
-    debuglog "%s: identified LINUX" "${0##*/}"
+    debuglog "identified LINUX"
 fi
 uname -s | grep -q "_NT-" && export WINDOWS=1 \
     && debuglog "%s: identified WINDOWS" "${0##*/}"

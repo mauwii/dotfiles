@@ -102,7 +102,7 @@ if [[ -d ~/.oh-my-zsh ]]; then
     function __add_plugin() {
         _plugin="${1}"
         _executable="${2}"
-        if [ $# -gt 2 ]; then
+        if [[ $# -gt 2 ]]; then
             printf "Usage: %s <plugin> [<executable>]" "$0"
             return 1
         fi
@@ -136,7 +136,7 @@ if [[ -d ~/.oh-my-zsh ]]; then
     zstyle ':omz:plugins:ssh-agent' quiet yes
 
     # add Identities from Keychain
-    if [[ "${MACOS}" -eq 1 ]]; then
+    if [[ "${MACOS}" = "1" ]]; then
         zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
     fi
 

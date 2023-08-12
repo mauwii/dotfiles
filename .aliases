@@ -51,22 +51,26 @@ if validate_command config; then
     # link all files to ~/.dotfiles to open in code
     link_dotfiles() {
         cd "${HOME}" || return 1
+        # clean broken symlinks
+        for folder in $(find .dotfiles -type d); do
+            cd "${HOME:?}/${folder:?}" || return 1
+            debuglog "cleaning broken symlinks in %s" "${HOME}/${folder}"
+            find -L . -name . -o -type d -prune -o -type l -exec rm {} +
+            # delete folder if empty
+            if [ -z "$($(which -p ls) -A "${HOME:?}/${folder:?}")" ]; then
+                rm -rf "${HOME:?}/${folder:?}"
+            fi
+        done
+        cd "${HOME}" || return 1
+        # link all files to ~/.dotfiles
         for file in $(config ls-tree --full-tree -r --name-only HEAD); do
             # skip .dotfiles folder
             if echo "${file}" | grep -q ".dotfiles"; then
                 continue
             fi
             _path="${HOME}/.dotfiles/${file}"
-            # clean broken symlinks
-            if [ -d "${file%/*}" ]; then
-                if [ -d "${_path%/*}" ] && [ "${_path%/*}" != "${justcleaned}" ]; then
-                    debuglog "cleaning broken symlink in ${_path%/*}"
-                    (cd "${_path%/*}" && clsym)
-                    justcleaned="${_path%/*}"
-                else
-                    mkdir -p "${_path%/*}"
-                fi
-            fi
+            # create folder if it doesn't exist
+            mkdir -p "${_path%/*}"
             # create symlink
             debuglog "linking ${HOME}/${file} to ${_path}"
             ln -sf "${HOME}/${file}" "${_path}"

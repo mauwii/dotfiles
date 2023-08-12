@@ -1,6 +1,3 @@
-[include]
-	path = ~/.local/.gitconfig
-
 [core]
 	editor = code --wait
 	fileMode = false
@@ -53,3 +50,6 @@
 [rebase]
 	autoStash = true
 	autosquash = true
+
+[include]
+	path = ~/.local/.gitconfig

@@ -64,4 +64,10 @@ else
     fi
 fi
 
+# set gem path
+if validate_command gem && [ -d "${HOME}/.gem/ruby/2.6.0" ]; then
+    export GEM_HOME="${HOME}/.gem/ruby/2.6.0"
+    export GEM_PATH="${HOME}/.gem/ruby/2.6.0:/System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/lib/ruby/gems/2.6.0"
+fi
+
 DOT_SHRC="true"

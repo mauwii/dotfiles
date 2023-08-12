@@ -48,11 +48,11 @@ prepend_path "${HOME}/.local/bin"
 
 # Add Ruby gems to PATH.
 if validate_command ruby && validate_command gem; then
-    gems_path="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
-    if [ -d "${gems_path}" ]; then
-        prepend_path "${gems_path}"
+    __gems_path="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+    if [ -d "${__gems_path}" ]; then
+        prepend_path "${__gems_path}"
     fi
-    unset gems_path
+    unset __gems_path
 fi
 
 # docker bins
@@ -90,9 +90,9 @@ fi
 
 # set dotnet root if dir exists
 DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
-if [ -d "${DOTNET_ROOT}" ] && command -v dotnet >/dev/null 2>&1; then
+if [ -d "${DOTNET_ROOT}" ] && validate_command dotnet1; then
     export DOTNET_ROOT
-    debuglog ".profile: set DOTNET_ROOT to %s" "$DOTNET_ROOT"
+    debuglog ".profile: set DOTNET_ROOT to %s" "${DOTNET_ROOT}"
 else
     unset DOTNET_ROOT
 fi

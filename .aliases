@@ -13,6 +13,8 @@ debuglog "loading .aliases"
 alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
 # remove broken symlinks
 alias clsym="find -L . -name . -o -type d -prune -o -type l -exec rm {} +"
+# list the PATH separated by new lines
+alias lspath='echo $PATH | tr ":" "\n"'
 
 # use exa as modern ls-replacement if available
 if validate_command exa; then
@@ -27,7 +29,7 @@ fi
 
 # ls aliases
 alias l='ls -ah'
-alias ll='l -lgG'
+alias ll='l -lg'
 alias lll='ll -@'
 alias lr='ls -R'
 alias llr='lr -l'
@@ -46,39 +48,9 @@ fi
 if [ -d "${HOME}/.cfg" ] && validate_command git; then
     alias config='git --git-dir="${HOME}/.cfg" --work-tree="${HOME}"'
     debuglog ".aliases: dotfiles management enabled"
-fi
-if validate_command config; then
-    # link all files to ~/.dotfiles to open in code
-    link_dotfiles() {
-        cd "${HOME}" || return 1
-        # clean broken symlinks
-        for folder in $(find .dotfiles -type d); do
-            cd "${HOME:?}/${folder:?}" || return 1
-            debuglog "cleaning broken symlinks in %s" "${HOME}/${folder}"
-            find -L . -name . -o -type d -prune -o -type l -exec rm {} +
-            # delete folder if empty
-            if [ -z "$($(which -p ls) -A "${HOME:?}/${folder:?}")" ]; then
-                rm -rf "${HOME:?}/${folder:?}"
-            fi
-        done
-        cd "${HOME}" || return 1
-        # link all files to ~/.dotfiles
-        for file in $(config ls-tree --full-tree -r --name-only HEAD); do
-            # skip .dotfiles folder
-            if echo "${file}" | grep -q ".dotfiles"; then
-                continue
-            fi
-            _path="${HOME}/.dotfiles/${file}"
-            # create folder if it doesn't exist
-            mkdir -p "${_path%/*}"
-            # create symlink
-            debuglog "linking ${HOME}/${file} to ${_path}"
-            ln -sf "${HOME}/${file}" "${_path}"
-        done
-    }
-    # link dotfiles to ~/.dotfiles and open in code
-    if validate_command code; then
-        alias dotfiles='link_dotfiles && code "${HOME}/.dotfiles"'
+    if validate_command link-dotfiles && validate_command code; then
+        # link dotfiles to ~/.dotfiles and open in code
+        alias dotfiles='link-dotfiles && code "${HOME}/.dotfiles"'
     fi
 fi
 

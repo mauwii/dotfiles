@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+DEBUG=${DEBUG:-true}
+dotrepo="${HOME}/.cfg"
+__cwd="${PWD}"
+link_target_folder="${HOME}/.dotfiles"
+
+# print log messages to STDOUT if $DEBUG is true
+__debuglog() {
+    # shellcheck disable=SC2059
+    msg=$(printf "$@")
+    printf "[%s][%s] %s\n" "$(date "+%T")" "${0##*/}" "$msg"
+}
+
+# set git command to use the dotfiles bare repository
+__git() {
+    git --git-dir="${dotrepo}" --work-tree="${HOME}" "$@"
+}
+
+# ensure that no arguments are passed
+if [[ $# -ne 0 ]]; then
+    printf "%s script doesn't take any arguments\n" "${0##*/}"
+    exit 1
+# ensure that bare repository exists
+elif [[ ! -d "${dotrepo}" ]]; then
+    printf "couldn't find bare repository in %s\n" "${dotrepo}"
+    exit 1
+# ensure that bare repository is working
+elif ! __git status >/dev/null 2>&1; then
+    printf "There is a problem with the bare repository in %s\n" "${dotrepo}"
+    exit 1
+fi
+
+# clean up broken symlinks
+while IFS= read -r -d '' folder; do
+    cd "${folder}" || return 1
+    if find -L . -name . -o -type d -prune -o -type l -exec rm {} +; then
+        __debuglog "cleaned broken symlinks in %s" "${folder}"
+    else
+        __debuglog "failed cleaning broken symlinks in %s" "${folder}"
+    fi
+    # delete folder if empty
+    if [ -z "$(command ls -A "${folder}")" ]; then
+        if rm -rf "${folder}"; then
+            __debuglog "deleted empty folder %s" "${folder}"
+        else
+            __debuglog "failed deleting empty folder %s" "${folder}"
+        fi
+    fi
+done < <(command find "${link_target_folder}" -type d -print0)
+
+# cd "${HOME}" || return 1
+
+# link all files to ~/.dotfiles
+for file in $(__git ls-tree --full-tree -r --name-only HEAD); do
+    file_to_link="${HOME}/${file}"
+    link_destination="${link_target_folder}/${file}"
+    # skip .dotfiles folder
+    if printf "%s" "${file}" | grep -q ".dotfiles"; then
+        __debuglog "skipping %s" "${file}"
+        continue
+    fi
+    # create target folder if it doesn't exist
+    if [[ ! -d "${link_destination%/*}" ]]; then
+        if mkdir -p "${link_destination%/*}"; then
+            __debuglog "created folder %s" "${link_destination%/*}"
+        else
+            __debuglog "couldn't create folder %s" "${link_destination%/*}"
+        fi
+    fi
+    # create symlink
+    if ln -sf "${file_to_link}" "${link_destination}"; then
+        __debuglog "linked %s to %s" "${file_to_link}" "${link_destination}"
+    else
+        __debuglog "failed linking %s to %s" "${file_to_link}" "${link_destination}"
+    fi
+done
+
+# cd "${__cwd}" || exit

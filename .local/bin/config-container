@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash disable=SC2207
 
-# completion partially working with: `compdef _gnu_generic config-container`
-
 ## initialize variables and set defaults
 
 # enable output of debug messages
@@ -11,8 +9,18 @@ debug=${DEBUG:-false}
 dotfilesdir="$HOME"
 # commands to mount dotfiles
 dockermounts=()
+# user name for the container user
+dockeruser_name="$(id -un)"
+# user id for the container user
+dockeruser_id="$(id -u)"
+# primary group name for the container user
+dockeruser_group="$(id -gn)"
+# primary group id for the container user
+dockeruser_gid="$(id -g)"
 # home directory in the container
-dockerhome="/root"
+dockerhome="/home/$dockeruser_name"
+# timezone to use in the container
+dockertime="${TZ:-UTC}"
 # workdir in the container
 workdir="${dockerhome}"
 # directory to mount the dotfiles in the container
@@ -242,12 +250,22 @@ fi
 
 if [ "${build}" = "true" ] || [ "${build_only}" = "true" ]; then
     debuglog "info: building dotfiles image"
-    debuglog "%15s %s" "Dockerfile:" "${dotfilesdir}/.dotfiles/Dockerfile"
-    debuglog "%15s %s" "image:" "${fulltag}"
-    debuglog "%15s %s" "platform:" "${platform}"
+    debuglog "%20s %s" "Dockerfile:" "${dotfilesdir}/.dotfiles/Dockerfile"
+    debuglog "%20s %s" "image:" "${fulltag}"
+    debuglog "%20s %s" "platform:" "${platform}"
+    debuglog "%20s %s" "dockeruser_name:" "${dockeruser_name}"
+    debuglog "%20s %s" "dockeruser_id:" "${dockeruser_id}"
+    debuglog "%20s %s" "dockeruser_group:" "${dockeruser_group}"
+    debuglog "%20s %s" "dockeruser_gid:" "${dockeruser_gid}"
     docker buildx build \
+        --build-arg TZ="${dockertime}" \
+        --build-arg DOTFILES_USERNAME="${dockeruser_name}" \
+        --build-arg DOTFILES_UID="${dockeruser_id}" \
+        --build-arg DOTFILES_GROUP="${dockeruser_group}" \
+        --build-arg DOTFILES_GID="${dockeruser_gid}" \
         --platform="${platform}" \
         --tag="${fulltag}" \
+        --progress=plain \
         --file="${dotfilesdir}/.dotfiles/Dockerfile" .
     # -o=type=image,name="${image}",push=true \
     if [ $? -ne 0 ]; then
@@ -309,6 +327,11 @@ for dotfile in $(getdotfiles); do
     fi
 done
 
+# mount public key as authorized_keys
+if [[ -f "${HOME}/.ssh/id_rsa.pub" ]]; then
+    dockermounts+=(-v "${HOME}/.ssh/id_rsa.pub":"${dockerhome}/.ssh/authorized_keys")
+fi
+
 # execute container interactive in pseudo tty
 debuglog "executing container"
 docker run \
@@ -318,10 +341,11 @@ docker run \
     --tty \
     --workdir="${workdir}" \
     --name dotfiles \
-    --hostname dotfiles \
+    --hostname dotfiles.local \
     -e "TZ=${TZ:-UTC}" \
     -e "SHELL=${_shell:-${shell}}" \
     -e "DEBUG=${debug}" \
+    -p 22 \
     ${LC_TERMINAL:+-e "LC_TERMINAL=${LC_TERMINAL}"} \
     "${dockermounts[@]}" \
     ${skip_brew:+-e "SKIP_BREW_BUNDLE=${skip_brew}"} \

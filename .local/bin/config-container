@@ -9,16 +9,9 @@ debug=${DEBUG:-false}
 dotfilesdir="$HOME"
 # commands to mount dotfiles
 dockermounts=()
-# user name for the container user
-dockeruser_name="$(id -un)"
-# user id for the container user
-dockeruser_id="$(id -u)"
-# primary group name for the container user
-dockeruser_group="$(id -gn)"
-# primary group id for the container user
-dockeruser_gid="$(id -g)"
 # home directory in the container
-dockerhome="/home/$dockeruser_name"
+dockerhome="/root"
+# dockerhome="/home/$dockeruser_name"
 # timezone to use in the container
 dockertime="${TZ:-UTC}"
 # workdir in the container
@@ -37,6 +30,10 @@ image="mauwii/dotfiles"
 pkgs=()
 # command to install packages
 installcmd=()
+# execute service ssh start
+ssh_start="false"
+# execute sshd -D -e
+ssh_only="false"
 
 # small function to print log messages if $DEBUG is true
 # find infos about how to format in the manpage of printf
@@ -68,6 +65,8 @@ helpmsg() {
     printhelp "--debug" "-d" "Switch to enable debug messages"
     printhelp "--build" "" "Build the container image"
     printhelp "--build-only" "" "Build but don't run the container"
+    printhelp "--ssh" "" "Add 'service ssh start' to the container cmd"
+    printhelp "--ssh-only" "" "Execute 'sshd -D -e' in the container"
     printhelp "--help" "-h" "Print this help message"
 }
 
@@ -217,6 +216,14 @@ for arg in "$@"; do
             # skip "brew bundle install"
             skip_brew="true"
             ;;
+        --ssh)
+            # add "service ssh start" to the container cmd
+            ssh_start="true"
+            ;;
+        --ssh-only)
+            # execute "sshd -D -e" in the container
+            ssh_only="true"
+            ;;
         *)
             if [ "$skip" = "true" ]; then
                 unset skip
@@ -253,21 +260,12 @@ if [ "${build}" = "true" ] || [ "${build_only}" = "true" ]; then
     debuglog "%20s %s" "Dockerfile:" "${dotfilesdir}/.dotfiles/Dockerfile"
     debuglog "%20s %s" "image:" "${fulltag}"
     debuglog "%20s %s" "platform:" "${platform}"
-    debuglog "%20s %s" "dockeruser_name:" "${dockeruser_name}"
-    debuglog "%20s %s" "dockeruser_id:" "${dockeruser_id}"
-    debuglog "%20s %s" "dockeruser_group:" "${dockeruser_group}"
-    debuglog "%20s %s" "dockeruser_gid:" "${dockeruser_gid}"
     docker buildx build \
         --build-arg TZ="${dockertime}" \
-        --build-arg DOTFILES_USERNAME="${dockeruser_name}" \
-        --build-arg DOTFILES_UID="${dockeruser_id}" \
-        --build-arg DOTFILES_GROUP="${dockeruser_group}" \
-        --build-arg DOTFILES_GID="${dockeruser_gid}" \
         --platform="${platform}" \
         --tag="${fulltag}" \
         --progress=plain \
-        --file="${dotfilesdir}/.dotfiles/Dockerfile" .
-    # -o=type=image,name="${image}",push=true \
+        --file="${dotfilesdir}/.dotfiles/Dockerfile" "$(printf %s "${HOME}/.SpaceVim.d")"
     if [ $? -ne 0 ]; then
         debuglog "error: failed to build image\n"
         exit 1
@@ -297,9 +295,16 @@ fi
 
 # set container cmd
 precmd=("${pkgs:+${installcmd[@]} ${pkgs[@]} &&}")
+ssh_start_cmd=(service ssh start)
 container_cmd=(
     "${precmd[@]}" "${dockermountdir}/.dotfiles/setup_local.sh" \&\& exec "${_shell:-$shell}" -l
 )
+if [[ "${ssh_start}" == "true" ]]; then
+    container_cmd=("${ssh_start_cmd[@]}" \&\& "${container_cmd[@]}")
+fi
+if [[ "${ssh_only}" == "true" ]]; then
+    container_cmd=(mkdir -p /run/sshd \&\& sshd -D -e)
+fi
 
 # debug output
 debuglog "dotfilesdir set to: %s" "${dotfilesdir}"
@@ -345,7 +350,7 @@ docker run \
     -e "TZ=${TZ:-UTC}" \
     -e "SHELL=${_shell:-${shell}}" \
     -e "DEBUG=${debug}" \
-    -p 22 \
+    -p 2222:22 \
     ${LC_TERMINAL:+-e "LC_TERMINAL=${LC_TERMINAL}"} \
     "${dockermounts[@]}" \
     ${skip_brew:+-e "SKIP_BREW_BUNDLE=${skip_brew}"} \

@@ -11688,7 +11688,7 @@
 				<real>1</real>
 			</dict>
 			<key>Blend</key>
-			<real>0.5</real>
+			<real>0.26155032835144926</real>
 			<key>Blink Allowed</key>
 			<true/>
 			<key>Blinking Cursor</key>
@@ -11696,7 +11696,7 @@
 			<key>Blur</key>
 			<true/>
 			<key>Blur Radius</key>
-			<real>14.653224734042553</real>
+			<real>9.7763464095744688</real>
 			<key>Bold Color</key>
 			<dict>
 				<key>Alpha Component</key>
@@ -12487,7 +12487,7 @@
 			<key>Title Components</key>
 			<integer>513</integer>
 			<key>Transparency</key>
-			<real>0.10158743351063827</real>
+			<real>0.049451462765957417</real>
 			<key>Unicode Version</key>
 			<integer>8</integer>
 			<key>Unlimited Scrollback</key>

@@ -73,7 +73,7 @@ if [[ -f "${__bash_completion}" ]]; then
 fi
 
 # initialize starship prompt if available
-if command -v starship >/dev/null 2>&1; then
+if validate_command starship; then
     eval "$(starship init bash)"
 fi
 

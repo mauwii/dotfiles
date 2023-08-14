@@ -13,11 +13,11 @@
     # layer
     colorscheme = "lunaperche"
     colorscheme_bg = "dark"
+    default_indent = 4
     # Disable guicolors in basic mode, many terminal do not support 24bit
     # true colors
-    enable_guicolors = false
-    # guifont = "SourceCodePro Nerd Font Mono:h11"
-    guifont = "Inconsolata Nerd Font:h14"
+    enable_guicolors = true
+    guifont = "SourceCodePro Nerd Font Mono:h11"
     statusline_separator = "arrow"
     statusline_iseparator = "arrow"
     buffer_index_type = 4
@@ -36,8 +36,8 @@
     name = 'core'
     filetree_show_hidden = true
     enable_smooth_scrolling = true
-    filetree_opened_icon = ''
-    filetree_closed_icon = ''
+    # filetree_opened_icon = ''
+    # filetree_closed_icon = ''
 
 [[layers]]
     name = 'autocomplete'
@@ -65,6 +65,6 @@
 [[layers]]
     name = 'VersionControl'
 
-[[custom_plugins]]
-    repo = "lilydjwg/colorizer"
-    merged = false
+# [[custom_plugins]]
+#     repo = "lilydjwg/colorizer"
+#     merged = false

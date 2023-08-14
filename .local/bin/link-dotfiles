@@ -56,7 +56,7 @@ for file in $(__git ls-tree --full-tree -r --name-only HEAD); do
     file_to_link="${HOME}/${file}"
     link_destination="${link_target_folder}/${file}"
     # skip .dotfiles folder
-    if printf "%s" "${file}" | grep -q ".dotfiles"; then
+    if printf "%s" "${file}" | grep -q ".dotfiles/"; then
         __debuglog "skipping %s" "${file}"
         continue
     fi

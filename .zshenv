@@ -1,4 +1,7 @@
-# shellcheck shell=bash
+# Description: This file is sourced by all zsh shells, unless the -f option is set.
+
+# zsh will source other shellscripts from this directory
+export ZDOTDIR="${HOME}/.config/zsh"
 
 # add shell functions
 if [ -r ~/.functions ]; then

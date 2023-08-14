@@ -10,9 +10,9 @@ fi
 debuglog "loading .profile"
 
 # set locale
-export LC_ALL="${LC_ALL:-en_US.UTF-8}"
-export LANG="${LANG:-en_US.UTF-8}"
-export LANGUAGE="${LANGUAGE:-en_US:en}"
+[ -z "${LANG}" ] && eval "$(locale)"
+[ -z "${LANG}" ] && export LANG=en_US.UTF-8
+[ -z "${LC_ALL}" ] && export LC_ALL="${LANG}"
 
 # set timezone
 export TZ="${TZ:-Europe/Berlin}"
@@ -80,6 +80,10 @@ if validate_command pyenv; then
     # shellcheck disable=SC2312
     eval "$(pyenv init --path)"
     debuglog "%s: initialized pyenv" "${0##*/}"
+    if validate_command pyenv-virtualenv; then
+        eval "$(pyenv virtualenv-init -)"
+        debuglog "%s: initialized pyenv-virtualenv" "${0##*/}"
+    fi
 fi
 
 # set kubeconfig

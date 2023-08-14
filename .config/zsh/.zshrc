@@ -1,5 +1,4 @@
-# shellcheck shell=bash disable=SC2034
-
+# shellcheck disable=SC2034,1091
 debuglog "loading .zshrc"
 
 # load ~/.profile if not loaded yet
@@ -131,6 +130,7 @@ if [[ -d ~/.oh-my-zsh ]]; then
 
     # Add Plugins with different executable
     __add_plugin azure az
+    __add_plugin gitfast git
 
     # silent SSH-Agent Start
     zstyle ':omz:plugins:ssh-agent' quiet yes

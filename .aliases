@@ -13,6 +13,9 @@ debuglog "loading .aliases"
 alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
 # remove broken symlinks
 alias clsym="find -L . -name . -o -type d -prune -o -type l -exec rm {} +"
+# remove __pycache__ recursive
+alias clpy='find . -name __pycache__ -type d -print0 | xargs -0 /bin/rm -rf'
+
 # list the PATH separated by new lines
 alias lspath='echo $PATH | tr ":" "\n"'
 

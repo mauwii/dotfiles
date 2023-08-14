@@ -43,8 +43,9 @@ fi
 
 # Initialize pyenv-virtualenv
 # shellcheck disable=SC2154
-if command -v pyenv-virtualenv >/dev/null 2>&1 && [[ "${PYENV_VIRTUALENV_INIT}" != 1 ]]; then
+if validate_command pyenv-virtualenv && [[ "${PYENV_VIRTUALENV_INIT}" != 1 ]]; then
     eval "$(pyenv virtualenv-init -)"
+    debuglog "%s: initialized pyenv-virtualenv" "${0##*/}"
 fi
 
 # pipx completion

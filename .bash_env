@@ -1,7 +1,0 @@
-# shellcheck shell=bash
-
-# load .zshenv
-if [[ -f ~/.zshenv ]]; then
-    # shellcheck source=.zshenv
-    . ~/.zshenv
-fi

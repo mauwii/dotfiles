@@ -80,7 +80,7 @@ if validate_command pyenv; then
     # shellcheck disable=SC2312
     eval "$(pyenv init --path)"
     debuglog "%s: initialized pyenv" "${0##*/}"
-    if validate_command pyenv-virtualenv; then
+    if validate_command pyenv-virtualenv && [[ "${PYENV_VIRTUALENV_INIT}" != 1 ]]; then
         eval "$(pyenv virtualenv-init -)"
         debuglog "%s: initialized pyenv-virtualenv" "${0##*/}"
     fi

@@ -1,4 +1,11 @@
 # shellcheck disable=SC2034,1091
+
+# add shell functions
+if [ -r ~/.functions ]; then
+    # shellcheck source=.functions
+    . ~/.functions
+fi
+
 debuglog "loading .zshrc"
 
 # load ~/.profile if not loaded yet

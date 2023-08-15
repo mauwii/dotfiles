@@ -5,9 +5,3 @@ typeset -U PATH
 
 # zsh will source other shellscripts from this directory
 export ZDOTDIR="${HOME}/.config/zsh"
-
-# add shell functions
-if [ -r ~/.functions ]; then
-    # shellcheck source=.functions
-    . ~/.functions
-fi

@@ -11696,7 +11696,7 @@
 			<key>Blur</key>
 			<true/>
 			<key>Blur Radius</key>
-			<real>9.7763464095744688</real>
+			<real>14.776346409574469</real>
 			<key>Bold Color</key>
 			<dict>
 				<key>Alpha Component</key>
@@ -11809,7 +11809,7 @@
 			<key>HotKey Key Code</key>
 			<integer>34</integer>
 			<key>HotKey Modifier Activation</key>
-			<integer>3</integer>
+			<integer>2</integer>
 			<key>HotKey Modifier Flags</key>
 			<integer>1572864</integer>
 			<key>HotKey Window Animates</key>

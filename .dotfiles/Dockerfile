@@ -48,11 +48,6 @@ RUN localedef \
     -c \
     -f UTF-8 \
     -A /usr/share/locale/locale.alias en_US.UTF-8
-# ARG TZ=UTC
-# ENV LANG=en_US.UTF-8 \
-#     LANGUAGE=en_US:en \
-#     LC_ALL=en_US.UTF-8 \
-#     TZ=$TZ
 
 # enable public key authentication and verbose logging
 RUN echo "mkdir -p /var/run/sshd" >>/etc/rc.local \

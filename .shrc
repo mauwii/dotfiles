@@ -9,10 +9,10 @@ fi
 
 # ensure .shrc is only loaded once
 if [ "${DOT_SHRC}" = "true" ]; then
-    debuglog "already loaded %s" "${BASH_SOURCE:-${0}}"
+    debuglog "already loaded .shrc"
     return
 else
-    debuglog "loading %s" "${BASH_SOURCE:-${0}}"
+    debuglog "begin loading .shrc"
 fi
 
 # load aliases
@@ -72,3 +72,5 @@ fi
 # fi
 
 DOT_SHRC="true"
+
+debuglog "done loading .shrc"

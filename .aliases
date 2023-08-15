@@ -7,12 +7,12 @@ if [ -r "${HOME}/.functions" ] && [ "${DOT_FUNCTIONS}" != "true" ]; then
     . "${HOME}/.functions"
 fi
 
-debuglog "loading .aliases"
+debuglog "begin loading .aliases"
 
 # Recursively delete `.DS_Store` files
-alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
+alias cleanup='find . -name "*.DS_Store" -type f -ls -delete'
 # remove broken symlinks
-alias clsym="find -L . -name . -o -type d -prune -o -type l -exec rm {} +"
+alias clsym='find -L . -name . -o -type d -prune -o -type l -exec rm {} +'
 # remove __pycache__ recursive
 alias clpy='find . -name __pycache__ -type d -print0 | xargs -0 /bin/rm -rf'
 
@@ -86,3 +86,5 @@ fi
 if validate_command register-python-argcomplete3; then
     alias register-python-argcomplete='register-python-argcomplete3'
 fi
+
+debuglog "done loading .aliases"

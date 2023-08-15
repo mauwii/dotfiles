@@ -11,7 +11,7 @@ if [[ "${DOT_BASHRC:-false}" = "true" ]]; then
     debuglog ".bashrc has already been loaded"
     return
 else
-    debuglog "loading .bashrc"
+    debuglog "begin loading .bashrc"
 fi
 
 # load shared shell configuration if not loaded yet
@@ -87,3 +87,5 @@ if [[ -r "${HOME}/.iterm2_shell_integration.bash" && ${LC_TERMINAL} == "iTerm2" 
 fi
 
 DOT_BASHRC="true"
+
+debuglog "done loading .bashrc"

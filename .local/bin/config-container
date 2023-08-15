@@ -315,7 +315,7 @@ debuglog "dockermountdir is set to: %s" "${dockermountdir}"
 
 # function to list all files from the bare repo
 getdotfiles() {
-    /usr/bin/git \
+    command git \
         --git-dir="${HOME}"/.cfg \
         --work-tree="${HOME}" \
         ls-tree \

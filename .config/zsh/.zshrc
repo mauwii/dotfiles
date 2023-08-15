@@ -6,7 +6,7 @@ if [ -r ~/.functions ]; then
     . ~/.functions
 fi
 
-debuglog "loading .zshrc"
+debuglog "begin loading .zshrc"
 
 # load ~/.profile if not loaded yet
 if [[ "${DOT_PROFILE:-false}" != "true" && -r ~/.profile ]]; then
@@ -236,3 +236,5 @@ else
 fi
 
 DOT_ZSHRC="true"
+
+debuglog "done loading .zshrc"

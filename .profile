@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-# shellcheck shell=sh
 
 # add shell functions
 if [ -r "${HOME}/.functions" ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
@@ -7,7 +6,7 @@ if [ -r "${HOME}/.functions" ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
     . "${HOME}/.functions"
 fi
 
-debuglog "loading .profile"
+debuglog "begin loading .profile"
 
 # set locale
 [ -z "${LANG}" ] && eval "$(locale)"
@@ -27,11 +26,13 @@ if [ "$(uname -s || true)" = "Darwin" ]; then
 elif [ "$(uname -s || true)" = "Linux" ]; then
     export LINUX=1 UNIX=1
     debuglog "identified LINUX"
+elif uname -s | grep -q "_NT-"; then
+    export WINDOWS=1
+    debuglog "identified WINDOWS"
+elif grep -q "Microsoft" /proc/version 2>/dev/null; then
+    export UBUNTU_ON_WINDOWS=1
+    debuglog "identified UBUNTU_ON_WINDOWS"
 fi
-uname -s | grep -q "_NT-" && export WINDOWS=1 \
-    && debuglog "%s: identified WINDOWS" "${0##*/}"
-grep -q "Microsoft" /proc/version 2>/dev/null && export UBUNTU_ON_WINDOWS=1 \
-    && debuglog "%s: identified UBUNTU_ON_WINDOWS" "${0##*/}"
 
 # add brew to env
 if [ -d "/opt/homebrew" ]; then
@@ -79,24 +80,24 @@ fi
 if validate_command pyenv; then
     # shellcheck disable=SC2312
     eval "$(pyenv init --path)"
-    debuglog "%s: initialized pyenv" "${0##*/}"
-    if validate_command pyenv-virtualenv && [[ "${PYENV_VIRTUALENV_INIT}" != 1 ]]; then
+    debuglog "initialized pyenv"
+    if validate_command pyenv-virtualenv && [ "${PYENV_VIRTUALENV_INIT}" != 1 ]; then
         eval "$(pyenv virtualenv-init -)"
-        debuglog "%s: initialized pyenv-virtualenv" "${0##*/}"
+        debuglog "initialized pyenv-virtualenv"
     fi
 fi
 
 # set kubeconfig
 if [ -r "${HOME}/.kube/config" ]; then
     export KUBECONFIG="${HOME}/.kube/config${KUBECONFIG:+:$KUBECONFIG}"
-    debuglog ".profile: set KUBECONFIG to %s" "$KUBECONFIG"
+    debuglog "set KUBECONFIG to %s" "$KUBECONFIG"
 fi
 
 # set dotnet root if dir exists
 DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
 if [ -d "${DOTNET_ROOT}" ] && validate_command dotnet1; then
     export DOTNET_ROOT
-    debuglog ".profile: set DOTNET_ROOT to %s" "${DOTNET_ROOT}"
+    debuglog "set DOTNET_ROOT to %s" "${DOTNET_ROOT}"
 else
     unset DOTNET_ROOT
 fi
@@ -106,7 +107,7 @@ DOCKER_HOST="$HOME/.docker/run/docker.sock"
 if [ -S "$DOCKER_HOST" ] && [ ! -S /var/run/docker.socket ] \
     && [ "$(docker context show || true)" = "default" ]; then
     export DOCKER_HOST="unix://${DOCKER_HOST}"
-    debuglog ".profile: set DOCKER_HOST to %s" "${DOCKER_HOST}"
+    debuglog "set DOCKER_HOST to %s" "${DOCKER_HOST}"
 else
     unset DOCKER_HOST
 fi
@@ -125,9 +126,9 @@ if [ "${CPUCOUNT}" -gt 1 ]; then
 fi
 
 # remove read-only path "/usr/share/man" from MANPATH on MacOS
-if validate_command manpath && [ "${MACOS}" = "1" ]; then
+if validate_command manpath && [ "${MACOS}" = 1 ]; then
     MANPATH=$(manpath | sed 's#:\/usr\/share\/man:#:#g')
-    debuglog ".profile: removed /usr/share/man from MANPATH"
+    debuglog "removed /usr/share/man from MANPATH"
     export MANPATH
 fi
 
@@ -135,3 +136,5 @@ ENV="${HOME}/.shrc"
 
 # shellcheck disable=SC2034
 DOT_PROFILE="true"
+
+debuglog "done loading .profile"

@@ -23,10 +23,10 @@ fi
 
 # install global brewfile
 if validate_command brew \
-    && [ -r "${HOME}/.Brewfile" ] \
+    && [ -f "${HOME}/.Brewfile" ] \
     && [ ! -f "${HOME}/.Brewfile.lock.json" ] \
-    && [ "${SKIP_BREW_BUNDLE}" = "false" ] \
-    && [ "${MACOS}" = "1" ]; then
+    && [ "${SKIP_BREW_BUNDLE:-false}" != "false" ] \
+    && [ "${MACOS}" = 1 ]; then
     brew bundle install --file "${HOME}/.Brewfile"
 fi
 

@@ -23,7 +23,7 @@ for file in .??*; do
         && echo "skipped .dotfiles" \
         && continue
     # copy file if not skipped
-    cp -r "$file" "$HOME"
+    cp -R "$file" "$HOME"
 done
 
 ln -s .config/zsh/.zshenv "${HOME}/.zshenv"

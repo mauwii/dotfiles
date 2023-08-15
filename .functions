@@ -16,6 +16,7 @@ debuglog() {
         __logmsg="$(printf "$@")"
         __date=$(date "+%T")
         printf "[%s][%s] %s\n" "${__date}" "${__source##*/}" "${__logmsg}"
+        unset -v __source
     fi
 }
 

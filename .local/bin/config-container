@@ -265,7 +265,7 @@ if [ "${build}" = "true" ] || [ "${build_only}" = "true" ]; then
         --platform="${platform}" \
         --tag="${fulltag}" \
         --progress=plain \
-        --file="${dotfilesdir}/.dotfiles/Dockerfile" "$(printf %s "${HOME}/.SpaceVim.d")"
+        --file="${dotfilesdir}/.dotfiles/Dockerfile" .
     if [ $? -ne 0 ]; then
         debuglog "error: failed to build image\n"
         exit 1

@@ -104,7 +104,7 @@ fi
 
 # change docker socket
 DOCKER_HOST="$HOME/.docker/run/docker.sock"
-if [ -S "$DOCKER_HOST" ] && [ ! -S /var/run/docker.socket ] \
+if [ -S "${DOCKER_HOST}" ] && [ ! -S /var/run/docker.socket ] \
     && [ "$(docker context show || true)" = "default" ]; then
     export DOCKER_HOST="unix://${DOCKER_HOST}"
     debuglog "set DOCKER_HOST to %s" "${DOCKER_HOST}"
@@ -113,9 +113,9 @@ else
 fi
 
 # Count CPUs for Make jobs
-if [ "${MACOS}" = "1" ]; then
+if [ "${MACOS}" = 1 ]; then
     CPUCOUNT="$(sysctl -n hw.ncpu)"
-elif [ "${LINUX}" = "1" ]; then
+elif [ "${LINUX}" = 1 ]; then
     CPUCOUNT="$(getconf _NPROCESSORS_ONLN)"
 else
     CPUCOUNT=1

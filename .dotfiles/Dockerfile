@@ -34,7 +34,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         neovim \
         openssh-server \
         python3-dev \
-        python3-pynvim \
+        python3-neovim \
         silversearcher-ag \
         tzdata \
         universal-ctags \
@@ -74,11 +74,6 @@ RUN mkdir -p "$HOME/.config" "$HOME/.SpaceVim.d" \
     && curl -sLf https://spacevim.org/install.sh | bash -s -- --install neovim \
     && git -C "$HOME/.SpaceVim" checkout v2.2.0 \
     && nvim --headless +"call dein#install#_update([],'install',v:false)" +qall \
-    && rm -rf "$HOME/.SpaceVim.d/init.toml"
-
-# install addons from personal SpaceVim config
-COPY init.toml "$HOME/.SpaceVim.d/init.toml"
-RUN nvim --headless +"call dein#install#_update([],'UpdateRemotePlugins',v:false)" +qall \
     && rm -rf "$HOME/.SpaceVim.d/init.toml"
 
 # install Oh My Zsh

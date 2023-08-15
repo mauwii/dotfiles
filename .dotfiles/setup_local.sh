@@ -25,3 +25,5 @@ for file in .??*; do
     # copy file if not skipped
     cp -r "$file" "$HOME"
 done
+
+ln -s .config/zsh/.zshenv "${HOME}/.zshenv"

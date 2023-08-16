@@ -49,7 +49,7 @@ fi
 
 # dotfiles management
 if [ -d "${HOME}/.cfg" ] && validate_command git; then
-    alias config='command git --git-dir="${HOME}"/.cfg --work-tree="${HOME}"'
+    alias config='command git --git-dir="${HOME}/.cfg" --work-tree="${HOME}"'
     debuglog ".aliases: dotfiles management enabled"
     if validate_command link-dotfiles && validate_command code; then
         # link dotfiles to ~/.dotfiles and open in code

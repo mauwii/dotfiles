@@ -4,7 +4,7 @@ Function Test-CommandExists {
         [string]$command
     )
     $oldPreference = $ErrorActionPreference
-    $ErrorActionPreference = ‘stop’
+    $ErrorActionPreference = 'Stop'
     try { if (Get-Command $command) { RETURN $true } }
     Catch { Write-Debug “$command does not exist”; RETURN $false }
     Finally { $ErrorActionPreference = $oldPreference }

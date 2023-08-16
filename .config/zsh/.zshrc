@@ -122,6 +122,7 @@ if [[ -d ~/.oh-my-zsh ]]; then
         argocd
         direnv
         dotnet
+        fzf
         kubectl
         multipass
         poetry
@@ -192,15 +193,18 @@ if validate_command pipx; then
     eval "$(register-python-argcomplete pipx || true)"
 fi
 
-if [[ -r ~/.zstyles ]]; then
-    # shellcheck disable=SC1090
-    source ~/.zstyles
-fi
+# if [[ -r ~/.zstyles ]]; then
+#     # shellcheck disable=SC1090
+#     source ~/.zstyles
+# fi
 
 # shellcheck source=.fzf
 [[ -f ~/.fzf ]] && validate_command fzf && source ~/.fzf
 # shellcheck source=.fzf.zsh
 [[ -f ~/.fzf.zsh ]] && validate_command fzf && source ~/.fzf.zsh
+
+# enable hidden files in completions
+_comp_options+=(globdots)
 
 # These AddOns should be sourced last
 # shellcheck disable=SC2154
@@ -216,10 +220,10 @@ if [[ -d "${HOMEBREW_PREFIX}" ]]; then
     # homebrew zsh-autosuggestions plugin
     ZSH_AUTOSUGGEST="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
     if [[ -r "${ZSH_AUTOSUGGEST}" ]]; then
-        # Disable autosuggestion for large buffers.
-        export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
-        # Enable aynchronous mode.
-        export ZSH_AUTOSUGGEST_USE_ASYNC="true"
+        # # Disable autosuggestion for large buffers.
+        # export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
+        # # Enable aynchronous mode.
+        # export ZSH_AUTOSUGGEST_USE_ASYNC=true
         # set strategy
         export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
         # shellcheck source=/dev/null

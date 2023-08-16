@@ -26,6 +26,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         ca-certificates \
         curl \
         direnv \
+        fd-find \
         exa \
         fzf \
         git \

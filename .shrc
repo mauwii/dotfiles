@@ -2,7 +2,7 @@
 # shellcheck disable=SC3003,SC3028,SC2154
 
 # add shell functions
-if [ -r "${HOME}/.functions" ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
+if [ -r "${HOME}/.functions" ]; then
     # shellcheck source=.functions
     . "${HOME}/.functions"
 fi
@@ -74,6 +74,9 @@ if validate_command gem && [ -d "$(ruby -r rubygems -e 'puts Gem.user_dir')" ]; 
 fi
 # export GEM_PATH="${HOME}/.gem/ruby/2.6.0:/System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/lib/ruby/gems/2.6.0"
 # fi
+
+# set word splitting
+export WORDCHARS='~!#$%^&*(){}[]<>?.+;-'
 
 DOT_SHRC="true"
 

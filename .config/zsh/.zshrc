@@ -6,10 +6,15 @@ if [ -r ~/.functions ]; then
     . ~/.functions
 fi
 
-debuglog "begin loading .zshrc"
+if [ "${DOT_ZSHRC}" = "true" ]; then
+    debuglog "already loaded .zshrc"
+    return
+else
+    debuglog "begin loading .zshrc"
+fi
 
 # load ~/.profile if not loaded yet
-if [[ "${DOT_PROFILE:-false}" != "true" && -r ~/.profile ]]; then
+if [[ -r ~/.profile ]]; then
     # shellcheck source=.profile
     source ~/.profile
 fi
@@ -199,9 +204,13 @@ fi
 # fi
 
 # shellcheck source=.fzf
-[[ -f ~/.fzf ]] && validate_command fzf && source ~/.fzf
+if [[ -f ~/.fzf ]]; then
+    validate_command fzf && source ~/.fzf
+fi
 # shellcheck source=.fzf.zsh
-[[ -f ~/.fzf.zsh ]] && validate_command fzf && source ~/.fzf.zsh
+if [[ -f ~/.fzf.zsh ]]; then
+    validate_command fzf && source ~/.fzf.zsh
+fi
 
 # enable hidden files in completions
 _comp_options+=(globdots)

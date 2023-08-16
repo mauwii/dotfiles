@@ -14,7 +14,7 @@ __debuglog() {
 
 # set git command to use the dotfiles bare repository
 __git() {
-    git --git-dir="${dotrepo}" --work-tree="${HOME}" "$@"
+    command git --git-dir="${dotrepo}" --work-tree="${HOME}" "$@"
 }
 
 # ensure that no arguments are passed

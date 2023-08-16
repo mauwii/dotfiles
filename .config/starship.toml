@@ -1052,7 +1052,7 @@ time_range = "-"
 [username]
 format = "[$user]($style) in "
 style_root = "red bold"
-style_user = "yellow bold"
+style_user = "green"
 show_always = true
 disabled = false
 

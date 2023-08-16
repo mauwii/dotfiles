@@ -1,12 +1,17 @@
 #!/usr/bin/env sh
 
 # add shell functions
-if [ -r "${HOME}/.functions" ] && [ "${DOT_FUNCTIONS:-false}" != "true" ]; then
+if [ -r "${HOME}/.functions" ]; then
     # shellcheck source=.functions
     . "${HOME}/.functions"
 fi
 
-debuglog "begin loading .profile"
+if [ "${DOT_PROFILE}" = "true" ]; then
+    debuglog "already loaded .profile"
+    return
+else
+    debuglog "begin loading .profile"
+fi
 
 # set locale
 [ -z "${LANG}" ] && eval "$(locale)"
@@ -14,7 +19,7 @@ debuglog "begin loading .profile"
 [ -z "${LC_ALL}" ] && export LC_ALL="${LANG}"
 
 # set timezone
-export TZ="${TZ:-Europe/Berlin}"
+export TZ="${TZ-Europe/Berlin}"
 
 # set command mode
 export COMMAND_MODE="unix2003"
@@ -102,7 +107,7 @@ else
 fi
 
 # change docker socket
-DOCKER_HOST="$HOME/.docker/run/docker.sock"
+DOCKER_HOST=${HOME}/.docker/run/docker.sock
 if [ -S "${DOCKER_HOST}" ] && [ ! -S /var/run/docker.socket ] \
     && [ "$(docker context show || true)" = "default" ]; then
     export DOCKER_HOST="unix://${DOCKER_HOST}"

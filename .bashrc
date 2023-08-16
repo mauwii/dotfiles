@@ -1,13 +1,13 @@
 # shellcheck shell=bash disable=SC2312
 
 # add shell functions
-if [[ -r ~/.functions && "${DOT_FUNCTIONS}" != "true" ]]; then
+if [[ -r ~/.functions ]]; then
     # shellcheck source=.functions
     . ~/.functions
 fi
 
 # check it was not sourced before
-if [[ "${DOT_BASHRC:-false}" = "true" ]]; then
+if [[ "${DOT_BASHRC}" = "true" ]]; then
     debuglog ".bashrc has already been loaded"
     return
 else
@@ -15,7 +15,7 @@ else
 fi
 
 # load shared shell configuration if not loaded yet
-if [[ "${DOT_SHRC}" != "true" && -r ~/.shrc ]]; then
+if [[ -r ~/.shrc ]]; then
     # shellcheck source=.shrc
     . ~/.shrc
 else

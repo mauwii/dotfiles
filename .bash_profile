@@ -1,12 +1,17 @@
 # shellcheck shell=bash
 
 # add shell functions
-if [[ -r ~/.functions && "${DOT_FUNCTIONS:-false}" != "true" ]]; then
+if [[ -r ~/.functions ]]; then
     # shellcheck source=.functions
     . ~/.functions
 fi
 
-debuglog "begin loading .bash_profile"
+if [ "${DOT_BASHPROFILE}" = "true" ]; then
+    debuglog "already loaded .bash_profile"
+    return
+else
+    debuglog "begin loading .bash_profile"
+fi
 
 # load cross-compatible profile if not loaded yet
 if [[ -r ~/.profile && "${DOT_PROFILE:-false}" != "true" ]]; then

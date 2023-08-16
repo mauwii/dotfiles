@@ -22,12 +22,15 @@ if [ -r "${HOME}/.aliases" ]; then
 fi
 
 # install global brewfile
+HOMEBREW_BUNDLE_GLOBAL_FILE="${HOME}/.Brewfile"
 if validate_command brew \
-    && [ -f "${HOME}/.Brewfile" ] \
-    && [ ! -f "${HOME}/.Brewfile.lock.json" ] \
+    && [ -f "${HOMEBREW_BUNDLE_GLOBAL_FILE}" ] \
+    && [ ! -f "${HOMEBREW_BUNDLE_GLOBAL_FILE}.lock.json" ] \
     && [ "${SKIP_BREW_BUNDLE:-false}" != "false" ] \
     && [ "${MACOS}" = 1 ]; then
-    brew bundle install --file "${HOME}/.Brewfile"
+    brew bundle install --file "${HOMEBREW_BUNDLE_GLOBAL_FILE}"
+else
+    unset HOME_BREW_BUNDLE_GLOBAL_FILE
 fi
 
 # Colourful manpages
@@ -65,8 +68,9 @@ else
 fi
 
 # set gem path
-if validate_command gem && [ -d "${HOME}/.gem/ruby/2.6.0" ]; then
-    export GEM_HOME="${HOME}/.gem/ruby/2.6.0"
+if validate_command gem && [ -d "$(ruby -r rubygems -e 'puts Gem.user_dir')" ]; then
+    GEM_HOME="$(ruby -r rubygems -e 'puts Gem.user_dir')"
+    export GEM_HOME
 fi
 # export GEM_PATH="${HOME}/.gem/ruby/2.6.0:/System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/lib/ruby/gems/2.6.0"
 # fi

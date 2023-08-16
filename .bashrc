@@ -54,7 +54,7 @@ if command -v pipx >/dev/null 2>&1; then
 fi
 
 # load bash completion if available
-if [[ -r "${HOMEBREW_PREFIX:-unset}/etc/profile.d/bash_completion.sh" ]]; then
+if [[ -r "${HOMEBREW_PREFIX:+${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh}" ]]; then
     __bash_completion="${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
 elif [[ -r /usr/share/bash-completion/bash_completion ]]; then
     __bash_completion=/usr/share/bash-completion/bash_completion
@@ -78,14 +78,17 @@ if validate_command starship; then
     eval "$(starship init bash)"
 fi
 
+# source command-line fuzzy finder if installed
+# shellcheck source=.fzf.bash source-path="SCRIPTDIR/.."
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
 # source iTerm2 shell integration if available
 # shellcheck disable=SC2154
-if [[ -r "${HOME}/.iterm2_shell_integration.bash" && ${LC_TERMINAL} == "iTerm2" ]]; then
+if [[ -r "${HOME}/.iterm2_shell_integration.bash" && "${LC_TERMINAL}" == "iTerm2" ]]; then
     # shellcheck source=/dev/null
     . "${HOME}/.iterm2_shell_integration.bash"
     debuglog "%s: sourced iTerm2 shell integration" ".bashrc"
 fi
 
 DOT_BASHRC="true"
-
 debuglog "done loading .bashrc"

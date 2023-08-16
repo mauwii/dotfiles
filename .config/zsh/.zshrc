@@ -197,6 +197,11 @@ if [[ -r ~/.zstyles ]]; then
     source ~/.zstyles
 fi
 
+# shellcheck source=.fzf
+[[ -f ~/.fzf ]] && validate_command fzf && source ~/.fzf
+# shellcheck source=.fzf.zsh
+[[ -f ~/.fzf.zsh ]] && validate_command fzf && source ~/.fzf.zsh
+
 # These AddOns should be sourced last
 # shellcheck disable=SC2154
 if [[ -d "${HOMEBREW_PREFIX}" ]]; then

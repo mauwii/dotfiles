@@ -44,8 +44,7 @@ elif [ -x "/usr/local/bin/brew" ]; then
 fi
 
 # add private bins to path
-mkdir -p "${HOME}/.local/bin"
-prepend_path "${HOME}/.local/bin"
+mkdir -p "${HOME}/.local/bin" && prepend_path "${HOME}/.local/bin"
 
 # Add Ruby gems to PATH.
 if validate_command ruby && validate_command gem; then

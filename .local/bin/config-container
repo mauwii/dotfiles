@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash disable=SC2207
 
+# check that docker is installed and running
+if command -v docker >/dev/null 2>&1; then
+    if ! docker info >/dev/null 2>&1; then
+        printf "error: docker is not running\n"
+        exit 1
+    fi
+else
+    printf "error: docker is not installed\n"
+    exit 1
+fi
+
 ## initialize variables and set defaults
 
 # enable output of debug messages

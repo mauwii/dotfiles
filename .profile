@@ -94,7 +94,7 @@ fi
 
 # set dotnet root if dir exists
 DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
-if [ -d "${DOTNET_ROOT}" ] && validate_command dotnet1; then
+if [ -d "${DOTNET_ROOT}" ] && validate_command dotnet; then
     export DOTNET_ROOT
     debuglog "set DOTNET_ROOT to %s" "${DOTNET_ROOT}"
 else

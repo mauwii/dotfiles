@@ -30,3 +30,6 @@ If (Test-CommandExists starship) {
     $(starship init powershell) | `
         Invoke-Expression # initialize starship prompt
 }
+
+# GitHub-CLI completion
+Invoke-Expression -Command $(gh completion -s powershell | Out-String)

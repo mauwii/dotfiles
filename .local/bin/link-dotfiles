@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-DEBUG=${DEBUG:-true}
+DEBUG="${DEBUG:-false}"
 dotrepo="${HOME}/.cfg"
-__cwd="${PWD}"
 link_target_folder="${HOME}/.dotfiles"
 
 # print log messages to STDOUT if $DEBUG is true
@@ -49,8 +48,6 @@ while IFS= read -r -d '' folder; do
     fi
 done < <(command find "${link_target_folder}" -type d -print0)
 
-# cd "${HOME}" || return 1
-
 # link all files to ~/.dotfiles
 for file in $(__git ls-tree --full-tree -r --name-only HEAD); do
     file_to_link="${HOME}/${file}"
@@ -75,5 +72,3 @@ for file in $(__git ls-tree --full-tree -r --name-only HEAD); do
         __debuglog "failed linking %s to %s" "${file_to_link}" "${link_destination}"
     fi
 done
-
-# cd "${__cwd}" || exit

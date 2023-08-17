@@ -2,7 +2,7 @@
 # shellcheck shell=sh source=.functions
 
 # add shell functions
-if [ -r "${HOME}/.functions" ] && [ "${DOT_FUNCTIONS}" != "true" ]; then
+if [ -r "${HOME}/.functions" ]; then
     # shellcheck source=.functions
     . "${HOME}/.functions"
 fi
@@ -40,20 +40,21 @@ alias llr='lr -l'
 # replace cat with bat, but disable paging to make it behave like cat
 if validate_command batcat && ! validate_command bat; then
     alias bat='$(which batcat)'
-    debuglog ".aliases: batcat aliased to bat"
+    debuglog "batcat aliased to bat"
 fi
 if validate_command bat; then
     alias cat="bat --paging=never"
-    debuglog ".aliases: cat aliased to bat without pager"
+    debuglog "cat aliased to bat without pager"
 fi
 
 # dotfiles management
-if [ -d "${HOME}/.cfg" ] && validate_command git; then
+if [ "${HOME-false}" != "false" ] && [ -d "${HOME}/.cfg" ] && validate_command git; then
     alias config='command git --git-dir="${HOME}/.cfg" --work-tree="${HOME}"'
-    debuglog ".aliases: dotfiles management enabled"
+    debuglog "aliased config to handle the bare repository"
     if validate_command link-dotfiles && validate_command code; then
         # link dotfiles to ~/.dotfiles and open in code
         alias dotfiles='link-dotfiles && code "${HOME}/.dotfiles"'
+        debuglog "aliased dotfiles to creade dotfile links and open in code"
     fi
 fi
 
@@ -65,17 +66,21 @@ fi
 # Copy public SSH Key
 if validate_command pbcopy && [ -r "${HOME}/.ssh/id_ed25519.pub" ]; then
     alias pubkey='pbcopy < "${HOME}/.ssh/id_ed25519.pub"'
+    debuglog "aliased pubkey to copy your public key to the clipboard"
 fi
 
 # dump Brewfile
-if [ -n "${HOMEBREW_BUNDLE_FILE}" ]; then
+if [ "${HOMEBREW_BUNDLE_FILE-false}" != "false" ]; then
     alias dump-brewfile='brew bundle dump --file="${HOMEBREW_BUNDLE_FILE}" --force'
+    debuglog "aliased dump-brewfile dump your installed packages to %s" "${HOMEBREW_BUNDLE_FILE}"
 fi
 
 # install or match Brewfile (match removes everything whats not in the Brewfile)
 if [ -f "${HOMEBREW_BUNDLE_FILE}" ]; then
     alias install-brewfile='brew bundle install --file="${HOMEBREW_BUNDLE_FILE}"'
+    debuglog "aliased install-brewfile to %s" "$(alias install-brewfile)"
     alias match-brewfile='brew bundle --force cleanup --file="${HOMEBREW_BUNDLE_FILE}"'
+    debuglog "aliased match-brewfile to %s" "$(alias match-brewfile)"
 fi
 
 # add getidf alias if ~/esp/esp-idf exists
@@ -83,6 +88,7 @@ IDF_PATH="${HOME}/esp/esp-idf"
 if [ -f "${IDF_PATH}/export.sh" ]; then
     export ESPIDF="${IDF_PATH}"
     alias getidf='. ${ESPIDF}/export.sh'
+    debuglog "aliased getidf to %s" "$(alias getidf)"
 else
     unset IDF_PATH
 fi
@@ -90,6 +96,7 @@ fi
 # register-python-argcomplete
 if validate_command register-python-argcomplete3; then
     alias register-python-argcomplete='register-python-argcomplete3'
+    debuglog "aliased register-python-argcomplete to %s" "$(alias register-python-argcomplete)"
 fi
 
 debuglog "done loading .aliases"

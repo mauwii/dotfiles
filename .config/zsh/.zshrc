@@ -1,12 +1,12 @@
 # shellcheck disable=SC2034,1091
 
 # add shell functions
-if [ -r ~/.functions ]; then
+if ! debuglog >/dev/null 2>&1 && [[ -r ~/.functions ]]; then
     # shellcheck source=.functions
     . ~/.functions
 fi
 
-if [ "${DOT_ZSHRC}" = "true" ]; then
+if [[ "${DOT_ZSHRC}" = "true" ]]; then
     debuglog "already loaded .zshrc"
     return
 else
@@ -24,16 +24,16 @@ fi
 # unset INFOPATH
 
 # set completion dump file
-ZSH_COMPDUMP="${ZDOTDIR:-${HOME}}/.zcompdump-$(hostname -s)${ZSH_VERSION:+-${ZSH_VERSION}}"
+ZSH_COMPDUMP="${ZDOTDIR:-${HOME:-.cache}}/.zcompdump-$(hostname -s)${ZSH_VERSION:+-${ZSH_VERSION}}"
 export ZSH_COMPDUMP
 
 # set History file
 HISTFILE=${ZDOTDIR:-${HOME}}/.zsh_history
 
 # if oh-my-zsh is installed
-if [[ -d ~/.oh-my-zsh ]]; then
+if [[ -d "${HOME}/.oh-my-zsh" ]]; then
     # Path to your oh-my-zsh installation.
-    export ZSH=~/.oh-my-zsh
+    export ZSH="${HOME}/.oh-my-zsh"
 
     # Set name of the theme to load --- if set to 'random', it will
     # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -107,6 +107,7 @@ if [[ -d ~/.oh-my-zsh ]]; then
 
     plugins=(
         ssh-agent
+        iTerm2
     )
 
     # Function to add plugin if executable is found
@@ -153,9 +154,12 @@ if [[ -d ~/.oh-my-zsh ]]; then
         zstyle ':omz:plugins:ssh-agent' ssh-add-args --apple-load-keychain
     fi
 
+    # source iTerm2 shell integration
+    zstyle :omz:plugins:iterm2 shell-integration yes
+
     if [[ -r "${ZSH}/oh-my-zsh.sh" ]]; then
-        debuglog ".zshrc: Loading oh-my-zsh"
         # shellcheck source=.oh-my-zsh/oh-my-zsh.sh disable=SC1094
+        debuglog "Loading oh-my-zsh"
         source "${ZSH}/oh-my-zsh.sh"
     fi
 else
@@ -171,8 +175,8 @@ fi
 
 # User configuration
 
-# load shared shell configuration if not loaded yet
-if [[ "${DOT_SHRC:-false}" = "false" && -r ~/.shrc ]]; then
+# load shared shell configuration
+if [[ -r ~/.shrc ]]; then
     # shellcheck source=.shrc
     source ~/.shrc
 fi
@@ -194,7 +198,7 @@ setopt HIST_IGNORE_SPACE
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # pipx completion
-if validate_command pipx; then
+if validate_command pipx && validate_command register-python-argcomplete; then
     eval "$(register-python-argcomplete pipx || true)"
 fi
 
@@ -203,55 +207,61 @@ fi
 #     source ~/.zstyles
 # fi
 
-# shellcheck source=.fzf
-if [[ -f ~/.fzf ]]; then
-    validate_command fzf && source ~/.fzf
+# load fzf if installed
+if validate_command fzf; then
+    if [[ -f ~/.fzf ]]; then
+        # shellcheck source=.fzf
+        source ~/.fzf >/dev/null 2>&1
+    fi
+    if [[ -f ~/.fzf.zsh ]]; then
+        # shellcheck source=.fzf.zsh
+        source ~/.fzf.zsh >/dev/null 2>&1
+    fi
 fi
-# shellcheck source=.fzf.zsh
-if [[ -f ~/.fzf.zsh ]]; then
-    validate_command fzf && source ~/.fzf.zsh
-fi
-
-# enable hidden files in completions
-_comp_options+=(globdots)
 
 # These AddOns should be sourced last
 # shellcheck disable=SC2154
-if [[ -d "${HOMEBREW_PREFIX}" ]]; then
+if validate_command brew; then
     # homebrew zsh-fast-syntax-highlighting plugin
-    ZSH_FAST_SYNTAX_HIGHLIGHTING="${HOMEBREW_PREFIX}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+    ZSH_FAST_SYNTAX_HIGHLIGHTING="$(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
     if [[ -r "${ZSH_FAST_SYNTAX_HIGHLIGHTING}" ]]; then
         # shellcheck source=/dev/null
         source "${ZSH_FAST_SYNTAX_HIGHLIGHTING}"
+        debuglog "loaded zsh-fast-syntax-highlighting"
     else
         unset ZSH_FAST_SYNTAX_HIGHLIGHTING
     fi
     # homebrew zsh-autosuggestions plugin
-    ZSH_AUTOSUGGEST="${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    ZSH_AUTOSUGGEST="$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
     if [[ -r "${ZSH_AUTOSUGGEST}" ]]; then
-        # # Disable autosuggestion for large buffers.
-        # export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
-        # # Enable aynchronous mode.
-        # export ZSH_AUTOSUGGEST_USE_ASYNC=true
-        # set strategy
-        export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
         # shellcheck source=/dev/null
         source "${ZSH_AUTOSUGGEST}"
+        debuglog "loaded zsh-autosuggestions"
+        # # Disable autosuggestion for large buffers.
+        export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
+        # # Enable aynchronous mode.
+        export ZSH_AUTOSUGGEST_USE_ASYNC="true"
+        # set strategy
+        export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
     else
         unset ZSH_AUTOSUGGEST
     fi
 fi
 
-# iTerm 2 Shell Integration
-ITERM2_SHELL_INTEGRATION=~/.iterm2_shell_integration.zsh
-# shellcheck disable=SC2154
-if [[ -r "${ITERM2_SHELL_INTEGRATION}" ]] \
-    && [[ "${LC_TERMINAL}" = "iTerm2" ]]; then
-    # shellcheck source=.iterm2_shell_integration.zsh
-    source "${ITERM2_SHELL_INTEGRATION}"
-else
-    unset ITERM2_SHELL_INTEGRATION
-fi
+# enable hidden files in completions
+_comp_options+=(globdots)
+
+# # iTerm 2 Shell Integration
+# ITERM2_SHELL_INTEGRATION=~/iterm2_shell_integration.zsh
+
+# # shellcheck disable=SC2154
+# if [[ -r "${ITERM2_SHELL_INTEGRATION}" ]] \
+#     && [[ "${LC_TERMINAL}" = "iTerm2" ]]; then
+#     # shellcheck source=.iterm2_shell_integration.zsh
+#     source "${ITERM2_SHELL_INTEGRATION}"
+# else
+#     unset ITERM2_SHELL_INTEGRATION
+# fi
 
 DOT_ZSHRC="true"
 

@@ -40,9 +40,9 @@ elif grep -q "Microsoft" /proc/version 2>/dev/null; then
 fi
 
 # add brew to env
-if [ -d "/opt/homebrew" ]; then
+if [ -x "/opt/homebrew/bin/brew" ]; then
     brew_init "/opt/homebrew"
-elif [ -d "/home/linuxbrew/.linuxbrew" ]; then
+elif [ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
     brew_init "/home/linuxbrew/.linuxbrew"
 elif [ -x "/usr/local/bin/brew" ]; then
     brew_init "/usr/local"
@@ -71,12 +71,12 @@ if [ -d "${HOME}/.docker/cli-plugins" ]; then
 fi
 
 # set PYENV_ROOT if dir exists and not set
-if [ -d "${HOME}/.pyenv" ] && [ -z "${PYENV_ROOT}" ]; then
+if [ -d "${HOME}/.pyenv" ] && [ "${PYENV_ROOT-false}" != "false" ]; then
     export PYENV_ROOT"=${HOME}/.pyenv"
 fi
 
 # add pyenv bins to path if dir exists
-if [ -n "${PYENV_ROOT}" ] && [ -d "${PYENV_ROOT}/bin" ]; then
+if [ "${PYENV_ROOT-false}" != "false" ] && [ -d "${PYENV_ROOT}/bin" ]; then
     prepend_path "${PYENV_ROOT}/bin"
 fi
 
@@ -85,6 +85,9 @@ if validate_command pyenv; then
     # shellcheck disable=SC2312
     eval "$(pyenv init --path)"
     debuglog "initialized pyenv"
+    if [ -d "${PYENV_ROOT}/plugins/pyenv-virtualenv/bin" ]; then
+        prepend_path "${PYENV_ROOT}/plugins/pyenv-virtualenv/bin"
+    fi
     if validate_command pyenv-virtualenv && [ "${PYENV_VIRTUALENV_INIT}" != 1 ]; then
         eval "$(pyenv virtualenv-init -)"
         debuglog "initialized pyenv-virtualenv"

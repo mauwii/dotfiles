@@ -1,7 +1,7 @@
 # shellcheck shell=bash disable=SC2312
 
 # add shell functions
-if [[ -r ~/.functions ]]; then
+if ! debuglog >/dev/null 2>&1 && [[ -r ~/.functions ]]; then
     # shellcheck source=.functions
     . ~/.functions
 fi
@@ -28,7 +28,7 @@ if validate_command direnv; then
 fi
 
 # Initialize pyenv
-if [[ -d ~/.pyenv && -z "${PYENV_ROOT}" ]]; then
+if [[ -d ~/.pyenv && "${PYENV_ROOT:fale}" != "false" ]]; then
     export PYENV_ROOT=~/.pyenv
     debuglog ".bashrc: setting PYENV_ROOT to %s" "$PYENV_ROOT"
 fi

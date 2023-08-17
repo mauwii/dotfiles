@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 # add shell functions
-if [[ -r ~/.functions ]]; then
+if ! debuglog >/dev/null 2>&1 && [[ -r ~/.functions ]]; then
     # shellcheck source=.functions
     . ~/.functions
 fi

@@ -122,6 +122,3 @@ viewgitmd() {
         pandoc -f gfm -t html "$1" | w3m -T text/html -o display_image=true
     fi
 }
-
-# shellcheck disable=SC2034
-DOT_FUNCTIONS=true

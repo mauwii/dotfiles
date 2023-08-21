@@ -79,6 +79,10 @@ brew_init() {
         if [ -d "${1}/share/zsh-completions" ]; then
             prepend_fpath "${1}/share/zsh-completions"
         fi
+        if validate_command pyenv; then
+            # remove pyenv shims from PATH before calling brew
+            alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+        fi
     fi
 }
 

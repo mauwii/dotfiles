@@ -202,10 +202,14 @@ if validate_command pipx && validate_command register-python-argcomplete; then
     eval "$(register-python-argcomplete pipx || true)"
 fi
 
-# if [[ -r ~/.zstyles ]]; then
-#     # shellcheck disable=SC1090
-#     source ~/.zstyles
-# fi
+# enable hidden files in completions
+_comp_options+=(globdots)
+
+# load zstyles
+if [[ -r "${ZDOTDIR:-$HOME}/.zstyles" ]]; then
+    # shellcheck disable=SC1090
+    source "${ZDOTDIR:-$HOME}/.zstyles"
+fi
 
 # load fzf if installed
 if validate_command fzf; then
@@ -248,20 +252,17 @@ if validate_command brew; then
     fi
 fi
 
-# enable hidden files in completions
-_comp_options+=(globdots)
-
 # # iTerm 2 Shell Integration
 # ITERM2_SHELL_INTEGRATION=~/iterm2_shell_integration.zsh
 
-# # shellcheck disable=SC2154
-# if [[ -r "${ITERM2_SHELL_INTEGRATION}" ]] \
-#     && [[ "${LC_TERMINAL}" = "iTerm2" ]]; then
-#     # shellcheck source=.iterm2_shell_integration.zsh
-#     source "${ITERM2_SHELL_INTEGRATION}"
-# else
-#     unset ITERM2_SHELL_INTEGRATION
-# fi
+# shellcheck disable=SC2154
+if [[ -r "${ITERM2_SHELL_INTEGRATION}" ]] \
+    && [[ "${LC_TERMINAL}" = "iTerm2" ]]; then
+    # shellcheck source=.iterm2_shell_integration.zsh
+    source "${ITERM2_SHELL_INTEGRATION}"
+else
+    unset ITERM2_SHELL_INTEGRATION
+fi
 
 DOT_ZSHRC="true"
 

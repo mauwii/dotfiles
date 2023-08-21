@@ -47,20 +47,20 @@ if validate_command bat; then
     debuglog "cat aliased to bat without pager"
 fi
 
+# don't know why, but this is fixing autocompletion
+if validate_command git; then
+    alias git='command git'
+fi
+
 # dotfiles management
 if [ "${HOME-false}" != "false" ] && [ -d "${HOME}/.cfg" ] && validate_command git; then
-    alias config='command git --git-dir="${HOME}/.cfg" --work-tree="${HOME}"'
+    alias config='git --git-dir="${HOME}/.cfg" --work-tree="${HOME}"'
     debuglog "aliased config to handle the bare repository"
     if validate_command link-dotfiles && validate_command code; then
         # link dotfiles to ~/.dotfiles and open in code
         alias dotfiles='link-dotfiles && code "${HOME}/.dotfiles"'
         debuglog "aliased dotfiles to creade dotfile links and open in code"
     fi
-fi
-
-# don't know why, but this is fixing autocompletion
-if validate_command git; then
-    alias git='command git'
 fi
 
 # Copy public SSH Key

@@ -23,7 +23,7 @@ setopt prompt_subst # Pass escape sequence (environment variable) through prompt
 ## _history: Completion from history. Used from _history_complete_word.
 ## _correct: Correct misspellings before completion.
 # zstyle ':completion:*' completer _oldlist _complete _ignored
-zstyle ':completion:*' completer _oldlist _complete
+zstyle ':completion:*' completer _oldlist _complete _ignored
 zstyle ':completion:*:messages' format '%F{yellow}%d'
 zstyle ':completion:*:warnings' format '%B%F{red}No matches for:''%F{white}%d%b'
 zstyle ':completion:*:descriptions' format '%B%F{white}--- %d ---%f%b'

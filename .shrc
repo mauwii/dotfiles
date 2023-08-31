@@ -76,7 +76,7 @@ fi
 # fi
 
 # set word splitting
-export WORDCHARS='~!#$%^&*(){}[]<>?.+;-'
+# export WORDCHARS='~!#$%^&*(){}[]<>?.+;-'
 
 DOT_SHRC="true"
 

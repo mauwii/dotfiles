@@ -47,3 +47,7 @@ build
 # neovim
 nvim/plugin/packer_compiled.lua
 .luarc.json
+
+# act configs
+**/.act
+.secrets

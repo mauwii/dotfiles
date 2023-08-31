@@ -202,8 +202,23 @@ if validate_command pipx && validate_command register-python-argcomplete; then
     eval "$(register-python-argcomplete pipx || true)"
 fi
 
+# act set docker host
+if validate_command act; then
+    act() {
+        local parameters=()
+        [[ -f ./.act/.secrets ]] && parameters+=(--secret-file ./.act/.secrets)
+        [[ -f ./.act/.env ]] && parameters+=(--env-file ./.act/.env)
+        env DOCKER_HOST="$(docker context inspect -f '{{.Endpoints.docker.Host}}')" \
+            "$(which -p act)" \
+            -s GITHUB_TOKEN="$(gh auth token)" \
+            --actor "${USER}" \
+            "${parameters[@]}" \
+            "$@"
+    }
+fi
+
 # enable hidden files in completions
-_comp_options+=(globdots)
+# _comp_options+=(globdots)
 
 # load zstyles
 if [[ -r "${ZDOTDIR:-$HOME}/.zstyles" ]]; then
@@ -253,7 +268,7 @@ if validate_command brew; then
 fi
 
 # # iTerm 2 Shell Integration
-# ITERM2_SHELL_INTEGRATION=~/iterm2_shell_integration.zsh
+ITERM2_SHELL_INTEGRATION="${HOME}/iterm2_shell_integration.zsh"
 
 # shellcheck disable=SC2154
 if [[ -r "${ITERM2_SHELL_INTEGRATION}" ]] \

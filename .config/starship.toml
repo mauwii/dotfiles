@@ -11,7 +11,7 @@ $time
 continuation_prompt = "[∙](bright-black) "
 scan_timeout = 30
 command_timeout = 500
-add_newline = false
+add_newline = true
 
 [palettes]
 

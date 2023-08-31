@@ -109,15 +109,28 @@ else
     unset DOTNET_ROOT
 fi
 
-# change docker socket
-DOCKER_HOST=${HOME}/.docker/run/docker.sock
-if [ -S "${DOCKER_HOST}" ] && [ ! -S /var/run/docker.socket ] \
-    && [ "$(docker context show || true)" = "default" ]; then
-    export DOCKER_HOST="unix://${DOCKER_HOST}"
-    debuglog "set DOCKER_HOST to %s" "${DOCKER_HOST}"
-else
-    unset DOCKER_HOST
+# ensure docker completion
+if validate_command docker && validate_command brew; then
+    etc=/Applications/Docker.app/Contents/Resources/etc
+    if [ -d $etc ] && [ -d "$(brew --prefix)/share/zsh/site-functions" ]; then
+        ln -sf $etc/docker.bash-completion "$(brew --prefix)/etc/bash_completion.d/docker"
+        ln -sf $etc/docker.zsh-completion "$(brew --prefix)/share/zsh/site-functions/_docker"
+        if validate_command docker-compose && [ -d "$(brew --prefix)/etc/bash_completion.d" ]; then
+            ln -sf $etc/docker-compose.bash-completion "$(brew --prefix)/etc/bash_completion.d/docker-compose"
+            ln -sf $etc/docker-compose.zsh-completion "$(brew --prefix)/share/zsh/site-functions/_docker-compose"
+        fi
+    fi
 fi
+
+# # change docker socket
+# DOCKER_HOST=${HOME}/.docker/run/docker.sock
+# if [ -S "${DOCKER_HOST}" ] && [ ! -S /var/run/docker.socket ] \
+#     && [ "$(docker context show || true)" = "default" ]; then
+#     export DOCKER_HOST="unix://${DOCKER_HOST}"
+#     debuglog "set DOCKER_HOST to %s" "${DOCKER_HOST}"
+# else
+#     unset DOCKER_HOST
+# fi
 
 # Count CPUs for Make jobs
 if [ "${MACOS}" = 1 ]; then

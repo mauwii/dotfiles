@@ -8,7 +8,7 @@ if command -v docker >/dev/null 2>&1; then
         exit 1
     fi
 else
-    printf "error: docker is not installed\n"
+    printf "error: docker exectuable is not in your PATH\n"
     exit 1
 fi
 

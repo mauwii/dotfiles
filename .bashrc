@@ -48,6 +48,17 @@ if validate_command pyenv-virtualenv && [[ "${PYENV_VIRTUALENV_INIT}" != 1 ]]; t
     debuglog "%s: initialized pyenv-virtualenv" "${0##*/}"
 fi
 
+# ensure docker completion
+if validate_command docker && validate_command brew; then
+    etc=/Applications/Docker.app/Contents/Resources/etc
+    if [[ -d $etc && -d "$(brew --prefix)/etc/bash_completion.d" ]]; then
+        ln -sf $etc/docker.bash-completion "$(brew --prefix)/etc/bash_completion.d/docker"
+        if validate_command docker-compose; then
+            ln -sf $etc/docker-compose.bash-completion "$(brew --prefix)/etc/bash_completion.d/docker-compose"
+        fi
+    fi
+fi
+
 # pipx completion
 if command -v pipx >/dev/null 2>&1; then
     eval "$(register-python-argcomplete pipx)"

@@ -202,6 +202,17 @@ if validate_command pipx && validate_command register-python-argcomplete; then
     eval "$(register-python-argcomplete pipx || true)"
 fi
 
+# ensure docker completion
+if validate_command docker && validate_command brew; then
+    etc=/Applications/Docker.app/Contents/Resources/etc
+    if [[ -d $etc && -d "$(brew --prefix)/share/zsh/site-functions" ]]; then
+        ln -sf $etc/docker.zsh-completion "$(brew --prefix)/share/zsh/site-functions/_docker"
+        if validate_command docker-compose; then
+            ln -sf $etc/docker-compose.zsh-completion "$(brew --prefix)/share/zsh/site-functions/_docker-compose"
+        fi
+    fi
+fi
+
 # act set docker host
 if validate_command act; then
     act() {

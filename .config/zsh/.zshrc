@@ -216,12 +216,17 @@ fi
 # act set docker host
 if validate_command act; then
     act() {
-        local parameters=()
+        local parameters current_docker_host github_token
+        parameters=()
+        current_docker_host="$(docker context inspect -f '{{.Endpoints.docker.Host}}')"
+        if validate_command gh; then
+            github_token="$(gh auth token)"
+            parameters+=(--secret GITHUB_TOKEN="${github_token}")
+        fi
         [[ -f ./.act/.secrets ]] && parameters+=(--secret-file ./.act/.secrets)
         [[ -f ./.act/.env ]] && parameters+=(--env-file ./.act/.env)
-        env DOCKER_HOST="$(docker context inspect -f '{{.Endpoints.docker.Host}}')" \
+        env DOCKER_HOST="${current_docker_host}" \
             "$(which -p act)" \
-            -s GITHUB_TOKEN="$(gh auth token)" \
             --actor "${USER}" \
             "${parameters[@]}" \
             "$@"

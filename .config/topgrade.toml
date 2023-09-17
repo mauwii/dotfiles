@@ -4,7 +4,7 @@ assume_yes = false
 
 # Disable specific steps - same options as the command line flag
 #disable = ["system", "emacs"]
-disable = ["ruby_gems","containers"]
+disable = [ "ruby_gems" ]
 
 # Ignore failures for these steps
 #ignore_failures = ["powershell"]
@@ -43,6 +43,9 @@ cleanup = true
 #    "~/src/*/",
 #    "~/.config/something"
 #]
+repos = [
+   "~/git/mauwii/*/"
+]
 # Don't pull the predefined git repos
 #predefined_repos = false
 

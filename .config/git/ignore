@@ -42,7 +42,7 @@ build
 .dccache
 
 # files I only want on my mac
-*.mac.local.*
+*.mac.local*
 
 # neovim
 nvim/plugin/packer_compiled.lua
@@ -51,3 +51,4 @@ nvim/plugin/packer_compiled.lua
 # act configs
 **/.act
 .secrets
+.actrc

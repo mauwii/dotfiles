@@ -5,3 +5,11 @@ typeset -U PATH
 
 # zsh will source other shellscripts from this directory
 export ZDOTDIR="${HOME}/.config/zsh"
+
+# telemetry optout
+export FUNCTIONS_CORE_TOOLS_TELEMETRY_OPTOUT=1
+
+# add DOETNET_ROOT
+if [ -d /opt/homebrew/opt/dotnet/libexec ]; then
+    export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
+fi

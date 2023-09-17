@@ -99,4 +99,13 @@ if validate_command register-python-argcomplete3; then
     debuglog "aliased register-python-argcomplete to %s" "$(alias register-python-argcomplete)"
 fi
 
+# always add gh auth token to act
+if validate_command act; then
+    alias act='act -s GITHUB_TOKEN="$(gh auth token)"'
+# add alias to use gh act as act if gh-act is installed and act isnt found
+elif gh extension list | grep -q "nektos/gh-act"; then
+    alias act='gh act -s GITHUB_TOKEN="$(gh auth token)"'
+    # alias act='export DOCKER_CERT_PATH="$(docker context inspect --format "{{.Storage.TLSPath}}")/docker" DOCKER_HOST="$(docker context inspect --format {{.Endpoints.docker.Host}})" && act -s GITHUB_TOKEN="$(gh auth token)"'
+fi
+
 debuglog "done loading .aliases"

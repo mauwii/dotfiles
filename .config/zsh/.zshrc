@@ -23,6 +23,9 @@ fi
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 # unset INFOPATH
 
+# Add dotnet tools to path
+export PATH="$PATH:/Users/mauwii/.dotnet/tools"
+
 # set completion dump file
 ZSH_COMPDUMP="${ZDOTDIR:-${HOME:-.cache}}/.zcompdump-$(hostname -s)${ZSH_VERSION:+-${ZSH_VERSION}}"
 export ZSH_COMPDUMP
@@ -127,7 +130,6 @@ if [[ -d "${HOME}/.oh-my-zsh" ]]; then
     plugins_to_check=(
         argocd
         direnv
-        dotnet
         fzf
         kubectl
         multipass
@@ -205,32 +207,12 @@ fi
 # ensure docker completion
 if validate_command docker && validate_command brew; then
     etc=/Applications/Docker.app/Contents/Resources/etc
-    if [[ -d $etc && -d "$(brew --prefix)/share/zsh/site-functions" ]]; then
-        ln -sf $etc/docker.zsh-completion "$(brew --prefix)/share/zsh/site-functions/_docker"
-        if validate_command docker-compose; then
-            ln -sf $etc/docker-compose.zsh-completion "$(brew --prefix)/share/zsh/site-functions/_docker-compose"
+    if [[ -f ${etc}/docker.zsh-completion && -d "$(brew --prefix)/share/zsh/site-functions" ]]; then
+        ln -sf ${etc}/docker.zsh-completion "$(brew --prefix)/share/zsh/site-functions/_docker"
+        if validate_command docker-compose && [[ -f ${etc}/docker-compose.zsh-completion ]]; then
+            ln -sf ${etc}/docker-compose.zsh-completion "$(brew --prefix)/share/zsh/site-functions/_docker-compose"
         fi
     fi
-fi
-
-# act set docker host
-if validate_command act; then
-    act() {
-        local parameters current_docker_host github_token
-        parameters=()
-        current_docker_host="$(docker context inspect -f '{{.Endpoints.docker.Host}}')"
-        if validate_command gh; then
-            github_token="$(gh auth token)"
-            parameters+=(--secret GITHUB_TOKEN="${github_token}")
-        fi
-        [[ -f ./.act/.secrets ]] && parameters+=(--secret-file ./.act/.secrets)
-        [[ -f ./.act/.env ]] && parameters+=(--env-file ./.act/.env)
-        env DOCKER_HOST="${current_docker_host}" \
-            "$(which -p act)" \
-            --actor "${USER}" \
-            "${parameters[@]}" \
-            "$@"
-    }
 fi
 
 # enable hidden files in completions

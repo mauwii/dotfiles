@@ -9,7 +9,7 @@
 
 # Disable specific steps - same options as the command line flag
 # disable = ["system", "emacs"]
-disable = [ "gem", "ruby_gems", "system" ]
+disable = [ "gem", "ruby_gems", "system", "powershell" ]
 
 # Ignore failures for these steps
 # ignore_failures = ["powershell"]

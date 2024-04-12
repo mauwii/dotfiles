@@ -58,8 +58,7 @@ if [ -n "${SSH_CONNECTION}" ]; then
     fi
 else
     if validate_command code; then
-        export EDITOR="code"
-        export GIT_EDITOR="${EDITOR} -w"
+        export EDITOR="code --wait"
     elif validate_command nvim; then
         export EDITOR="nvim"
     elif validate_command nano; then

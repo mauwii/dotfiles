@@ -281,9 +281,11 @@ ITERM2_SHELL_INTEGRATION="${HOME}/iterm2_shell_integration.zsh"
 
 # shellcheck disable=SC2154
 if [[ -r "${ITERM2_SHELL_INTEGRATION}" ]] \
-    && [[ "${LC_TERMINAL}" = "iTerm2" ]]; then
+    && [[ "${LC_TERMINAL}" = "iTerm2" ]] \
+    && [[ ! -d "${HOME}/.oh-my-zsh" ]]; then
     # shellcheck source=.iterm2_shell_integration.zsh
     source "${ITERM2_SHELL_INTEGRATION}"
+    debuglog "loaded iTerm2 shell integration"
 else
     unset ITERM2_SHELL_INTEGRATION
 fi

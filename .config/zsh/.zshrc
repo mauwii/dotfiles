@@ -24,7 +24,7 @@ fi
 # unset INFOPATH
 
 # Add dotnet tools to path
-export PATH="$PATH:/Users/mauwii/.dotnet/tools"
+export PATH="${PATH}:${HOME}/.dotnet/tools"
 
 # set completion dump file
 ZSH_COMPDUMP="${ZDOTDIR:-${HOME:-.cache}}/.zcompdump-$(hostname -s)${ZSH_VERSION:+-${ZSH_VERSION}}"
@@ -157,7 +157,9 @@ if [[ -d "${HOME}/.oh-my-zsh" ]]; then
     fi
 
     # source iTerm2 shell integration
-    zstyle :omz:plugins:iterm2 shell-integration yes
+    if [[ $LC_TERMINAL = "iTerm2" ]]; then
+        zstyle :omz:plugins:iterm2 shell-integration yes
+    fi
 
     if [[ -r "${ZSH}/oh-my-zsh.sh" ]]; then
         # shellcheck source=.oh-my-zsh/oh-my-zsh.sh disable=SC1094
@@ -234,6 +236,15 @@ if validate_command fzf; then
         # shellcheck source=.fzf.zsh
         source ~/.fzf.zsh >/dev/null 2>&1
     fi
+fi
+
+# Terraform completion
+if validate_command terraform; then
+    # Scaleway CLI autocomplete initialization.
+    eval "$(scw autocomplete script shell=zsh)"
+
+    autoload -U +X bashcompinit && bashcompinit
+    complete -o nospace -C /opt/homebrew/Cellar/tfenv/3.0.0/versions/1.6.6/terraform terraform
 fi
 
 # These AddOns should be sourced last

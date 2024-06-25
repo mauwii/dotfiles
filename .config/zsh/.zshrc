@@ -290,6 +290,11 @@ else
     unset ITERM2_SHELL_INTEGRATION
 fi
 
+# Scaleway CLI autocomplete initialization.
+if validate_command scw; then
+    eval "$(scw autocomplete script shell=zsh)"
+fi
+
 DOT_ZSHRC="true"
 
 debuglog "done loading .zshrc"

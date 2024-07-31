@@ -19,11 +19,11 @@ alias clpy='find . -name __pycache__ -type d -print0 | xargs -0 /bin/rm -rf'
 # list the PATH separated by new lines
 alias lspath='echo $PATH | tr ":" "\n"'
 
-# use exa as modern ls-replacement if available
-if validate_command exa; then
-    exa --git >/dev/null 2>&1 && exa_git="true"
+# use eza as modern ls-replacement if available
+if validate_command eza; then
+    eza --git >/dev/null 2>&1 && eza_git="true"
     # shellcheck disable=SC2139
-    alias ls="exa --icons --group-directories-first ${exa_git:+--git} --accessed --modified --created"
+    alias ls="eza --icons --group-directories-first ${eza_git:+--git} --accessed --modified --created"
 elif [ "$(uname -s || true)" = "Darwin" ]; then
     alias ls='ls -G'
 else
